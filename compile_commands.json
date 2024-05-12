@@ -1,0 +1,17 @@
+[
+  {
+    "arguments": [
+      "/opt/homebrew/opt/llvm/bin/clang",
+      "-c",
+      "-Wall",
+      "-fpic",
+      "-I/opt/homebrew/opt/opencv/include/opencv4",
+      "-o",
+      "libs/cv/cv.o",
+      "libs/cv/cv.cpp"
+    ],
+    "directory": "/Users/kaku/dev/probe/opencv-odin-demo",
+    "file": "/Users/kaku/dev/probe/opencv-odin-demo/libs/cv/cv.cpp",
+    "output": "/Users/kaku/dev/probe/opencv-odin-demo/libs/cv/cv.o"
+  }
+]
