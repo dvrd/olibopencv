@@ -2,7 +2,7 @@ package cv
 
 import "core:c"
 
-when ODIN_OS == .Darwin do foreign import cv "libcv.dylib"
+when ODIN_OS == .Darwin do foreign import cv "libcv.a"
 
 Mat :: distinct rawptr
 VideoCapture :: distinct rawptr
