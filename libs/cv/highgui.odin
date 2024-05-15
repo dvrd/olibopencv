@@ -109,11 +109,11 @@ destroy_window :: proc(w: ^Window) {
 //
 // For further details, please see:
 // https://docs.opencv.org/master/d7/dfc/group__highgui.html#gaaf9504b8f9cf19024d9d44a14e461656
-get_window_property :: proc(w: ^Window, flag: WindowPropertyFlag) -> f64 {
+get_window_property :: proc(w: ^Window, flag: WindowPropertyFlag) -> WindowFlag {
 	c_name := strings.clone_to_cstring(w.name)
 	defer delete(c_name)
 
-	return cast(f64)Window_GetProperty(c_name, c.int(flag))
+	return cast(WindowFlag)Window_GetProperty(c_name, c.int(flag))
 }
 
 // set_window_property changes parameters of a window dynamically.

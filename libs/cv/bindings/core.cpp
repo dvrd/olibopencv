@@ -85,7 +85,7 @@ Mat Mat_FromPtr(Mat m, int rows, int cols, int type, int prow, int pcol) {
 void Mat_Close(Mat m) { delete m; }
 
 // Mat_Empty tests if a Mat is empty
-int Mat_Empty(Mat m) { return m->empty(); }
+bool Mat_Empty(Mat m) { return m->empty(); }
 
 // Mat_IsContinuous tests if a Mat is continuous
 bool Mat_IsContinuous(Mat m) { return m->isContinuous(); }

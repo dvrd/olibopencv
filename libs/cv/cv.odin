@@ -75,7 +75,7 @@ VideoCaptureAPIs :: enum c.int {
 
 @(default_calling_convention = "c")
 foreign cv {
-	image_read :: proc(file: cstring, flags: c.int) -> Mat ---
+	image_read :: proc(file: cstring, flags: ImageReadModes) -> Mat ---
 	image_show :: proc(name: cstring, img: Mat) ---
 	image_write :: proc(filename: cstring, img: Mat) -> c.bool ---
 

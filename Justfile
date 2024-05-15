@@ -19,7 +19,6 @@ object:
     fi; \
   done
 
-
 static: object
   ar rcs {{cv_lib_src}}/libcv.a {{cv_lib_bindigns}}/*.o
 
@@ -39,6 +38,9 @@ build_odin: shared static
 
 build target:
   @just build_{{target}}
+
+test: static
+  odin test libs/cv/tests -extra-linker-flags:{{linker_flags}} \
 
 run_c: build_c
   LD_LIBRARY_PATH={{cv_lib_src}}/ ./main

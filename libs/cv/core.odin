@@ -314,7 +314,7 @@ foreign cv {
 
 	// Mat_Close deletes an existing Mat
 	@(link_name = "Mat_Close")
-	mat_close :: proc(m: Mat) ---
+	mat_destroy :: proc(m: Mat) ---
 
 	// Mat_IsContinuous tests if a Mat is continuous
 	@(link_name = "Mat_IsContinuous")
@@ -322,7 +322,7 @@ foreign cv {
 
 	// Mat_Empty tests if a Mat is empty
 	@(link_name = "Mat_Empty")
-	mat_empty :: proc(m: Mat) -> c.int ---
+	mat_empty :: proc(m: Mat) -> c.bool ---
 
 	@(link_name = "Mat_Inv")
 	mat_inv :: proc(m: Mat) ---
