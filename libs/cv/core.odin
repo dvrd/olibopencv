@@ -830,7 +830,7 @@ foreign cv {
 	point2f_close :: proc(p: Point2f) ---
 
 	@(link_name = "Rects_Close")
-	rects_close :: proc(rs: Rects) ---
+	delete_rects :: proc(rs: Rects) ---
 
 	@(link_name = "DMatches_Close")
 	dmatches_close :: proc(ds: DMatches) ---

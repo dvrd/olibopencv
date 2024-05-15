@@ -79,7 +79,6 @@ foreign cv {
 	image_show :: proc(name: cstring, img: Mat) ---
 	image_write :: proc(filename: cstring, img: Mat) -> c.bool ---
 
-	wait_key :: proc(delay: c.int) -> c.int ---
 	free_mem :: proc(data: rawptr) ---
 
 	new_videocapture :: proc() -> VideoCapture ---
