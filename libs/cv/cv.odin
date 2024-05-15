@@ -2,9 +2,10 @@ package cv
 
 import "core:c"
 
-when ODIN_OS == .Darwin do foreign import cv "libcv.a"
+when ODIN_OS == .Darwin {
+	foreign import cv "libcv.a"
+}
 
-Mat :: distinct rawptr
 VideoCapture :: distinct rawptr
 
 ImageReadModes :: enum c.int {
@@ -74,14 +75,11 @@ VideoCaptureAPIs :: enum c.int {
 
 @(default_calling_convention = "c")
 foreign cv {
-	new_mat :: proc() -> Mat ---
 	image_read :: proc(file: cstring, flags: c.int) -> Mat ---
-	mat_isempty :: proc(mat: Mat) -> c.bool ---
-	named_window :: proc(name: cstring) ---
 	image_show :: proc(name: cstring, img: Mat) ---
-	wait_key :: proc(delay: c.int) -> c.int ---
-	destroy_window :: proc(name: cstring) ---
 	image_write :: proc(filename: cstring, img: Mat) -> c.bool ---
+
+	wait_key :: proc(delay: c.int) -> c.int ---
 	free_mem :: proc(data: rawptr) ---
 
 	new_videocapture :: proc() -> VideoCapture ---

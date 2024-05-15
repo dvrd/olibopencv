@@ -9,17 +9,6 @@ Mat image_read(const char *file, int flags) {
   return new cv::Mat(image);
 }
 
-bool mat_isempty(Mat mat) {
-  cv::Mat *m = static_cast<cv::Mat *>(mat);
-  return m->empty();
-}
-
-void named_window(const char *name) {
-  // std::string win_name{name};
-  // cv::namedWindow(win_name);
-  cv::namedWindow(name);
-}
-
 void image_show(const char *name, Mat img) {
   cv::Mat *image = static_cast<cv::Mat *>(img);
   std::string win_name{name};
@@ -28,12 +17,6 @@ void image_show(const char *name, Mat img) {
 }
 
 int wait_key(int delay) { return cv::waitKey(delay); }
-
-void destroy_window(const char *name) {
-  // const std::string win_name{name};
-  // cv::destroyWindow(win_name);
-  cv::destroyWindow(name);
-}
 
 bool image_write(const char *filename, Mat img) {
   cv::Mat *image = static_cast<cv::Mat *>(img);
