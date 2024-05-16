@@ -21,117 +21,53 @@ foreign cv {
 
 // IMReadFlag is one of the valid flags to use for the IMRead function.
 IMReadFlag :: enum {
-	// IMReadUnchanged return the loaded image as is (with alpha channel,
-	// otherwise it gets cropped).
-	Unchanged         = -1,
-
-	// IMReadGrayScale always convert image to the single channel
-	// grayscale image.
-	GrayScale         = 0,
-
-	// IMReadColor always converts image to the 3 channel BGR color image.
-	Color             = 1,
-
-	// IMReadAnyDepth returns 16-bit/32-bit image when the input has the corresponding
-	// depth, otherwise convert it to 8-bit.
-	AnyDepth          = 2,
-
-	// IMReadAnyColor the image is read in any possible color format.
-	AnyColor          = 4,
-
-	// IMReadLoadGDAL uses the gdal driver for loading the image.
-	LoadGDAL          = 8,
-
-	// IMReadReducedGrayscale2 always converts image to the single channel grayscale image
-	// and the image size reduced 1/2.
-	ReducedGrayscale2 = 16,
-
-	// IMReadReducedColor2 always converts image to the 3 channel BGR color image and the
-	// image size reduced 1/2.
-	ReducedColor2     = 17,
-
-	// IMReadReducedGrayscale4 always converts image to the single channel grayscale image and
-	// the image size reduced 1/4.
-	ReducedGrayscale4 = 32,
-
-	// IMReadReducedColor4 always converts image to the 3 channel BGR color image and
-	// the image size reduced 1/4.
-	ReducedColor4     = 33,
-
-	// IMReadReducedGrayscale8 always convert image to the single channel grayscale image and
-	// the image size reduced 1/8.
-	ReducedGrayscale8 = 64,
-
-	// IMReadReducedColor8 always convert image to the 3 channel BGR color image and the
-	// image size reduced 1/8.
-	ReducedColor8     = 65,
-
-	// IMReadIgnoreOrientation do not rotate the image according to EXIF's orientation flag.
-	IgnoreOrientation = 128,
+	Unchanged         = -1, // Unchanged return the loaded image as is (with alpha channel, otherwise it gets cropped).
+	GrayScale         = 0, // GrayScale always convert image to the single channel grayscale image.
+	Color             = 1, // Color always converts image to the 3 channel BGR color image.
+	AnyDepth          = 2, // AnyDepth returns 16-bit/32-bit image when the input has the corresponding depth, otherwise convert it to 8-bit.
+	AnyColor          = 4, // AnyColor the image is read in any possible color format.
+	LoadGDAL          = 8, // LoadGDAL uses the gdal driver for loading the image.
+	ReducedGrayscale2 = 16, // ReducedGrayscale2 always converts image to the single channel grayscale image and the image size reduced 1/2.
+	ReducedColor2     = 17, // ReducedColor2 always converts image to the 3 channel BGR color image and the image size reduced 1/2.
+	ReducedGrayscale4 = 32, // ReducedGrayscale4 always converts image to the single channel grayscale image and the image size reduced 1/4.
+	ReducedColor4     = 33, // ReducedColor4 always converts image to the 3 channel BGR color image and the image size reduced 1/4.
+	ReducedGrayscale8 = 64, // ReducedGrayscale8 always convert image to the single channel grayscale image and the image size reduced 1/8.
+	ReducedColor8     = 65, // ReducedColor8 always convert image to the 3 channel BGR color image and the image size reduced 1/8.
+	IgnoreOrientation = 128, // IgnoreOrientation do not rotate the image according to EXIF's orientation flag.
 }
 
 IMWriteFlag :: enum {
-	//IMWriteJpegQuality is the quality from 0 to 100 for JPEG (the higher is the better). Default value is 95.
-	JpegQuality            = 1,
-
-	// JpegProgressive enables JPEG progressive feature, 0 or 1, default is False.
-	JpegProgressive        = 2,
-
-	// JpegOptimize enables JPEG optimization, 0 or 1, default is False.
-	JpegOptimize           = 3,
-
-	// JpegRstInterval is the JPEG restart interval, 0 - 65535, default is 0 - no restart.
-	JpegRstInterval        = 4,
-
-	// JpegLumaQuality separates luma quality level, 0 - 100, default is 0 - don't use.
-	JpegLumaQuality        = 5,
-
-	// JpegChromaQuality separates chroma quality level, 0 - 100, default is 0 - don't use.
-	JpegChromaQuality      = 6,
+	JpegQuality            = 1, // JpegQuality is the quality from 0 to 100 for JPEG (the higher is the better). Default value is 95.
+	JpegProgressive        = 2, // JpegProgressive enables JPEG progressive feature, 0 or 1, default is False
+	JpegOptimize           = 3, // JpegOptimize enables JPEG optimization, 0 or 1, default is False
+	JpegRstInterval        = 4, // JpegRstInterval is the JPEG restart interval, 0 - 65535, default is 0 - no restart
+	JpegLumaQuality        = 5, // JpegLumaQuality separates luma quality level, 0 - 100, default is 0 - don't use
+	JpegChromaQuality      = 6, // JpegChromaQuality separates chroma quality level, 0 - 100, default is 0 - don't use
 
 	// PngCompression is the compression level from 0 to 9 for PNG. A
 	// higher value means a smaller size and longer compression time.
 	// If specified, strategy is changed to IMWRITE_PNG_STRATEGY_DEFAULT (Z_DEFAULT_STRATEGY).
 	// Default value is 1 (best speed setting).
 	PngCompression         = 16,
-
-	// PngStrategy is one of cv::IMWritePNGFlags, default is IMWRITE_PNG_STRATEGY_RLE.
-	PngStrategy            = 17,
-
-	// PngBilevel is the binary level PNG, 0 or 1, default is 0.
-	PngBilevel             = 18,
-
-	// PxmBinary for PPM, PGM, or PBM can be a binary format flag, 0 or 1. Default value is 1.
-	PxmBinary              = 32,
+	PngStrategy            = 17, // PngStrategy is one of cv::IMWritePNGFlags, default is IMWRITE_PNG_STRATEGY_RLE
+	PngBilevel             = 18, // PngBilevel is the binary level PNG, 0 or 1, default is 0
+	PxmBinary              = 32, // PxmBinary for PPM, PGM, or PBM can be a binary format flag, 0 or 1. Default value is 1
 
 	// WebpQuality is the quality from 1 to 100 for WEBP (the higher is
 	// the better). By default (without any parameter) and for quality above
 	// 100 the lossless compression is used.
 	WebpQuality            = 64,
-
-	// PamTupletype sets the TUPLETYPE field to the corresponding string
-	// value that is defined for the format.
-	PamTupletype           = 128,
-
-	// PngStrategyDefault is the value to use for normal data.
-	PngStrategyDefault     = 0,
+	PamTupletype           = 128, // PamTupletype sets the TUPLETYPE field to the corresponding string value that is defined for the format
+	PngStrategyDefault     = 0, // PngStrategyDefault is the value to use for normal data
 
 	// PngStrategyFiltered is the value to use for data produced by a
 	// filter (or predictor). Filtered data consists mostly of small values
 	// with a somewhat random distribution. In this case, the compression
 	// algorithm is tuned to compress them better.
 	PngStrategyFiltered    = 1,
-
-	// PngStrategyHuffmanOnly forces Huffman encoding only (no string match).
-	PngStrategyHuffmanOnly = 2,
-
-	// PngStrategyRle is the value to use to limit match distances to
-	// one (run-length encoding).
-	PngStrategyRle         = 3,
-
-	// PngStrategyFixed is the value to prevent the use of dynamic
-	// Huffman codes, allowing for a simpler decoder for special applications.
-	PngStrategyFixed       = 4,
+	PngStrategyHuffmanOnly = 2, // PngStrategyHuffmanOnly forces Huffman encoding only (no string match)
+	PngStrategyRle         = 3, // PngStrategyRle is the value to use to limit match distances to one (run-length encoding)
+	PngStrategyFixed       = 4, // PngStrategyFixed is the value to prevent the use of dynamic Huffman codes, allowing for a simpler decoder for special applications
 }
 
 // IMRead reads an image from a file into a Mat.
@@ -174,10 +110,7 @@ imwrite_with_params :: proc(name: string, img: Mat, params: []int) -> bool {
 		c_params[i] = c.int(v)
 	}
 
-	params_vector := IntVector{
-		cast([^]c.int)&c_params[0],
-		cast(c.int)len(c_params),
-	}
+	params_vector := IntVector{cast([^]c.int)&c_params[0], cast(c.int)len(c_params)}
 
 	return cast(bool)Image_IMWrite_WithParams(c_name, img, params_vector)
 }
@@ -190,10 +123,14 @@ FileExt :: enum {
 
 ext_mapper :: proc(ext: FileExt) -> cstring {
 	switch ext {
-	case .PNG:	return ".png"
-	case .JPEG:	return ".jpg"
-	case .GIF:	return ".gif"
-	case:				return "unreachable"
+	case .PNG:
+		return ".png"
+	case .JPEG:
+		return ".jpg"
+	case .GIF:
+		return ".gif"
+	case:
+		return "unreachable"
 	}
 }
 
@@ -235,10 +172,7 @@ imencode_with_params :: proc(file_ext: FileExt, img: Mat, params: []int) -> (buf
 		c_params[i] = c.int(v)
 	}
 
-	params_vector := IntVector{
-		cast([^]c.int)&c_params[0],
-		cast(c.int)len(c_params),
-	}
+	params_vector := IntVector{cast([^]c.int)&c_params[0], cast(c.int)len(c_params)}
 
 	tmp_buf: ByteArray
 	Image_IMEncode_WithParams(c_file_ext, img, params_vector, &tmp_buf)
@@ -271,4 +205,3 @@ imdecode_into_mat :: proc(buf: []byte, flags: IMReadFlag, dest: Mat) {
 	data := to_byte_array(cast([^]byte)&buf[0], cast(c.int)len(buf))
 	Image_IMDecodeIntoMat(data, c.int(flags), dest)
 }
-

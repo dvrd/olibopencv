@@ -261,110 +261,41 @@ Mats :: struct {
 }
 
 Mat_Type :: enum {
-	// MatTypeCV8U is a Mat of 8-bit unsigned int
-	CV_8U    = 0,
-
-	// CV8S is a Mat of 8-bit signed int
-	CV_8S    = 1,
-
-	// CV16U is a Mat of 16-bit unsigned int
-	CV_16U   = 2,
-
-	// CV16S is a Mat of 16-bit signed int
-	CV_16S   = 3,
-
-	// CV16SC2 is a Mat of 16-bit signed int with 2 channels
-	CV_16SC2 = 3 + Mat_Channel2,
-
-	// CV32S is a Mat of 32-bit signed int
-	CV_32S   = 4,
-
-	// CV32F is a Mat of 32-bit float
-	CV_32F   = 5,
-
-	// CV64F is a Mat of 64-bit float
-	CV_64F   = 6,
-
-	// CV8UC1 is a Mat of 8-bit unsigned int with a single channel
-	CV_8UC1  = 0 + Mat_Channel1,
-
-	// CV8UC2 is a Mat of 8-bit unsigned int with 2 channels
-	CV_8UC2  = 0 + Mat_Channel2,
-
-	// CV8UC3 is a Mat of 8-bit unsigned int with 3 channels
-	CV_8UC3  = 0 + Mat_Channel3,
-
-	// CV8UC4 is a Mat of 8-bit unsigned int with 4 channels
-	CV_8UC4  = 0 + Mat_Channel4,
-
-	// CV8SC1 is a Mat of 8-bit signed int with a single channel
-	CV_8SC1  = 1 + Mat_Channel1,
-
-	// CV8SC2 is a Mat of 8-bit signed int with 2 channels
-	CV_8SC2  = 1 + Mat_Channel2,
-
-	// CV8SC3 is a Mat of 8-bit signed int with 3 channels
-	CV_8SC3  = 1 + Mat_Channel3,
-
-	// CV8SC4 is a Mat of 8-bit signed int with 4 channels
-	CV_8SC4  = 1 + Mat_Channel4,
-
-	// CV16UC1 is a Mat of 16-bit unsigned int with a single channel
-	CV_16UC1 = 2 + Mat_Channel1,
-
-	// CV16UC2 is a Mat of 16-bit unsigned int with 2 channels
-	CV_16UC2 = 2 + Mat_Channel2,
-
-	// CV16UC3 is a Mat of 16-bit unsigned int with 3 channels
-	CV_16UC3 = 2 + Mat_Channel3,
-
-	// CV16UC4 is a Mat of 16-bit unsigned int with 4 channels
-	CV_16UC4 = 2 + Mat_Channel4,
-
-	// CV16SC1 is a Mat of 16-bit signed int with a single channel
-	CV_16SC1 = 3 + Mat_Channel1,
-
-	// CV16SC3 is a Mat of 16-bit signed int with 3 channels
-	CV_16SC3 = 3 + Mat_Channel3,
-
-	// CV16SC4 is a Mat of 16-bit signed int with 4 channels
-	CV_16SC4 = 3 + Mat_Channel4,
-
-	// CV32SC1 is a Mat of 32-bit signed int with a single channel
-	CV_32SC1 = 4 + Mat_Channel1,
-
-	// CV32SC2 is a Mat of 32-bit signed int with 2 channels
-	CV_32SC2 = 4 + Mat_Channel2,
-
-	// CV32SC3 is a Mat of 32-bit signed int with 3 channels
-	CV_32SC3 = 4 + Mat_Channel3,
-
-	// CV32SC4 is a Mat of 32-bit signed int with 4 channels
-	CV_32SC4 = 4 + Mat_Channel4,
-
-	// CV32FC1 is a Mat of 32-bit float int with a single channel
-	CV_32FC1 = 5 + Mat_Channel1,
-
-	// CV32FC2 is a Mat of 32-bit float int with 2 channels
-	CV_32FC2 = 5 + Mat_Channel2,
-
-	// CV32FC3 is a Mat of 32-bit float int with 3 channels
-	CV_32FC3 = 5 + Mat_Channel3,
-
-	// CV32FC4 is a Mat of 32-bit float int with 4 channels
-	CV_32FC4 = 5 + Mat_Channel4,
-
-	// CV64FC1 is a Mat of 64-bit float int with a single channel
-	CV_64FC1 = 6 + Mat_Channel1,
-
-	// CV64FC2 is a Mat of 64-bit float int with 2 channels
-	CV_64FC2 = 6 + Mat_Channel2,
-
-	// CV64FC3 is a Mat of 64-bit float int with 3 channels
-	CV_64FC3 = 6 + Mat_Channel3,
-
-	// CV64FC4 is a Mat of 64-bit float int with 4 channels
-	CV64FC4  = 6 + Mat_Channel4,
+	CV_8U    = 0, // MatTypeCV8U is a Mat of 8-bit unsigned in
+	CV_8S    = 1, // CV8S is a Mat of 8-bit signed in
+	CV_16U   = 2, // CV16U is a Mat of 16-bit unsigned in
+	CV_16S   = 3, // CV16S is a Mat of 16-bit signed in
+	CV_16SC2 = CV_16S + Mat_Channel2, // CV16SC2 is a Mat of 16-bit signed int with 2 channel
+	CV_32S   = 4, // CV32S is a Mat of 32-bit signed in
+	CV_32F   = 5, // CV32F is a Mat of 32-bit floa
+	CV_64F   = 6, // CV64F is a Mat of 64-bit floa
+	CV_8UC1  = CV_8U + Mat_Channel1, // CV8UC1 is a Mat of 8-bit unsigned int with a single channe
+	CV_8UC2  = CV_8U + Mat_Channel2, // CV8UC2 is a Mat of 8-bit unsigned int with 2 channel
+	CV_8UC3  = CV_8U + Mat_Channel3, // CV8UC3 is a Mat of 8-bit unsigned int with 3 channel
+	CV_8UC4  = CV_8U + Mat_Channel4, // CV8UC4 is a Mat of 8-bit unsigned int with 4 channel
+	CV_8SC1  = CV_8S + Mat_Channel1, // CV8SC1 is a Mat of 8-bit signed int with a single channe
+	CV_8SC2  = CV_8S + Mat_Channel2, // CV8SC2 is a Mat of 8-bit signed int with 2 channel
+	CV_8SC3  = CV_8S + Mat_Channel3, // CV8SC3 is a Mat of 8-bit signed int with 3 channel
+	CV_8SC4  = CV_8S + Mat_Channel4, // CV8SC4 is a Mat of 8-bit signed int with 4 channel
+	CV_16UC1 = CV_16U + Mat_Channel1, // CV16UC1 is a Mat of 16-bit unsigned int with a single channe
+	CV_16UC2 = CV_16U + Mat_Channel2, // CV16UC2 is a Mat of 16-bit unsigned int with 2 channel
+	CV_16UC3 = CV_16U + Mat_Channel3, // CV16UC3 is a Mat of 16-bit unsigned int with 3 channel
+	CV_16UC4 = CV_16U + Mat_Channel4, // CV16UC4 is a Mat of 16-bit unsigned int with 4 channel
+	CV_16SC1 = CV_16S + Mat_Channel1, // CV16SC1 is a Mat of 16-bit signed int with a single channe
+	CV_16SC3 = CV_16S + Mat_Channel3, // CV16SC3 is a Mat of 16-bit signed int with 3 channel
+	CV_16SC4 = CV_16S + Mat_Channel4, // CV16SC4 is a Mat of 16-bit signed int with 4 channel
+	CV_32SC1 = CV_32S + Mat_Channel1, // CV32SC1 is a Mat of 32-bit signed int with a single channe
+	CV_32SC2 = CV_32S + Mat_Channel2, // CV32SC2 is a Mat of 32-bit signed int with 2 channel
+	CV_32SC3 = CV_32S + Mat_Channel3, // CV32SC3 is a Mat of 32-bit signed int with 3 channel
+	CV_32SC4 = CV_32S + Mat_Channel4, // CV32SC4 is a Mat of 32-bit signed int with 4 channel
+	CV_32FC1 = CV_32F + Mat_Channel1, // CV32FC1 is a Mat of 32-bit float int with a single channe
+	CV_32FC2 = CV_32F + Mat_Channel2, // CV32FC2 is a Mat of 32-bit float int with 2 channel
+	CV_32FC3 = CV_32F + Mat_Channel3, // CV32FC3 is a Mat of 32-bit float int with 3 channel
+	CV_32FC4 = CV_32F + Mat_Channel4, // CV32FC4 is a Mat of 32-bit float int with 4 channel
+	CV_64FC1 = CV_64F + Mat_Channel1, // CV64FC1 is a Mat of 64-bit float int with a single channe
+	CV_64FC2 = CV_64F + Mat_Channel2, // CV64FC2 is a Mat of 64-bit float int with 2 channel
+	CV_64FC3 = CV_64F + Mat_Channel3, // CV64FC3 is a Mat of 64-bit float int with 3 channel
+	CV64FC4  = CV_64F + Mat_Channel4, // CV64FC4 is a Mat of 64-bit float int with 4 channel
 }
 
 @(default_calling_convention = "c")
