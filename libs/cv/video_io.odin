@@ -1,7 +1,10 @@
 package cv
 
 import "core:c"
+import "core:fmt"
+import "core:strconv"
 import "core:strings"
+import "core:sync"
 
 when ODIN_OS == .Darwin {
 	foreign import cv "libcv.dylib"
@@ -18,7 +21,11 @@ VideoCapture :: distinct rawptr
 //
 // For further details, please see:
 // http://docs.opencv.org/master/dd/d9e/classcv_1_1VideoWriter.html
-VideoWriter :: distinct rawptr
+RawVideoWriter :: distinct rawptr
+VideoWriter :: struct {
+	p:  RawVideoWriter,
+	mu: ^sync.RW_Mutex,
+}
 
 Cap_API :: enum {
 	ANY           = 0, //!< Auto detect == 0
@@ -114,7 +121,9 @@ Cap_Props :: enum {
 foreign cv {
 	@(link_name = "VideoCapture_New")
 	new_videocapture :: proc() -> VideoCapture ---
+	@(link_name = "VideoCapture_Close")
 	delete_videocapture :: proc(v: VideoCapture) ---
+
 	VideoCapture_Open :: proc(v: VideoCapture, uri: cstring) -> c.bool ---
 	VideoCapture_OpenWithAPI :: proc(v: VideoCapture, uri: cstring, apiPreference: Cap_API) -> c.bool ---
 	VideoCapture_OpenDevice :: proc(v: VideoCapture, device: c.int) -> c.bool ---
@@ -123,19 +132,18 @@ foreign cv {
 	VideoCapture_Get :: proc(v: VideoCapture, prop: Cap_Props) -> c.double ---
 	VideoCapture_IsOpened :: proc(v: VideoCapture) -> c.int ---
 	VideoCapture_Read :: proc(v: VideoCapture, buf: Mat) -> c.int ---
-	VideoCapture_Grab :: proc(v: VideoCapture, skip: int) ---
+	VideoCapture_Grab :: proc(v: VideoCapture, skip: c.int) ---
 	VideoCapture_Retrieve :: proc(v: VideoCapture, buf: Mat) -> c.int ---
 
-	// VideoWriter
-	VideoWriter_New :: proc() -> VideoWriter ---
-	VideoWriter_Close :: proc(vw: VideoWriter) ---
-	VideoWriter_Open :: proc(vw: VideoWriter, name, codec: cstring, fps: c.double, width, height: c.int, isColor: c.bool) ---
-	VideoWriter_IsOpened :: proc(vw: VideoWriter) -> c.int ---
-	VideoWriter_Write :: proc(vw: VideoWriter, img: Mat) ---
+	VideoWriter_New :: proc() -> RawVideoWriter ---
+	VideoWriter_Close :: proc(v: VideoCapture) ---
+
+	VideoWriter_Open :: proc(vw: RawVideoWriter, name, codec: cstring, fps: c.double, width, height: c.int, isColor: c.bool) ---
+	VideoWriter_IsOpened :: proc(vw: RawVideoWriter) -> c.int ---
+	VideoWriter_Write :: proc(vw: RawVideoWriter, img: Mat) ---
 }
 
-
-// VideoCaptureFile opens a VideoCapture from a file and prepares
+// videocapture_file opens a VideoCapture from a file and prepares
 // to start capturing. It returns error if it fails to open the file stored in uri path.
 videocapture_file :: proc(uri: string) -> (vc: VideoCapture, ok: bool) {
 	vc = new_videocapture()
@@ -148,9 +156,9 @@ videocapture_file :: proc(uri: string) -> (vc: VideoCapture, ok: bool) {
 	return
 }
 
-// VideoCaptureFile opens a VideoCapture from a file and prepares
+// videocapture_file__with_api opens a VideoCapture from a file and prepares
 // to start capturing. It returns error if it fails to open the file stored in uri path.
-videocapture_file__with_api :: proc(
+videocapture_file_with_api :: proc(
 	uri: string,
 	apiPreference: Cap_API,
 ) -> (
@@ -167,7 +175,7 @@ videocapture_file__with_api :: proc(
 	return
 }
 
-// VideoCaptureDevice opens a VideoCapture from a device and prepares
+// videocapture_device opens a VideoCapture from a device and prepares
 // to start capturing. It returns error if it fails to open the video device.
 videocapture_device :: proc(device: int) -> (vc: VideoCapture, ok: bool) {
 	vc = new_videocapture()
@@ -175,7 +183,7 @@ videocapture_device :: proc(device: int) -> (vc: VideoCapture, ok: bool) {
 	return
 }
 
-// VideoCaptureDevice opens a VideoCapture from a device with the api preference.
+// videocapture_device_with_api opens a VideoCapture from a device with the api preference.
 // It returns error if it fails to open the video device.
 videocapture_device_with_api :: proc(
 	device: int,
@@ -189,148 +197,173 @@ videocapture_device_with_api :: proc(
 	return
 }
 
-// Set parameter with property (=key).
+// videocapture_set parameter with property (=key).
 videocapture_set :: proc(v: VideoCapture, prop: Cap_Props, param: f64) {
 	VideoCapture_Set(v, prop, c.double(param))
 }
 
-// // Get parameter with property (=key).
-// func (v VideoCapture) Get(prop VideoCaptureProperties) float64 {
-// 	return float64(C.VideoCapture_Get(v.p, C.int(prop)))
-// }
-//
-// // IsOpened returns if the VideoCapture has been opened to read from
-// // a file or capture device.
-// func (v *VideoCapture) IsOpened() bool {
-// 	isOpened := C.VideoCapture_IsOpened(v.p)
-// 	return isOpened != 0
-// }
-//
-// // Read reads the next frame from the VideoCapture to the Mat passed in
-// // as the param. It returns false if the VideoCapture cannot read frame.
-// func (v *VideoCapture) Read(m *Mat) bool {
-// 	return C.VideoCapture_Read(v.p, m.p) != 0
-// }
-//
-// // Grab skips a specific number of frames.
-// func (v *VideoCapture) Grab(skip int) {
-// 	C.VideoCapture_Grab(v.p, C.int(skip))
-// }
-//
-// // Retrieve decodes and returns the grabbed video frame. Should be used after Grab
-// //
-// // For further details, please see:
-// // http://docs.opencv.org/master/d8/dfe/classcv_1_1VideoCapture.html#a9ac7f4b1cdfe624663478568486e6712
-// func (v *VideoCapture) Retrieve(m *Mat) bool {
-// 	return C.VideoCapture_Retrieve(v.p, m.p) != 0
-// }
-//
-// // CodecString returns a string representation of FourCC bytes, i.e. the name of a codec
-// func (v *VideoCapture) CodecString() string {
-// 	res := ""
-// 	hexes := []int64{0xff, 0xff00, 0xff0000, 0xff000000}
-// 	for i, h := range hexes {
-// 		res += string(rune(int64(v.Get(VideoCaptureFOURCC)) & h >> (uint(i * 8))))
-// 	}
-// 	return res
-// }
-//
-// // ToCodec returns an float64 representation of FourCC bytes
-// func (v *VideoCapture) ToCodec(codec string) float64 {
-// 	if len(codec) != 4 {
-// 		return -1.0
-// 	}
-// 	c1 := []rune(string(codec[0]))[0]
-// 	c2 := []rune(string(codec[1]))[0]
-// 	c3 := []rune(string(codec[2]))[0]
-// 	c4 := []rune(string(codec[3]))[0]
-// 	return float64((c1 & 255) + ((c2 & 255) << 8) + ((c3 & 255) << 16) + ((c4 & 255) << 24))
-// }
+// videocapture_get parameter with property (=key).
+videocapture_get :: proc(v: VideoCapture, prop: Cap_Props) -> f64 {
+	return VideoCapture_Get(v, prop)
+}
 
-// // VideoWriterFile opens a VideoWriter with a specific output file.
-// // The "codec" param should be the four-letter code for the desired output
-// // codec, for example "MJPG".
-// //
-// // For further details, please see:
-// // http://docs.opencv.org/master/dd/d9e/classcv_1_1VideoWriter.html#a0901c353cd5ea05bba455317dab81130
-// func VideoWriterFile(name string, codec string, fps float64, width int, height int, isColor bool) (vw *VideoWriter, err error) {
+// videocapture_is_opened returns if the VideoCapture has been opened to read from
+// a file or capture device.
+videocapture_is_opened :: proc(v: VideoCapture) -> bool {
+	isOpened := VideoCapture_IsOpened(v)
+	return isOpened != 0
+}
+
+// videocapture_read reads the next frame from the VideoCapture to the Mat passed in
+// as the param. It returns false if the VideoCapture cannot read frame.
+videocapture_read :: proc(v: VideoCapture, m: Mat) -> bool {
+	return VideoCapture_Read(v, m) != 0
+}
+
+// videocapture_grab skips a specific number of frames.
+videocapture_grab :: proc(v: VideoCapture, skip: int) {
+	VideoCapture_Grab(v, c.int(skip))
+}
+
+// videocapture_retrieve decodes and returns the grabbed video frame. Should be used after Grab
 //
-// 	if fps == 0 || width == 0 || height == 0 {
-// 		return nil, fmt.Errorf("one of the numerical parameters "+
-// 			"is equal to zero: FPS: %f, width: %d, height: %d", fps, width, height)
-// 	}
+// For further details, please see:
+// http://docs.opencv.org/master/d8/dfe/classcv_1_1VideoCapture.html#a9ac7f4b1cdfe624663478568486e6712
+videocapture_retrieve :: proc(v: VideoCapture, m: Mat) -> bool {
+	return VideoCapture_Retrieve(v, m) != 0
+}
+
+// videocapture_codec_string returns a string representation of FourCC bytes, i.e. the name of a codec
+videocapture_codec_string :: proc(v: VideoCapture) -> string {
+	sb := strings.builder_make()
+	defer strings.builder_destroy(&sb)
+
+	hexes := []i64{0xff, 0xff00, 0xff0000, 0xff000000}
+	param: i64
+	for h, i in hexes {
+		param = cast(i64)videocapture_get(v, .FOURCC)
+		strings.write_rune(&sb, rune(param & h >> (uint(i * 8))))
+	}
+
+	return strings.to_string(sb)
+}
+
+// videocapture_to_codec returns an float64 representation of FourCC bytes
+videocapture_to_codec :: proc(v: VideoCapture, codec: string) -> f64 {
+	if len(codec) != 4 {
+		return -1.0
+	}
+	c1 := codec[0]
+	c2 := codec[1]
+	c3 := codec[2]
+	c4 := codec[3]
+	return f64((c1 & 255) + ((c2 & 255) << 8) + ((c3 & 255) << 16) + ((c4 & 255) << 24))
+}
+
+new_videowriter :: proc() -> (vw: ^VideoWriter) {
+	vw = new(VideoWriter)
+	vw.p = VideoWriter_New()
+	return
+}
+
+// videowriter_file opens a VideoWriter with a specific output file.
+// The "codec" param should be the four-letter code for the desired output
+// codec, for example "MJPG".
 //
-// 	vw = &VideoWriter{
-// 		p:  C.VideoWriter_New(),
-// 		mu: &sync.RWMutex{},
-// 	}
+// For further details, please see:
+// http://docs.opencv.org/master/dd/d9e/classcv_1_1VideoWriter.html#a0901c353cd5ea05bba455317dab81130
+videowriter_file :: proc(
+	name, codec: string,
+	fps: f64,
+	width, height: int,
+	isColor: bool,
+) -> (
+	vw: ^VideoWriter,
+	ok: bool,
+) {
+	ok = true
+
+	if fps == 0 || width == 0 || height == 0 {
+		fmt.eprintfln(
+			"one of the numerical parameters is equal to zero: FPS: %f, width: %d, height: %d",
+			fps,
+			width,
+			height,
+		)
+		return nil, false
+	}
+
+	vw = new_videowriter()
+
+	c_name := strings.clone_to_cstring(name)
+	defer delete(c_name)
+
+	c_codec := strings.clone_to_cstring(codec)
+	defer delete(c_codec)
+
+	VideoWriter_Open(
+		vw.p,
+		c_name,
+		c_codec,
+		c.double(fps),
+		c.int(width),
+		c.int(height),
+		c.bool(isColor),
+	)
+	return
+}
+
+// videowriter_is_opened checks if the VideoWriter is open and ready to be written to.
 //
-// 	cName := C.CString(name)
-// 	defer C.free(unsafe.Pointer(cName))
+// For further details, please see:
+// http://docs.opencv.org/master/dd/d9e/classcv_1_1VideoWriter.html#a9a40803e5f671968ac9efa877c984d75
+videowriter_is_opened :: proc(v: ^VideoWriter) -> bool {
+	isOpened := VideoWriter_IsOpened(v.p)
+	return isOpened != 0
+}
+
+// videowriter_write the next video frame from the Mat image to the open VideoWriter.
 //
-// 	cCodec := C.CString(codec)
-// 	defer C.free(unsafe.Pointer(cCodec))
-//
-// 	C.VideoWriter_Open(vw.p, cName, cCodec, C.double(fps), C.int(width), C.int(height), C.bool(isColor))
-// 	return
-// }
-//
-// // Close VideoWriter object.
-// func (vw *VideoWriter) Close() error {
-// 	C.VideoWriter_Close(vw.p)
-// 	vw.p = nil
-// 	return nil
-// }
-//
-// // IsOpened checks if the VideoWriter is open and ready to be written to.
-// //
-// // For further details, please see:
-// // http://docs.opencv.org/master/dd/d9e/classcv_1_1VideoWriter.html#a9a40803e5f671968ac9efa877c984d75
-// func (vw *VideoWriter) IsOpened() bool {
-// 	isOpend := C.VideoWriter_IsOpened(vw.p)
-// 	return isOpend != 0
-// }
-//
-// // Write the next video frame from the Mat image to the open VideoWriter.
-// //
-// // For further details, please see:
-// // http://docs.opencv.org/master/dd/d9e/classcv_1_1VideoWriter.html#a3115b679d612a6a0b5864a0c88ed4b39
-// func (vw *VideoWriter) Write(img Mat) error {
-// 	vw.mu.Lock()
-// 	defer vw.mu.Unlock()
-// 	C.VideoWriter_Write(vw.p, img.p)
-// 	return nil
-// }
-//
-// // OpenVideoCapture return VideoCapture specified by device ID if v is a
-// // number. Return VideoCapture created from video file, URL, or GStreamer
-// // pipeline if v is a string.
-// func OpenVideoCapture(v interface{}) (*VideoCapture, error) {
-// 	switch vv := v.(type) {
-// 	case int:
-// 		return VideoCaptureDevice(vv)
-// 	case string:
-// 		id, err := strconv.Atoi(vv)
-// 		if err == nil {
-// 			return VideoCaptureDevice(id)
-// 		}
-// 		return VideoCaptureFile(vv)
-// 	default:
-// 		return nil, errors.New("argument must be int or string")
-// 	}
-// }
-//
-// func OpenVideoCaptureWithAPI(v interface{}, apiPreference VideoCaptureAPI) (*VideoCapture, error) {
-// 	switch vv := v.(type) {
-// 	case int:
-// 		return VideoCaptureDeviceWithAPI(vv, apiPreference)
-// 	case string:
-// 		id, err := strconv.Atoi(vv)
-// 		if err == nil {
-// 			return VideoCaptureDeviceWithAPI(id, apiPreference)
-// 		}
-// 		return VideoCaptureFileWithAPI(vv, apiPreference)
-// 	default:
-// 		return nil, errors.New("argument must be int or string")
-// 	}
-// }
+// For further details, please see:
+// http://docs.opencv.org/master/dd/d9e/classcv_1_1VideoWriter.html#a3115b679d612a6a0b5864a0c88ed4b39
+videowriter_write :: proc(vw: ^VideoWriter, img: Mat) {
+	sync.lock(vw.mu)
+	defer sync.unlock(vw.mu)
+	VideoWriter_Write(vw.p, img)
+	return
+}
+
+// open_videocapture return VideoCapture specified by device ID if v is a
+// number. Return VideoCapture created from video file, URL, or GStreamer
+// pipeline if v is a string.
+open_videocapture :: proc(src: union {
+		int,
+		string,
+	}) -> (VideoCapture, bool) {
+	switch s in src {
+	case int:
+		return videocapture_device(s)
+	case string:
+		id, ok := strconv.parse_int(s)
+		if ok do return videocapture_device(id)
+		return videocapture_file(s)
+	case:
+		return nil, false
+	}
+}
+
+open_videocapture_with_api :: proc(src: union {
+		int,
+		string,
+	}, apiPreference: Cap_API) -> (VideoCapture, bool) {
+	switch s in src {
+	case int:
+		return videocapture_device_with_api(s, apiPreference)
+	case string:
+		id, ok := strconv.parse_int(s)
+		if ok do return videocapture_device_with_api(id, apiPreference)
+		return videocapture_file_with_api(s, apiPreference)
+	case:
+		return nil, false
+	}
+}
