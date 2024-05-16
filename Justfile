@@ -39,8 +39,12 @@ build_odin: shared static
 build target:
   @just build_{{target}}
 
-test: static
-  odin test libs/cv/tests -extra-linker-flags:{{linker_flags}} \
+test:
+  @if [[ ! -f {{cv_lib_src}}/libcv.dylib ]]; then \
+    just shared; \
+  fi; \
+  odin test libs/cv/tests -extra-linker-flags:{{linker_flags}}; \
+  rm tests
 
 run_c: build_c
   LD_LIBRARY_PATH={{cv_lib_src}}/ ./main

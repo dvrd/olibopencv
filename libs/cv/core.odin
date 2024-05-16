@@ -2,7 +2,14 @@ package cv
 
 import "core:c"
 
-when ODIN_OS == .Darwin do foreign import cv "libcv.a"
+when ODIN_OS == .Darwin {
+	foreign import cv "libcv.dylib"
+}
+
+Mat_Channel1 :: 0
+Mat_Channel2 :: 8
+Mat_Channel3 :: 16
+Mat_Channel4 :: 24
 
 // Wrapper for std::vector<string>
 CStrings :: struct {
@@ -254,67 +261,154 @@ Mats :: struct {
 }
 
 Mat_Type :: enum {
-	CV_8U,
-	CV_8S,
-	CV_16U,
-	CV_16S,
-	CV_32S,
-	CV_32F,
-	CV_64F,
+	// MatTypeCV8U is a Mat of 8-bit unsigned int
+	CV_8U    = 0,
+
+	// CV8S is a Mat of 8-bit signed int
+	CV_8S    = 1,
+
+	// CV16U is a Mat of 16-bit unsigned int
+	CV_16U   = 2,
+
+	// CV16S is a Mat of 16-bit signed int
+	CV_16S   = 3,
+
+	// CV16SC2 is a Mat of 16-bit signed int with 2 channels
+	CV_16SC2 = 3 + Mat_Channel2,
+
+	// CV32S is a Mat of 32-bit signed int
+	CV_32S   = 4,
+
+	// CV32F is a Mat of 32-bit float
+	CV_32F   = 5,
+
+	// CV64F is a Mat of 64-bit float
+	CV_64F   = 6,
+
+	// CV8UC1 is a Mat of 8-bit unsigned int with a single channel
+	CV_8UC1  = 0 + Mat_Channel1,
+
+	// CV8UC2 is a Mat of 8-bit unsigned int with 2 channels
+	CV_8UC2  = 0 + Mat_Channel2,
+
+	// CV8UC3 is a Mat of 8-bit unsigned int with 3 channels
+	CV_8UC3  = 0 + Mat_Channel3,
+
+	// CV8UC4 is a Mat of 8-bit unsigned int with 4 channels
+	CV_8UC4  = 0 + Mat_Channel4,
+
+	// CV8SC1 is a Mat of 8-bit signed int with a single channel
+	CV_8SC1  = 1 + Mat_Channel1,
+
+	// CV8SC2 is a Mat of 8-bit signed int with 2 channels
+	CV_8SC2  = 1 + Mat_Channel2,
+
+	// CV8SC3 is a Mat of 8-bit signed int with 3 channels
+	CV_8SC3  = 1 + Mat_Channel3,
+
+	// CV8SC4 is a Mat of 8-bit signed int with 4 channels
+	CV_8SC4  = 1 + Mat_Channel4,
+
+	// CV16UC1 is a Mat of 16-bit unsigned int with a single channel
+	CV_16UC1 = 2 + Mat_Channel1,
+
+	// CV16UC2 is a Mat of 16-bit unsigned int with 2 channels
+	CV_16UC2 = 2 + Mat_Channel2,
+
+	// CV16UC3 is a Mat of 16-bit unsigned int with 3 channels
+	CV_16UC3 = 2 + Mat_Channel3,
+
+	// CV16UC4 is a Mat of 16-bit unsigned int with 4 channels
+	CV_16UC4 = 2 + Mat_Channel4,
+
+	// CV16SC1 is a Mat of 16-bit signed int with a single channel
+	CV_16SC1 = 3 + Mat_Channel1,
+
+	// CV16SC3 is a Mat of 16-bit signed int with 3 channels
+	CV_16SC3 = 3 + Mat_Channel3,
+
+	// CV16SC4 is a Mat of 16-bit signed int with 4 channels
+	CV_16SC4 = 3 + Mat_Channel4,
+
+	// CV32SC1 is a Mat of 32-bit signed int with a single channel
+	CV_32SC1 = 4 + Mat_Channel1,
+
+	// CV32SC2 is a Mat of 32-bit signed int with 2 channels
+	CV_32SC2 = 4 + Mat_Channel2,
+
+	// CV32SC3 is a Mat of 32-bit signed int with 3 channels
+	CV_32SC3 = 4 + Mat_Channel3,
+
+	// CV32SC4 is a Mat of 32-bit signed int with 4 channels
+	CV_32SC4 = 4 + Mat_Channel4,
+
+	// CV32FC1 is a Mat of 32-bit float int with a single channel
+	CV_32FC1 = 5 + Mat_Channel1,
+
+	// CV32FC2 is a Mat of 32-bit float int with 2 channels
+	CV_32FC2 = 5 + Mat_Channel2,
+
+	// CV32FC3 is a Mat of 32-bit float int with 3 channels
+	CV_32FC3 = 5 + Mat_Channel3,
+
+	// CV32FC4 is a Mat of 32-bit float int with 4 channels
+	CV_32FC4 = 5 + Mat_Channel4,
+
+	// CV64FC1 is a Mat of 64-bit float int with a single channel
+	CV_64FC1 = 6 + Mat_Channel1,
+
+	// CV64FC2 is a Mat of 64-bit float int with 2 channels
+	CV_64FC2 = 6 + Mat_Channel2,
+
+	// CV64FC3 is a Mat of 64-bit float int with 3 channels
+	CV_64FC3 = 6 + Mat_Channel3,
+
+	// CV64FC4 is a Mat of 64-bit float int with 4 channels
+	CV64FC4  = 6 + Mat_Channel4,
 }
 
 @(default_calling_convention = "c")
 foreign cv {
 	// Mat_New creates a new empty Mat
 	@(link_name = "Mat_New")
-	mat_new :: proc() -> Mat ---
+	new_mat :: proc() -> Mat ---
 
 	// Mat_NewWithSize creates a new Mat with a specific size dimension and number
 	// of channels.
-	@(link_name = "Mat_NewWithSize")
-	mat_new_with_size :: proc(rows, cols: c.int, type: Mat_Type) -> Mat ---
+	Mat_NewWithSize :: proc(rows, cols: c.int, type: Mat_Type) -> Mat ---
 
 	// Mat_NewWithSizes creates a new Mat with specific dimension sizes and number
 	// of channels.
-	@(link_name = "Mat_NewWithSizes")
-	mat_new_with_sizes :: proc(sizes: []c.int, type: Mat_Type) -> Mat ---
+	Mat_NewWithSizes :: proc(sizes: []c.int, type: Mat_Type) -> Mat ---
 
 	// Mat_NewFromScalar creates a new Mat from a Scalar. Intended to be used
 	// for Mat comparison operation such as InRange.
-	@(link_name = "Mat_NewFromScalar")
-	mat_new_from_scalar :: proc(ar: Scalar, type: Mat_Type) -> Mat ---
+	Mat_NewFromScalar :: proc(ar: Scalar, type: Mat_Type) -> Mat ---
 
 	// Mat_NewWithSizeFromScalar creates a new Mat from a Scalar with a specific
 	// size dimension and number of channels
-	@(link_name = "Mat_NewWithSizeFromScalar")
-	mat_new_with_size_from_scalar :: proc(ar: Scalar, rows, cols: c.int, type: Mat_Type) -> Mat ---
+	Mat_NewWithSizeFromScalar :: proc(ar: Scalar, rows, cols: c.int, type: Mat_Type) -> Mat ---
 
-	@(link_name = "Mat_NewFromBytes")
-	mat_new_from_bytes :: proc(rows, cols: c.int, type: Mat_Type, buf: ByteArray) -> Mat ---
+	Mat_NewFromBytes :: proc(rows, cols: c.int, type: Mat_Type, buf: ByteArray) -> Mat ---
 
 	// Mat_NewWithSizesFromScalar creates multidimensional Mat from a scalar
-	@(link_name = "Mat_NewWithSizesFromScalar")
-	mat_new_with_sizes_from_scalar :: proc(sizes: IntVector, type: Mat_Type, ar: Scalar) -> Mat ---
+	Mat_NewWithSizesFromScalar :: proc(sizes: IntVector, type: Mat_Type, ar: Scalar) -> Mat ---
 
 	// Mat_NewWithSizesFromBytes creates multidimensional Mat from a bytes
-	@(link_name = "Mat_NewWithSizesFromBytes")
-	mat_new_with_sizes_from_bytes :: proc(sizes: IntVector, type: Mat_Type, buf: ByteArray) -> Mat ---
+	Mat_NewWithSizesFromBytes :: proc(sizes: IntVector, type: Mat_Type, buf: ByteArray) -> Mat ---
 
-	@(link_name = "Eye")
-	eye :: proc(rows, cols: c.int, type: Mat_Type) -> Mat ---
+	Eye :: proc(rows, cols: c.int, type: Mat_Type) -> Mat ---
 
-	@(link_name = "Zeros")
-	zeros :: proc(rows, cols: c.int, type: Mat_Type) -> Mat ---
+	Zeros :: proc(rows, cols: c.int, type: Mat_Type) -> Mat ---
 
-	@(link_name = "Ones")
-	ones :: proc(rows, cols: c.int, type: Mat_Type) -> Mat ---
+	Ones :: proc(rows, cols: c.int, type: Mat_Type) -> Mat ---
 
 	@(link_name = "Mat_FromPtr")
 	mat_from_ptr :: proc(m: Mat, rows, cols: c.int, type: Mat_Type, prow, pcol: c.int) -> Mat ---
 
 	// Mat_Close deletes an existing Mat
 	@(link_name = "Mat_Close")
-	mat_destroy :: proc(m: Mat) ---
+	delete_mat :: proc(m: Mat) ---
 
 	// Mat_IsContinuous tests if a Mat is continuous
 	@(link_name = "Mat_IsContinuous")
@@ -382,16 +476,13 @@ foreign cv {
 	lut :: proc(src, lut, dst: Mat) -> Mat ---
 
 	// Mat_Rows returns how many rows in this Mat.
-	@(link_name = "Mat_Rows")
-	mat_rows :: proc(m: Mat) -> c.int ---
+	Mat_Rows :: proc(m: Mat) -> c.int ---
 
 	// Mat_Cols returns how many columns in this Mat.
-	@(link_name = "Mat_Cols")
-	mat_cols :: proc(m: Mat) -> c.int ---
+	Mat_Cols :: proc(m: Mat) -> c.int ---
 
 	// Mat_Channels returns how many channels in this Mat.
-	@(link_name = "Mat_Channels")
-	mat_channels :: proc(m: Mat) -> c.int ---
+	Mat_Channels :: proc(m: Mat) -> c.int ---
 
 	// Mat_Type returns how many channels in this Mat.
 	@(link_name = "Mat_Type")
@@ -411,8 +502,7 @@ foreign cv {
 
 	// Mat_GetUChar returns a specific row/col value from this Mat expecting
 	// each element to contain a schar aka CV_8U.
-	@(link_name = "Mat_GetUChar")
-	mat_get_uchar :: proc(m: Mat, row, col: c.int) -> c.uint8_t ---
+	Mat_GetUChar :: proc(m: Mat, row, col: c.int) -> c.uint8_t ---
 
 	@(link_name = "Mat_GetUChar3")
 	mat_get_uchar3 :: proc(m: Mat, x, y, z: c.int) -> c.uint8_t ---
@@ -446,8 +536,7 @@ foreign cv {
 	@(link_name = "Mat_GetFloat")
 	mat_get_float :: proc(m: Mat, row, col: c.int) -> c.float ---
 
-	@(link_name = "Mat_GetFloat3")
-	mat_get_float3 :: proc(m: Mat, x, y, z: c.int) -> c.float ---
+	Mat_GetFloat3 :: proc(m: Mat, x, y, z: c.int) -> c.float ---
 
 	// Mat_GetDouble returns a specific row/col value from this Mat expecting
 	// each element to contain a double aka CV_64F.
@@ -572,13 +661,13 @@ foreign cv {
 	bitwise_xor_with_mask :: proc(src1, src2, dst, mask: Mat) ---
 
 	@(link_name = "Mat_BatchDistance")
-	batch_distance :: proc(src1, src2, dist: Mat, dtype: c.int, nidx: Mat, normType, K: c.int, mask: Mat, update: c.int, crosscheck: c.bool) ---
+	batch_distance :: proc(src1, src2, dist: Mat, dtype: Mat_Type, nidx: Mat, normType, K: c.int, mask: Mat, update: c.int, crosscheck: c.bool) ---
 
 	@(link_name = "Mat_BorderInterpolate")
-	border_interpolate :: proc(p, len, borderType: c.int) -> c.int ---
+	border_interpolate :: proc(p, len, bordertype: Mat_Type) -> c.int ---
 
 	@(link_name = "Mat_CalcCovarMatrix")
-	calc_covar_matrix :: proc(samples, covar, mean: Mat, flags, ctype: c.int) ---
+	calc_covar_matrix :: proc(samples, covar, mean: Mat, flags, ctype: Mat_Type) ---
 
 	@(link_name = "Mat_CartToPolar")
 	cart_to_polar :: proc(x, y, magnitude, angle: Mat, angleInDegrees: c.bool) ---
@@ -599,7 +688,7 @@ foreign cv {
 	convert_scale_abs :: proc(src, dst: Mat, alpha, beta: c.double) ---
 
 	@(link_name = "Mat_CopyMakeBorder")
-	copy_make_border :: proc(src, dst: Mat, top, bottom, left, right, borderType: c.int, value: Scalar) ---
+	copy_make_border :: proc(src, dst: Mat, top, bottom, left, right, bordertype: Mat_Type, value: Scalar) ---
 
 	@(link_name = "Mat_DCT")
 	dct :: proc(src, dst: Mat, flags: c.int) ---
@@ -731,16 +820,16 @@ foreign cv {
 	multiply :: proc(src1, src2, dst: Mat) ---
 
 	@(link_name = "Mat_MultiplyWithParams")
-	multiply_with_params :: proc(src1, src2, dst: Mat, scale: c.double, dtype: c.int) ---
+	multiply_with_params :: proc(src1, src2, dst: Mat, scale: c.double, dtype: Mat_Type) ---
 
 	@(link_name = "Mat_Normalize")
 	normalize :: proc(src, dst: Mat, alpha, beta: c.double, typ: c.int) ---
 
 	@(link_name = "Norm")
-	norm :: proc(src1: Mat, normType: c.int) -> c.double ---
+	norm :: proc(src1: Mat, normtype: Mat_Type) -> c.double ---
 
 	@(link_name = "NormWithMats")
-	norm_with_mats :: proc(src1, src2: Mat, normType: c.int) -> c.double ---
+	norm_with_mats :: proc(src1, src2: Mat, normtype: Mat_Type) -> c.double ---
 
 	@(link_name = "Mat_PerspectiveTransform")
 	perspective_transform :: proc(src, dst, tm: Mat) ---
@@ -755,7 +844,7 @@ foreign cv {
 	solve_poly :: proc(coeffs, roots: Mat, maxIters: c.int) -> c.double ---
 
 	@(link_name = "Mat_Reduce")
-	reduce :: proc(src, dst: Mat, dim, rType, dType: c.int) ---
+	reduce :: proc(src, dst: Mat, dim, rType, dtype: Mat_Type) ---
 
 	@(link_name = "Mat_ReduceArgMax")
 	reduce_arg_max :: proc(src, dst: Mat, axis: c.int, lastIndex: c.bool) ---
@@ -778,8 +867,7 @@ foreign cv {
 	@(link_name = "Mat_SortIdx")
 	sort_idx :: proc(src, dst: Mat, flags: c.int) ---
 
-	@(link_name = "Mat_Split")
-	split :: proc(src: Mat, mats: ^Mats) ---
+	Mat_Split :: proc(src: Mat, mats: ^Mats) ---
 
 	@(link_name = "Mat_Subtract")
 	subtract :: proc(src1, src2, dst: Mat) ---
@@ -851,7 +939,7 @@ foreign cv {
 	bytearray_release :: proc(buf: ByteArray) ---
 
 	@(link_name = "toByteArray")
-	tobytearray :: proc(buf: [^]byte, len: c.int) -> ByteArray ---
+	to_byte_array :: proc(buf: [^]byte, len: c.int) -> ByteArray ---
 
 	@(link_name = "GetCVTickCount")
 	get_tick_count :: proc() -> c.int64_t ---
@@ -932,7 +1020,7 @@ foreign cv {
 	set_rng_seed :: proc(seed: c.int) ---
 
 	@(link_name = "RNG_Fill")
-	rng_fill :: proc(rng: RNG, mat: Mat, distType: c.int, a: c.double, b: c.double, saturateRange: c.bool) ---
+	rng_fill :: proc(rng: RNG, mat: Mat, disttype: Mat_Type, a: c.double, b: c.double, saturateRange: c.bool) ---
 
 	@(link_name = "RNG_Gaussian")
 	rng_gaussian :: proc(rng: RNG, sigma: c.double) -> c.double ---
@@ -1031,6 +1119,82 @@ foreign cv {
 	get_num_threads :: proc() -> c.int ---
 }
 
+new_mat_with_size :: proc(rows, cols: int, type: Mat_Type) -> Mat {
+	return Mat_NewWithSize(c.int(rows), c.int(cols), type)
+}
+
+new_mat_with_sizes :: proc(sizes: []int, type: Mat_Type) -> Mat {
+	c_sizes := make([]c.int, len(sizes))
+	for s, i in sizes {
+		c_sizes[i] = c.int(s)
+	}
+
+	return Mat_NewWithSizes(c_sizes, type)
+}
+
+new_mat_from_scalar :: proc(ar: Scalar, type: Mat_Type) -> Mat {
+	return Mat_NewFromScalar(ar, type)
+}
+
+new_mat_with_size_from_scalar :: proc(ar: Scalar, rows, cols: int, type: Mat_Type) -> Mat {
+	return Mat_NewWithSizeFromScalar(ar, c.int(rows), c.int(cols), type)
+}
+
+new_mat_from_bytes :: proc(rows, cols: int, type: Mat_Type, buf: []byte) -> (m: Mat, ok: bool) {
+	if len(buf) <= 0 do return
+
+	m = Mat_NewFromBytes(c.int(rows), c.int(cols), type, {cast([^]byte)&buf[0], c.int(len(buf))})
+	if m != nil do ok = true
+
+	return
+}
+
+new_mat_with_sizes_from_scalar :: proc(sizes: []int, type: Mat_Type, ar: Scalar) -> Mat {
+	c_sizes := make([]c.int, len(sizes))
+	for s, i in sizes {
+		c_sizes[i] = c.int(s)
+	}
+
+	return Mat_NewWithSizesFromScalar({cast([^]c.int)&c_sizes[0], c.int(len(c_sizes))}, type, ar)
+}
+
+new_mat_with_sizes_from_bytes :: proc(
+	sizes: []int,
+	type: Mat_Type,
+	buf: []byte,
+) -> (
+	m: Mat,
+	ok: bool,
+) {
+	if len(buf) <= 0 do return
+
+	c_sizes := make([]c.int, len(sizes))
+	for s, i in sizes {
+		c_sizes[i] = c.int(s)
+	}
+
+	m = Mat_NewWithSizesFromBytes(
+		{cast([^]c.int)&c_sizes[0], c.int(len(c_sizes))},
+		type,
+		{cast([^]byte)&buf[0], c.int(len(buf))},
+	)
+	if m != nil do ok = true
+
+	return
+}
+
+eye :: proc(rows, cols: int, type: Mat_Type) -> Mat {
+	return Eye(c.int(rows), c.int(cols), type)
+}
+
+zeros :: proc(rows, cols: int, type: Mat_Type) -> Mat {
+	return Zeros(c.int(rows), c.int(cols), type)
+}
+
+ones :: proc(rows, cols: int, type: Mat_Type) -> Mat {
+	return Ones(c.int(rows), c.int(cols), type)
+}
+
 mat_to_bytes :: proc(m: Mat) -> []byte {
 	arr := Mat_ToBytes(m)
 	return arr.data[:arr.length]
@@ -1051,4 +1215,34 @@ mat_size :: proc(m: Mat) -> (dims: []int) {
 	}
 
 	return
+}
+
+mat_channels :: proc(m: Mat) -> int {
+	return cast(int)Mat_Channels(m)
+}
+
+mat_get_float_at3 :: proc(m: Mat, x, y, z: int) -> f32 {
+	return cast(f32)Mat_GetFloat3(m, c.int(x), c.int(y), c.int(z))
+}
+
+mat_get_uchar :: proc(m: Mat, x, y: int) -> u8 {
+	return cast(u8)Mat_GetUChar(m, c.int(x), c.int(y))
+}
+
+mat_rows :: proc(m: Mat) -> int {
+	return cast(int)Mat_Rows(m)
+}
+
+mat_cols :: proc(m: Mat) -> int {
+	return cast(int)Mat_Cols(m)
+}
+
+split :: proc(src: Mat) -> []Mat {
+	c_mats: Mats
+	Mat_Split(src, &c_mats)
+	mats := make([]Mat, int(c_mats.length))
+	for mat, i in c_mats.mats[:c_mats.length] {
+		mats[i] = mat
+	}
+	return mats
 }

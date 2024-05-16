@@ -3,6 +3,10 @@ package cv
 import "core:c"
 import "core:strings"
 
+when ODIN_OS == .Darwin {
+	foreign import cv "libcv.dylib"
+}
+
 // Window is a wrapper around OpenCV's "HighGUI" named windows.
 // While OpenCV was designed for use in full-scale applications and can be used
 // within functionally rich UI frameworks (such as Qt*, WinForms*, or Cocoa*)
@@ -55,10 +59,6 @@ WindowPropertyFlag :: enum {
 	WindowPropertyVisible,
 }
 
-when ODIN_OS == .Darwin {
-	foreign import cv "libcv.a"
-}
-
 @(default_calling_convention = "c")
 foreign cv {
 	Window_New :: proc(winname: cstring, flags: c.int) ---
@@ -91,11 +91,11 @@ named_window :: proc(name: string) -> (w: ^Window) {
 	return
 }
 
-// destroy_window closes and deletes a named OpenCV Window.
+// close_window closes and deletes a named OpenCV Window.
 //
 // For further details, please see:
 // http://docs.opencv.org/master/d7/dfc/group__highgui.html#ga851ccdd6961022d1d5b4c4f255dbab34
-destroy_window :: proc(w: ^Window) {
+close_window :: proc(w: ^Window) {
 	c_name := strings.clone_to_cstring(w.name)
 	defer delete(c_name)
 
@@ -222,7 +222,6 @@ select_ROIs :: proc(w: ^Window, img: Mat) -> Rects {
 @(default_calling_convention = "c")
 foreign cv {
 	Trackbar_Create :: proc(winname, trackname: cstring, max: c.int) ---
-	Trackbar_CreateWithValue :: proc(winname, trackname: cstring, value: ^c.int, max: c.int) ---
 	Trackbar_GetPos :: proc(winname, trackname: cstring) -> c.int ---
 	Trackbar_SetPos :: proc(winname, trackname: cstring, pos: c.int) ---
 	Trackbar_SetMin :: proc(winname, trackname: cstring, pos: c.int) ---
@@ -247,33 +246,6 @@ create_trackbar :: proc(w: ^Window, name: string, max: int) -> (t: ^Trackbar) {
 	defer delete(t_name)
 
 	Trackbar_Create(c_name, t_name, c.int(max))
-	t = new(Trackbar)
-	t.name = name
-	t.parent = w
-
-	return
-}
-
-// create_trackbar_with_value works like CreateTrackbar but also assigns a
-// variable value to be a position synchronized with the trackbar.
-//
-// For further details, please see:
-// https://docs.opencv.org/master/d7/dfc/group__highgui.html#gaf78d2155d30b728fc413803745b67a9b
-create_trackbar_with_value :: proc(
-	w: ^Window,
-	name: string,
-	value: ^int,
-	max: int,
-) -> (
-	t: ^Trackbar,
-) {
-	c_name := strings.clone_to_cstring(w.name)
-	defer delete(c_name)
-
-	t_name := strings.clone_to_cstring(name)
-	defer delete(t_name)
-
-	Trackbar_CreateWithValue(c_name, t_name, cast(^c.int)value, c.int(max))
 	t = new(Trackbar)
 	t.name = name
 	t.parent = w

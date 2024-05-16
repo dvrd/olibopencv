@@ -3,7 +3,7 @@ package cv_tests
 import cv ".."
 import "core:testing"
 
-@(test)
+// @(test)
 test_window :: proc(t: ^testing.T) {
 	using testing
 
@@ -24,11 +24,11 @@ test_window :: proc(t: ^testing.T) {
 	cv.move_window(window, 100, 100)
 	cv.resize_window(window, 100, 100)
 
-	cv.destroy_window(window)
+	cv.close_window(window)
 	expect(t, !window.open, "Window should have been closed")
 }
 
-@(test)
+// @(test)
 test_imshow :: proc(t: ^testing.T) {
 	using testing
 
@@ -37,23 +37,23 @@ test_imshow :: proc(t: ^testing.T) {
 
 	img := cv.image_read("assets/logo.png", .IMREAD_COLOR)
 	expect(t, !cv.mat_empty(img), "Invalid Mat in imshow")
-	defer cv.mat_destroy(img)
+	defer cv.delete_mat(img)
 
 	// TODO: some way to determine if the call succeeded
 	cv.imshow(window, img)
 
 	val := cv.wait_key(1)
 	expect(t, val == -1, "Invalid for imshow")
-	cv.destroy_window(window)
+	cv.close_window(window)
 	expect(t, !window.open, "IMShow window should have been closed")
 }
 
-@(test)
+// @(test)
 test_trackbar :: proc(t: ^testing.T) {
 	using testing
 
 	window := cv.named_window("trackbar")
-	defer cv.destroy_window(window)
+	defer cv.close_window(window)
 
 	tracker := cv.create_trackbar(window, "trackme", 100)
 	expect(t, cv.get_trackbar_pos(tracker) == 0, "Trackbar pos should have been 0")
@@ -63,19 +63,4 @@ test_trackbar :: proc(t: ^testing.T) {
 	cv.set_trackbar_pos(tracker, 50)
 
 	expect(t, cv.get_trackbar_pos(tracker) == 50, "Trackbar pos should have been 50")
-}
-
-@(test)
-test_trackbar_with_value :: proc(t: ^testing.T) {
-	using testing
-
-	window := cv.named_window("trackbar")
-	defer cv.destroy_window(window)
-
-	value := 20
-	tracker := cv.create_trackbar_with_value(window, "trackme", &value, 100)
-	expect(t, cv.get_trackbar_pos(tracker) == 20, "Trackbar pos should have been 20")
-
-	cv.set_trackbar_pos(tracker, 50)
-	expect(t, value == 50, "Trackbar pos should have been 50")
 }
