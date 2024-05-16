@@ -6,16 +6,19 @@ when ODIN_OS == .Darwin {
 	foreign import cv "libcv.dylib"
 }
 
+BackgroundSubtractorMOG2 :: distinct rawptr
+BackgroundSubtractorKNN :: distinct rawptr
+
 @(default_calling_convention = "c")
 foreign cv {
 	BackgroundSubtractorMOG2_Create :: proc() -> BackgroundSubtractorMOG2 ---
 	BackgroundSubtractorMOG2_CreateWithParams :: proc(history: c.int, varThreshold: c.double, detectShadows: c.bool) -> BackgroundSubtractorMOG2 ---
 	BackgroundSubtractorMOG2_Close :: proc(b: BackgroundSubtractorMOG2) ---
-	BackgroundSubtractorMOG2_Apply :: proc(b,: BackgroundSubtractorMOG2, src, dst: Mat) ---
+	BackgroundSubtractorMOG2_Apply :: proc(b: BackgroundSubtractorMOG2, src, dst: Mat) ---
 	BackgroundSubtractorKNN_Create :: proc() -> BackgroundSubtractorKNN ---
 	BackgroundSubtractorKNN_CreateWithParams :: proc(history: c.int, dist2Threshold: c.double, detectShadows: c.bool) -> BackgroundSubtractorKNN ---
 	BackgroundSubtractorKNN_Close :: proc(b: BackgroundSubtractorKNN) ---
-	BackgroundSubtractorKNN_Apply :: proc(b,: BackgroundSubtractorKNN src, dst: Mat) ---
+	BackgroundSubtractorKNN_Apply :: proc(b: BackgroundSubtractorKNN, src, dst: Mat) ---
 	CalcOpticalFlowPyrLK :: proc(prevImg, nextImg, prevPts, nextPts, status, err: Mat) ---
 	CalcOpticalFlowPyrLKWithParams :: proc(prevImg, nextImg, prevPts, nextPts, status, err: Mat, winSize: Size, maxLevel: c.int, criteria: TermCriteria, flags: c.int, minEigThreshold: c.double) ---
 	CalcOpticalFlowFarneback :: proc(prevImg, nextImg, flow: Mat, pyrScale: c.double, levels, winsize, iterations, polyN: c.int, polySigma: c.double, flags: c.int) ---
@@ -58,4 +61,3 @@ foreign cv {
 	// KalmanFilter_SetGain :: proc(KalmanFilter kf, Mat gain) ---
 	// KalmanFilter_SetErrorCovPost :: proc(KalmanFilter kf, Mat errorCovPost) ---
 }
-
