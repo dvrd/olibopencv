@@ -1,0 +1,17 @@
+{
+  name: "olibopencv",
+  version: "0.1.0",
+  host: "github.com",
+  owner: "dvrd"
+  builds: {
+    release: {
+      src: "src",
+      collections: {
+        libs: "libs"
+      },
+      optim: "speed",
+      separate_modules: true,
+      linker_flags: "\"`pkg-config --cflags --libs opencv4` -lstdc++\"",
+    },
+  },
+}

@@ -255,6 +255,20 @@ Points2fVector :: distinct rawptr
 Point3fVector :: distinct rawptr
 Points3fVector :: distinct rawptr
 
+Matrix :: struct {
+	p:    Mat,
+	rows: int,
+	cols: int,
+	type: Mat_Type,
+	data: []byte,
+}
+
+FlipCode :: enum c.int {
+	Horizontal = 1,
+	Vertical   = 0,
+	Both       = -1,
+}
+
 Mats :: struct {
 	mats:   [^]Mat,
 	length: c.int,
@@ -269,7 +283,7 @@ Mat_Type :: enum {
 	CV_32S   = 4, // CV32S is a Mat of 32-bit signed in
 	CV_32F   = 5, // CV32F is a Mat of 32-bit floa
 	CV_64F   = 6, // CV64F is a Mat of 64-bit floa
-	CV_8UC1  = CV_8U + Mat_Channel1, // CV8UC1 is a Mat of 8-bit unsigned int with a single channe
+	CV_8UC1  = CV_8U + Mat_Channel1, // CV8UC1 is a Mat of 8-bit unsigned int with a single channel
 	CV_8UC2  = CV_8U + Mat_Channel2, // CV8UC2 is a Mat of 8-bit unsigned int with 2 channel
 	CV_8UC3  = CV_8U + Mat_Channel3, // CV8UC3 is a Mat of 8-bit unsigned int with 3 channel
 	CV_8UC4  = CV_8U + Mat_Channel4, // CV8UC4 is a Mat of 8-bit unsigned int with 4 channel
@@ -277,22 +291,22 @@ Mat_Type :: enum {
 	CV_8SC2  = CV_8S + Mat_Channel2, // CV8SC2 is a Mat of 8-bit signed int with 2 channel
 	CV_8SC3  = CV_8S + Mat_Channel3, // CV8SC3 is a Mat of 8-bit signed int with 3 channel
 	CV_8SC4  = CV_8S + Mat_Channel4, // CV8SC4 is a Mat of 8-bit signed int with 4 channel
-	CV_16UC1 = CV_16U + Mat_Channel1, // CV16UC1 is a Mat of 16-bit unsigned int with a single channe
+	CV_16UC1 = CV_16U + Mat_Channel1, // CV16UC1 is a Mat of 16-bit unsigned int with a single channel
 	CV_16UC2 = CV_16U + Mat_Channel2, // CV16UC2 is a Mat of 16-bit unsigned int with 2 channel
 	CV_16UC3 = CV_16U + Mat_Channel3, // CV16UC3 is a Mat of 16-bit unsigned int with 3 channel
 	CV_16UC4 = CV_16U + Mat_Channel4, // CV16UC4 is a Mat of 16-bit unsigned int with 4 channel
-	CV_16SC1 = CV_16S + Mat_Channel1, // CV16SC1 is a Mat of 16-bit signed int with a single channe
+	CV_16SC1 = CV_16S + Mat_Channel1, // CV16SC1 is a Mat of 16-bit signed int with a single channel
 	CV_16SC3 = CV_16S + Mat_Channel3, // CV16SC3 is a Mat of 16-bit signed int with 3 channel
 	CV_16SC4 = CV_16S + Mat_Channel4, // CV16SC4 is a Mat of 16-bit signed int with 4 channel
-	CV_32SC1 = CV_32S + Mat_Channel1, // CV32SC1 is a Mat of 32-bit signed int with a single channe
+	CV_32SC1 = CV_32S + Mat_Channel1, // CV32SC1 is a Mat of 32-bit signed int with a single channel
 	CV_32SC2 = CV_32S + Mat_Channel2, // CV32SC2 is a Mat of 32-bit signed int with 2 channel
 	CV_32SC3 = CV_32S + Mat_Channel3, // CV32SC3 is a Mat of 32-bit signed int with 3 channel
 	CV_32SC4 = CV_32S + Mat_Channel4, // CV32SC4 is a Mat of 32-bit signed int with 4 channel
-	CV_32FC1 = CV_32F + Mat_Channel1, // CV32FC1 is a Mat of 32-bit float int with a single channe
+	CV_32FC1 = CV_32F + Mat_Channel1, // CV32FC1 is a Mat of 32-bit float int with a single channel
 	CV_32FC2 = CV_32F + Mat_Channel2, // CV32FC2 is a Mat of 32-bit float int with 2 channel
 	CV_32FC3 = CV_32F + Mat_Channel3, // CV32FC3 is a Mat of 32-bit float int with 3 channel
 	CV_32FC4 = CV_32F + Mat_Channel4, // CV32FC4 is a Mat of 32-bit float int with 4 channel
-	CV_64FC1 = CV_64F + Mat_Channel1, // CV64FC1 is a Mat of 64-bit float int with a single channe
+	CV_64FC1 = CV_64F + Mat_Channel1, // CV64FC1 is a Mat of 64-bit float int with a single channel
 	CV_64FC2 = CV_64F + Mat_Channel2, // CV64FC2 is a Mat of 64-bit float int with 2 channel
 	CV_64FC3 = CV_64F + Mat_Channel3, // CV64FC3 is a Mat of 64-bit float int with 3 channel
 	CV64FC4  = CV_64F + Mat_Channel4, // CV64FC4 is a Mat of 64-bit float int with 4 channel
@@ -347,24 +361,24 @@ foreign cv {
 
 	// Mat_Empty tests if a Mat is empty
 	@(link_name = "Mat_Empty")
-	mat_empty :: proc(m: Mat) -> c.bool ---
+	is_empty :: proc(m: Mat) -> c.bool ---
 
 	@(link_name = "Mat_Inv")
-	mat_inv :: proc(m: Mat) ---
+	inv :: proc(m: Mat) ---
 
 	@(link_name = "Mat_Col")
-	mat_col :: proc(m: Mat) -> Mat ---
+	col :: proc(m: Mat) -> Mat ---
 
 	@(link_name = "Mat_Row")
-	mat_row :: proc(m: Mat) -> Mat ---
+	row :: proc(m: Mat) -> Mat ---
 
 	// Mat_Clone returns a clone of this Mat
 	@(link_name = "Mat_Clone")
-	mat_clone :: proc(m: Mat) -> Mat ---
+	clone :: proc(m: Mat) -> Mat ---
 
 	// Mat_CopyTo copies this Mat to another Mat.
 	@(link_name = "Mat_CopyTo")
-	mat_copy_to :: proc(m, dst: Mat) ---
+	copy_to :: proc(m, dst: Mat) ---
 
 	// Mat_CopyToWithMask copies this Mat to another Mat while applying the mask
 	@(link_name = "Mat_CopyToWithMask")
@@ -667,7 +681,7 @@ foreign cv {
 	find_non_zero :: proc(src, idx: Mat) ---
 
 	@(link_name = "Mat_Flip")
-	flip :: proc(src, idx: Mat, flipCode: c.int) ---
+	flip :: proc(src, idx: Mat, flipCode: FlipCode) ---
 
 	@(link_name = "Mat_Gemm")
 	gemm :: proc(src1, src2: Mat, alpha: c.double, src3: Mat, beta: c.double, dst: Mat, flags: c.int) ---
@@ -1126,17 +1140,17 @@ ones :: proc(rows, cols: int, type: Mat_Type) -> Mat {
 	return Ones(c.int(rows), c.int(cols), type)
 }
 
-mat_to_bytes :: proc(m: Mat) -> []byte {
+to_bytes :: proc(m: Mat) -> []byte {
 	arr := Mat_ToBytes(m)
 	return arr.data[:arr.length]
 }
 
-mat_data_ptr :: proc(m: Mat) -> []byte {
+data_ptr :: proc(m: Mat) -> rawptr {
 	arr := Mat_DataPtr(m)
-	return arr.data[:arr.length]
+	return raw_data(arr.data[:arr.length])
 }
 
-mat_size :: proc(m: Mat) -> (dims: []int) {
+size :: proc(m: Mat) -> (dims: []int) {
 	res: IntVector
 	Mat_Size(m, &res)
 
@@ -1148,23 +1162,23 @@ mat_size :: proc(m: Mat) -> (dims: []int) {
 	return
 }
 
-mat_channels :: proc(m: Mat) -> int {
+channels :: proc(m: Mat) -> int {
 	return cast(int)Mat_Channels(m)
 }
 
-mat_get_float_at3 :: proc(m: Mat, x, y, z: int) -> f32 {
+get_float_at3 :: proc(m: Mat, x, y, z: int) -> f32 {
 	return cast(f32)Mat_GetFloat3(m, c.int(x), c.int(y), c.int(z))
 }
 
-mat_get_uchar :: proc(m: Mat, x, y: int) -> u8 {
+get_uchar :: proc(m: Mat, x, y: int) -> u8 {
 	return cast(u8)Mat_GetUChar(m, c.int(x), c.int(y))
 }
 
-mat_rows :: proc(m: Mat) -> int {
+rows :: proc(m: Mat) -> int {
 	return cast(int)Mat_Rows(m)
 }
 
-mat_cols :: proc(m: Mat) -> int {
+cols :: proc(m: Mat) -> int {
 	return cast(int)Mat_Cols(m)
 }
 

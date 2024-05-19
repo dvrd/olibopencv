@@ -1,7 +1,4 @@
-.vscode/
-build/
-main
-odin-vision
+target
 libs/**/*.o
 libs/**/*.a
 libs/**/*.dylib
