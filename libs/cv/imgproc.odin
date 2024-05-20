@@ -506,7 +506,7 @@ BorderType :: enum {
 	Wrap        = 3, // BorderWrap border type
 	Reflect101  = 4, // BorderReflect101 border type
 	Transparent = 5, // BorderTransparent border type
-	Default     = BorderReflect101, // BorderDefault border type
+	Default     = Reflect101, // BorderDefault border type
 	Isolated    = 16, // BorderIsolated border type
 }
 
