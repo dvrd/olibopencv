@@ -55,6 +55,21 @@ main :: proc() {
 
 	on := true
 	for !rl.WindowShouldClose() {
+		rl.BeginDrawing()
+		defer rl.EndDrawing()
+		rl.ClearBackground(rl.RAYWHITE)
+		rl.DrawTexture(texture, 0, 0, rl.WHITE)
+		if rl.IsKeyPressed(.SPACE) {
+			fmt.println("PRESSED SPACE")
+			if on {
+				on = false
+				texture = img_to_texture(cv.cvt_color(base, .BGRAToGray))
+			} else {
+				on = true
+				texture = img_to_texture(base)
+			}
+		}
+
 		mouseOnText = rl.CheckCollisionPointRec(rl.GetMousePosition(), textBox)
 
 		if mouseOnText {
@@ -81,21 +96,6 @@ main :: proc() {
 		} else do rl.SetMouseCursor(.DEFAULT)
 
 		framesCounter = mouseOnText ? framesCounter + 1 : 0
-
-		rl.BeginDrawing()
-		defer rl.EndDrawing()
-		rl.ClearBackground(rl.RAYWHITE)
-		rl.DrawTexture(texture, 0, 0, rl.WHITE)
-		if rl.IsKeyPressed(.SPACE) {
-			fmt.println("PRESSED SPACE")
-			if on {
-				on = false
-				texture = img_to_texture(cv.cvt_color(base, .BGRAToGray))
-			} else {
-				on = true
-				texture = img_to_texture(base)
-			}
-		}
 
 		rl.DrawText("PLACE MOUSE OVER INPUT BOX!", 240, 140, 20, rl.GRAY)
 
