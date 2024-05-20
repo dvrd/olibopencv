@@ -1,5 +1,4 @@
 target
 libs/**/*.o
 libs/**/*.a
-libs/**/*.dylib
 
