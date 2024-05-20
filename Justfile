@@ -27,9 +27,6 @@ static: object
 shared: object
   clang -dynamiclib -o {{cv_lib_src}}/libcv.dylib {{cv_lib_bindings}}/*.o `pkg-config --cflags --libs opencv4` -lstdc++
 
-build_c: shared
-  clang -Wall -I{{cv_lib_src}} -o main src/main.c -L{{cv_lib_src}} -lcv `pkg-config --cflags --libs opencv4` -lstdc++
-
 build:
   @if [[ ! -f {{cv_lib_src}}/libcv.dylib ]]; then \
     just shared; \
