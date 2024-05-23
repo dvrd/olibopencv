@@ -197,44 +197,44 @@ foreign cv {
 	ConvexHull :: proc(points: PointVector, hull: Mat, clockwise, returnPoints: c.bool) ---
 	ConvexityDefects :: proc(points: PointVector, hull, result: Mat) ---
 	BilateralFilter :: proc(src, dst: Mat, d: c.int, sc, ss: c.double) ---
-	Blur :: proc(src, dst: Mat, ps: Size) ---
-	BoxFilter :: proc(src, dst: Mat, ddepth: c.int, ps: Size) ---
-	SqBoxFilter :: proc(src, dst: Mat, ddepth: c.int, ps: Size) ---
+	Blur :: proc(src, dst: Mat, ps: CSize) ---
+	BoxFilter :: proc(src, dst: Mat, ddepth: c.int, ps: CSize) ---
+	SqBoxFilter :: proc(src, dst: Mat, ddepth: c.int, ps: CSize) ---
 	Dilate :: proc(src, dst, kernel: Mat) ---
-	DilateWithParams :: proc(src, dst, kernel: Mat, anchor: Point, iterations, borderType: c.int, borderValue: Scalar) ---
+	DilateWithParams :: proc(src, dst, kernel: Mat, anchor: CPoint, iterations, borderType: BorderType, borderValue: Scalar) ---
 	DistanceTransform :: proc(src, dst, labels: Mat, distanceType, maskSize, labelType: c.int) ---
 	Erode :: proc(src, dst, kernel: Mat) ---
-	ErodeWithParams :: proc(src, dst, kernel: Mat, anchor: Point, iterations, borderType: c.int) ---
-	ErodeWithParamsAndBorderValue :: proc(src, dst, kernel: Mat, anchor: Point, iterations, borderType: c.int, borderValue: Scalar) ---
-	MatchTemplate :: proc(image, templ, result: Mat, method: c.int, mask: Mat) ---
+	ErodeWithParams :: proc(src, dst, kernel: Mat, anchor: CPoint, iterations, borderType: BorderType) ---
+	ErodeWithParamsAndBorderValue :: proc(src, dst, kernel: Mat, anchor: CPoint, iterations, borderType: BorderType, borderValue: Scalar) ---
+	MatchTemplate :: proc(image, templ, result: Mat, method: TemplateMatchMode, mask: Mat) ---
 	Moments :: proc(src: Mat, binaryImage: c.bool) -> Moment ---
-	PyrDown :: proc(src: Mat, dst: Mat, dstsize: Size, borderType: c.int) ---
-	PyrUp :: proc(src, dst: Mat, dstsize: Size, borderType: c.int) ---
-	BoundingRect :: proc(pts: PointVector) -> Rect ---
-	BoxPoints :: proc(rect: RotatedRect, boxPts: Mat) ---
-	BoxPoints2f :: proc(rect: RotatedRect2f, boxPts: Mat) ---
+	PyrDown :: proc(src: Mat, dst: Mat, dstsize: CSize, borderType: BorderType) ---
+	PyrUp :: proc(src, dst: Mat, dstsize: CSize, borderType: BorderType) ---
+	BoundingRect :: proc(pts: PointVector) -> CRect ---
+	BoxPoints :: proc(rect: CRotatedRect, boxPts: Mat) ---
+	BoxPoints2f :: proc(rect: CRotatedRect2f, boxPts: Mat) ---
 	ContourArea :: proc(pts: PointVector) -> c.double ---
-	MinAreaRect :: proc(pts: PointVector) -> RotatedRect ---
-	MinAreaRect2f :: proc(pts: PointVector) -> RotatedRect2f ---
-	FitEllipse :: proc(pts: PointVector) -> RotatedRect ---
+	MinAreaRect :: proc(pts: PointVector) -> CRotatedRect ---
+	MinAreaRect2f :: proc(pts: PointVector) -> CRotatedRect2f ---
+	FitEllipse :: proc(pts: PointVector) -> CRotatedRect ---
 	MinEnclosingCircle :: proc(pts: PointVector, center: ^Point2f, radius: ^c.float) ---
 	FindContours :: proc(src, hierarchy: Mat, mode, method: c.int) -> PointsVector ---
-	PointPolygonTest :: proc(pts: PointVector, pt: Point, measureDist: c.bool) -> c.double ---
-	ConnectedComponents :: proc(src, dst: Mat, connectivity, ltype, ccltype: c.int) -> c.int ---
-	ConnectedComponentsWithStats :: proc(src: Mat, labels: Mat, stats: Mat, centroids: Mat, connectivity: c.int, ltype: c.int, ccltype: c.int) -> c.int ---
-	GaussianBlur :: proc(src: Mat, dst: Mat, ps: Size, sX: c.double, sY: c.double, bt: c.int) ---
-	GetGaussianKernel :: proc(ksize: c.int, sigma: c.double, ktype: c.int) -> Mat ---
-	Laplacian :: proc(src: Mat, dst: Mat, dDepth: c.int, kSize: c.int, scale: c.double, delta: c.double, borderType: c.int) ---
-	Scharr :: proc(src: Mat, dst: Mat, dDepth: c.int, dx: c.int, dy: c.int, scale: c.double, delta: c.double, borderType: c.int) ---
-	GetStructuringElement :: proc(shape: c.int, ksize: Size) -> Mat ---
+	PointPolygonTest :: proc(pts: PointVector, pt: CPoint, measureDist: c.bool) -> c.double ---
+	ConnectedComponents :: proc(src, dst: Mat, connectivity: c.int, ltype: Mat_Type, ccltype: CCL_AlgorithmType) -> c.int ---
+	ConnectedComponentsWithStats :: proc(src: Mat, labels: Mat, stats: Mat, centroids: Mat, connectivity: c.int, ltype: Mat_Type, ccltype: CCL_AlgorithmType) -> c.int ---
+	GaussianBlur :: proc(src: Mat, dst: Mat, ps: CSize, sX, sY: c.double, bt: BorderType) ---
+	GetGaussianKernel :: proc(ksize: c.int, sigma: c.double, ktype: Mat_Type) -> Mat ---
+	Laplacian :: proc(src: Mat, dst: Mat, dDepth, kSize: c.int, scale, delta: c.double, borderType: BorderType) ---
+	Scharr :: proc(src: Mat, dst: Mat, dDepth: c.int, dx, dy: c.int, scale, delta: c.double, borderType: BorderType) ---
+	GetStructuringElement :: proc(shape: c.int, ksize: CSize) -> Mat ---
 	MorphologyDefaultBorderValue :: proc() -> Scalar ---
-	MorphologyEx :: proc(src: Mat, dst: Mat, op: c.int, kernel: Mat) ---
-	MorphologyExWithParams :: proc(src: Mat, dst: Mat, op: c.int, kernel: Mat, pt: Point, iterations: c.int, borderType: c.int) ---
+	MorphologyEx :: proc(src: Mat, dst: Mat, op: MorphType, kernel: Mat) ---
+	MorphologyExWithParams :: proc(src: Mat, dst: Mat, op: MorphType, kernel: Mat, pt: CPoint, iterations, borderType: BorderType) ---
 	MedianBlur :: proc(src: Mat, dst: Mat, ksize: c.int) ---
 	Canny :: proc(src: Mat, edges: Mat, t1: c.double, t2: c.double) ---
-	CornerSubPix :: proc(img: Mat, corners: Mat, winSize: Size, zeroZone: Size, criteria: TermCriteria) ---
+	CornerSubPix :: proc(img: Mat, corners: Mat, winSize: CSize, zeroZone: Size, criteria: TermCriteria) ---
 	GoodFeaturesToTrack :: proc(img: Mat, corners: Mat, maxCorners: c.int, quality: c.double, minDist: c.double) ---
-	GrabCut :: proc(img: Mat, mask: Mat, rect: Rect, bgdModel: Mat, fgdModel: Mat, iterCount: c.int, mode: c.int) ---
+	GrabCut :: proc(img: Mat, mask: Mat, rect: CRect, bgdModel: Mat, fgdModel: Mat, iterCount: c.int, mode: c.int) ---
 	HoughCircles :: proc(src: Mat, circles: Mat, method: c.int, dp: c.double, minDist: c.double) ---
 	HoughCirclesWithParams :: proc(src: Mat, circles: Mat, method: c.int, dp: c.double, minDist: c.double, param1: c.double, param2: c.double, minRadius: c.int, maxRadius: c.int) ---
 	HoughLines :: proc(src: Mat, lines: Mat, rho: c.double, theta: c.double, threshold: c.int) ---
@@ -244,28 +244,28 @@ foreign cv {
 	Integral :: proc(src: Mat, sum: Mat, sqsum: Mat, tilted: Mat) ---
 	Threshold :: proc(src: Mat, dst: Mat, thresh: c.double, maxvalue: c.double, typ: c.int) -> c.double ---
 	AdaptiveThreshold :: proc(src: Mat, dst: Mat, maxValue: c.double, adaptiveTyp: c.int, typ: c.int, blockSize: c.int, c: c.double) ---
-	ArrowedLine :: proc(img: Mat, pt1: Point, pt2: Point, color: Scalar, thickness: c.int) ---
-	Circle :: proc(img: Mat, center: Point, radius: c.int, color: Scalar, thickness: c.int) ---
-	CircleWithParams :: proc(img: Mat, center: Point, radius: c.int, color: Scalar, thickness: c.int, lineType: c.int, shift: c.int) ---
-	Ellipse :: proc(img: Mat, center: Point, axes: Point, angle: c.double, startAngle: c.double, endAngle: c.double, color: Scalar, thickness: c.int) ---
-	EllipseWithParams :: proc(img: Mat, center: Point, axes: Point, angle: c.double, startAngle: c.double, endAngle: c.double, color: Scalar, thickness: c.int, lineType: c.int, shift: c.int) ---
-	Line :: proc(img: Mat, pt1: Point, pt2: Point, color: Scalar, thickness: c.int) ---
-	Rectangle :: proc(img: Mat, rect: Rect, color: Scalar, thickness: c.int) ---
-	RectangleWithParams :: proc(img: Mat, rect: Rect, color: Scalar, thickness: c.int, lineType: c.int, shift: c.int) ---
+	ArrowedLine :: proc(img: Mat, pt1: CPoint, pt2: CPoint, color: Scalar, thickness: c.int) ---
+	Circle :: proc(img: Mat, center: CPoint, radius: c.int, color: Scalar, thickness: c.int) ---
+	CircleWithParams :: proc(img: Mat, center: CPoint, radius: c.int, color: Scalar, thickness: c.int, lineType: c.int, shift: c.int) ---
+	Ellipse :: proc(img: Mat, center: CPoint, axes: CPoint, angle: c.double, startAngle: c.double, endAngle: c.double, color: Scalar, thickness: c.int) ---
+	EllipseWithParams :: proc(img: Mat, center: CPoint, axes: CPoint, angle: c.double, startAngle: c.double, endAngle: c.double, color: Scalar, thickness: c.int, lineType: c.int, shift: c.int) ---
+	Line :: proc(img: Mat, pt1: CPoint, pt2: CPoint, color: Scalar, thickness: c.int) ---
+	Rectangle :: proc(img: Mat, rect: CRect, color: Scalar, thickness: c.int) ---
+	RectangleWithParams :: proc(img: Mat, rect: CRect, color: Scalar, thickness: c.int, lineType: c.int, shift: c.int) ---
 	FillPoly :: proc(img: Mat, points: PointsVector, color: Scalar) ---
-	FillPolyWithParams :: proc(img: Mat, points: PointsVector, color: Scalar, lineType: c.int, shift: c.int, offset: Point) ---
+	FillPolyWithParams :: proc(img: Mat, points: PointsVector, color: Scalar, lineType: c.int, shift: c.int, offset: CPoint) ---
 	Polylines :: proc(img: Mat, points: PointsVector, isClosed: c.bool, color: Scalar, thickness: c.int) ---
 	GetTextSize :: proc(text: cstring, fontFace: c.int, fontScale: c.double, thickness: c.int) -> Size ---
 	GetTextSizeWithBaseline :: proc(text: cstring, fontFace: c.int, fontScale: c.double, thickness: c.int, baseline: ^c.int) -> Size ---
-	PutText :: proc(img: Mat, text: cstring, org: Point, fontFace: c.int, fontScale: c.double, color: Scalar, thickness: c.int) ---
-	PutTextWithParams :: proc(img: Mat, text: cstring, org: Point, fontFace: c.int, fontScale: c.double, color: Scalar, thickness: c.int, lineType: c.int, bottomLeftOrigin: c.bool) ---
-	Resize :: proc(src: Mat, dst: Mat, sz: Size, fx: c.double, fy: c.double, interp: c.int) ---
-	GetRectSubPix :: proc(src: Mat, patchSize: Size, center: Point, dst: Mat) ---
-	GetRotationMatrix2D :: proc(center: Point, angle: c.double, scale: c.double) -> Mat ---
-	WarpAffine :: proc(src: Mat, dst: Mat, rot_mat: Mat, dsize: Size) ---
-	WarpAffineWithParams :: proc(src: Mat, dst: Mat, rot_mat: Mat, dsize: Size, flags: c.int, borderMode: c.int, borderValue: Scalar) ---
-	WarpPerspective :: proc(src: Mat, dst: Mat, m: Mat, dsize: Size) ---
-	WarpPerspectiveWithParams :: proc(src: Mat, dst: Mat, rot_mat: Mat, dsize: Size, flags: c.int, borderMode: c.int, borderValue: Scalar) ---
+	PutText :: proc(img: Mat, text: cstring, org: CPoint, fontFace: c.int, fontScale: c.double, color: Scalar, thickness: c.int) ---
+	PutTextWithParams :: proc(img: Mat, text: cstring, org: CPoint, fontFace: c.int, fontScale: c.double, color: Scalar, thickness: c.int, lineType: c.int, bottomLeftOrigin: c.bool) ---
+	Resize :: proc(src: Mat, dst: Mat, sz: CSize, fx: c.double, fy: c.double, interp: c.int) ---
+	GetRectSubPix :: proc(src: Mat, patchSize: CSize, center: CPoint, dst: Mat) ---
+	GetRotationMatrix2D :: proc(center: CPoint, angle: c.double, scale: c.double) -> Mat ---
+	WarpAffine :: proc(src: Mat, dst: Mat, rot_mat: Mat, dsize: CSize) ---
+	WarpAffineWithParams :: proc(src: Mat, dst: Mat, rot_mat: Mat, dsize: CSize, flags: c.int, borderMode: c.int, borderValue: Scalar) ---
+	WarpPerspective :: proc(src: Mat, dst: Mat, m: Mat, dsize: CSize) ---
+	WarpPerspectiveWithParams :: proc(src: Mat, dst: Mat, rot_mat: Mat, dsize: CSize, flags: c.int, borderMode: c.int, borderValue: Scalar) ---
 	Watershed :: proc(image: Mat, markers: Mat) ---
 	ApplyColorMap :: proc(src: Mat, dst: Mat, colormap: c.int) ---
 	ApplyCustomColorMap :: proc(src: Mat, dst: Mat, colormap: Mat) ---
@@ -275,24 +275,24 @@ foreign cv {
 	GetAffineTransform2f :: proc(src: Point2fVector, dst: Point2fVector) -> Mat ---
 	FindHomography :: proc(src: Mat, dst: Mat, method: c.int, ransacReprojThreshold: c.double, mask: Mat, maxIters: c.int, confidence: c.double) -> Mat ---
 	DrawContours :: proc(src: Mat, contours: PointsVector, contourIdx: c.int, color: Scalar, thickness: c.int) ---
-	DrawContoursWithParams :: proc(src: Mat, contours: PointsVector, contourIdx: c.int, color: Scalar, thickness: c.int, lineType: c.int, hierarchy: Mat, maxLevel: c.int, offset: Point) ---
-	Sobel :: proc(src: Mat, dst: Mat, ddepth: c.int, dx: c.int, dy: c.int, ksize: c.int, scale: c.double, delta: c.double, borderType: c.int) ---
-	SpatialGradient :: proc(src: Mat, dx: Mat, dy: Mat, ksize: c.int, borderType: c.int) ---
+	DrawContoursWithParams :: proc(src: Mat, contours: PointsVector, contourIdx: c.int, color: Scalar, thickness: c.int, lineType: c.int, hierarchy: Mat, maxLevel: c.int, offset: CPoint) ---
+	Sobel :: proc(src: Mat, dst: Mat, ddepth: c.int, dx: c.int, dy: c.int, ksize: c.int, scale: c.double, delta: c.double, borderType: BorderType) ---
+	SpatialGradient :: proc(src: Mat, dx: Mat, dy: Mat, ksize: c.int, borderType: BorderType) ---
 	Remap :: proc(src: Mat, dst: Mat, map1: Mat, map2: Mat, interpolation: c.int, borderMode: c.int, borderValue: Scalar) ---
-	Filter2D :: proc(src: Mat, dst: Mat, ddepth: c.int, kernel: Mat, anchor: Point, delta: c.double, borderType: c.int) ---
-	SepFilter2D :: proc(src: Mat, dst: Mat, ddepth: c.int, kernelX: Mat, kernelY: Mat, anchor: Point, delta: c.double, borderType: c.int) ---
-	LogPolar :: proc(src: Mat, dst: Mat, center: Point, m: c.double, flags: c.int) ---
+	Filter2D :: proc(src: Mat, dst: Mat, ddepth: c.int, kernel: Mat, anchor: CPoint, delta: c.double, borderType: BorderType) ---
+	SepFilter2D :: proc(src: Mat, dst: Mat, ddepth: c.int, kernelX: Mat, kernelY: Mat, anchor: CPoint, delta: c.double, borderType: BorderType) ---
+	LogPolar :: proc(src: Mat, dst: Mat, center: CPoint, m: c.double, flags: c.int) ---
 	FitLine :: proc(pts: PointVector, line: Mat, distType: c.int, param: c.double, reps: c.double, aeps: c.double) ---
-	LinearPolar :: proc(src: Mat, dst: Mat, center: Point, maxRadius: c.double, flags: c.int) ---
+	LinearPolar :: proc(src: Mat, dst: Mat, center: CPoint, maxRadius: c.double, flags: c.int) ---
 	MatchShapes :: proc(contour1: PointVector, contour2: PointVector, method: c.int, parameter: c.double) -> c.double ---
-	ClipLine :: proc(imgSize: Size, pt1: Point, pt2: Point) -> c.bool ---
+	ClipLine :: proc(imgSize: CSize, pt1: CPoint, pt2: CPoint) -> c.bool ---
 	CLAHE_Create :: proc() -> CLAHE ---
-	CLAHE_CreateWithParams :: proc(clipLimit: c.double, tileGridSize: Size) -> CLAHE ---
+	CLAHE_CreateWithParams :: proc(clipLimit: c.double, tileGridSize: CSize) -> CLAHE ---
 	CLAHE_Close :: proc(c: CLAHE) ---
 	CLAHE_Apply :: proc(c: CLAHE, src, dst: Mat) ---
 	InvertAffineTransform :: proc(src: Mat, dst: Mat) ---
 	PhaseCorrelate :: proc(src1: Mat, src2: Mat, window: Mat, response: ^c.double) -> Point2f ---
-	CreateHanningWindow :: proc(dst: Mat, size: Size, typ: c.int) ---
+	CreateHanningWindow :: proc(dst: Mat, size: CSize, typ: c.int) ---
 	Mat_Accumulate :: proc(src: Mat, dst: Mat) ---
 	Mat_AccumulateWithMask :: proc(src: Mat, dst: Mat, mask: Mat) ---
 	Mat_AccumulateSquare :: proc(src: Mat, dst: Mat) ---
@@ -431,9 +431,9 @@ emd :: proc(signature1, signature2: Mat, typ: DistanceTypes) -> f32 {
 // For further details, please see:
 // https://docs.opencv.org/master/d6/d6e/group__imgproc__draw.html#gaf483cb46ad6b049bc35ec67052ef1c2c
 clip_line :: proc(imgSize, pt1, pt2: [2]int) -> bool {
-	pSize := Size{c.int(imgSize.x), c.int(imgSize.y)}
-	rPt1 := Point{c.int(pt1.x), c.int(pt1.y)}
-	rPt2 := Point{c.int(pt2.x), c.int(pt2.y)}
+	pSize := CSize{c.int(imgSize.x), c.int(imgSize.y)}
+	rPt1 := CPoint{c.int(pt1.x), c.int(pt1.y)}
+	rPt2 := CPoint{c.int(pt2.x), c.int(pt2.y)}
 	return bool(ClipLine(pSize, rPt1, rPt2))
 }
 
@@ -459,7 +459,7 @@ bilateral_filter :: proc(src: Mat, diameter: int, sigmaColor: f64, sigmaSpace: f
 // https://docs.opencv.org/master/d4/d86/group__imgproc__filter.html#ga8c45db9afe636703801b0b2e440fce37
 blur :: proc(src: Mat, ksize: [2]int) -> (dst: Mat) {
 	dst = new_mat()
-	pSize := Size{c.int(ksize.x), c.int(ksize.y)}
+	pSize := CSize{c.int(ksize.x), c.int(ksize.y)}
 	Blur(src, dst, pSize)
 	return
 }
@@ -470,7 +470,7 @@ blur :: proc(src: Mat, ksize: [2]int) -> (dst: Mat) {
 // https://docs.opencv.org/master/d4/d86/group__imgproc__filter.html#gad533230ebf2d42509547d514f7d3fbc3
 box_filter :: proc(src: Mat, depth: int, ksize: [2]int) -> (dst: Mat) {
 	dst = new_mat()
-	pSize := Size{c.int(ksize.x), c.int(ksize.y)}
+	pSize := CSize{c.int(ksize.x), c.int(ksize.y)}
 	BoxFilter(src, dst, c.int(depth), pSize)
 	return
 }
@@ -481,7 +481,7 @@ box_filter :: proc(src: Mat, depth: int, ksize: [2]int) -> (dst: Mat) {
 // https://docs.opencv.org/master/d4/d86/group__imgproc__filter.html#ga045028184a9ef65d7d2579e5c4bff6c0
 sq_box_filter :: proc(src: Mat, depth: int, ksize: [2]int) -> (dst: Mat) {
 	dst = new_mat()
-	pSize := Size{c.int(ksize.x), c.int(ksize.y)}
+	pSize := CSize{c.int(ksize.x), c.int(ksize.y)}
 	SqBoxFilter(src, dst, c.int(depth), pSize)
 	return
 }
@@ -524,14 +524,14 @@ dilate_with_params :: proc(
 	dst: Mat,
 ) {
 	dst = new_mat()
-	cAnchor := Point{c.int(anchor.x), c.int(anchor.y)}
+	cAnchor := CPoint{c.int(anchor.x), c.int(anchor.y)}
 	bv := Scalar {
 		c.double(borderValue.b),
 		c.double(borderValue.g),
 		c.double(borderValue.r),
 		c.double(borderValue.a),
 	}
-	DilateWithParams(src, dst, kernel, cAnchor, c.int(iterations), c.int(borderType), bv)
+	DilateWithParams(src, dst, kernel, cAnchor, iterations, borderType, bv)
 	return
 }
 
@@ -539,7 +539,7 @@ dilate_with_params :: proc(
 DistanceTransformLabelTypes :: enum {
 	// CComp assigns the same label to each connected component of zeros in the source image
 	// (as well as all the non-zero pixels closest to the connected component).
-	CComp = 0,
+	CComp,
 	// Pixel assigns its own label to each zero pixel (and all the non-zero pixels closest to it).
 	Pixel,
 }
@@ -568,7 +568,7 @@ distance_transform :: proc(
 	return
 }
 
-// Erode erodes an image by using a specific structuring element.
+// erode erodes an image by using a specific structuring element.
 //
 // For further details, please see:
 // https://docs.opencv.org/master/d4/d86/group__imgproc__filter.html#gaeb1e0c1033e3f6b891a25d0511362aeb
@@ -578,7 +578,7 @@ erode :: proc(src, kernel: Mat) -> (dst: Mat) {
 	return
 }
 
-// ErodeWithParams erodes an image by using a specific structuring element.
+// erode_with_params erodes an image by using a specific structuring element.
 //
 // For further details, please see:
 // https://docs.opencv.org/master/d4/d86/group__imgproc__filter.html#gaeb1e0c1033e3f6b891a25d0511362aeb
@@ -590,607 +590,585 @@ erode_with_params :: proc(
 	dst: Mat,
 ) {
 	dst = new_mat()
-	cAnchor := Point{c.int(anchor.x), c.int(anchor.y)}
-	ErodeWithParams(src, dst, kernel, cAnchor, c.int(iterations), c.int(borderType))
+	cAnchor := CPoint{c.int(anchor.x), c.int(anchor.y)}
+	ErodeWithParams(src, dst, kernel, cAnchor, iterations, borderType)
 	return
 }
 
-// // ErodeWithParamsAndBorderValue erodes an image by using a specific structuring
-// // element. Same as ErodeWithParams but requires an additional borderValue
-// // parameter.
-// //
-// // For further details, please see:
-// // https://docs.opencv.org/master/d4/d86/group__imgproc__filter.html#gaeb1e0c1033e3f6b891a25d0511362aeb
-// ErodeWithParamsAndBorderValue(src Mat, dst *Mat, kernel Mat, anchor image.Point, iterations, borderType int, borderValue Scalar) {
-// 	cAnchor := Point{
-// 		x: c.int(anchor.X),
-// 		y: c.int(anchor.Y),
-// 	}
-//
-// 	bv := Scalar{
-// 		val1: c.double(borderValue.Val1),
-// 		val2: c.double(borderValue.Val2),
-// 		val3: c.double(borderValue.Val3),
-// 		val4: c.double(borderValue.Val4),
-// 	}
-//
-// 	C.ErodeWithParamsAndBorderValue(src, dst, kernel, cAnchor, c.int(iterations), C.int(borderType), bv)
-// }
-//
-// // RetrievalMode is the mode of the contour retrieval algorithm.
-// type RetrievalMode int
-//
-// const (
-// 	// RetrievalExternal retrieves only the extreme outer contours.
-// 	// It sets `hierarchy[i][2]=hierarchy[i][3]=-1` for all the contours.
-// 	RetrievalExternal RetrievalMode = 0
-//
-// 	// RetrievalList retrieves all of the contours without establishing
-// 	// any hierarchical relationships.
-// 	RetrievalList RetrievalMode = 1
-//
-// 	// RetrievalCComp retrieves all of the contours and organizes them into
-// 	// a two-level hierarchy. At the top level, there are external boundaries
-// 	// of the components. At the second level, there are boundaries of the holes.
-// 	// If there is another contour inside a hole of a connected component, it
-// 	// is still put at the top level.
-// 	RetrievalCComp RetrievalMode = 2
-//
-// 	// RetrievalTree retrieves all of the contours and reconstructs a full
-// 	// hierarchy of nested contours.
-// 	RetrievalTree RetrievalMode = 3
-//
-// 	// RetrievalFloodfill lacks a description in the original header.
-// 	RetrievalFloodfill RetrievalMode = 4
-// )
-//
-// // ContourApproximationMode is the mode of the contour approximation algorithm.
-// type ContourApproximationMode int
-//
-// const (
-// 	// ChainApproxNone stores absolutely all the contour points. That is,
-// 	// any 2 subsequent points (x1,y1) and (x2,y2) of the contour will be
-// 	// either horizontal, vertical or diagonal neighbors, that is,
-// 	// max(abs(x1-x2),abs(y2-y1))==1.
-// 	ChainApproxNone ContourApproximationMode = 1
-//
-// 	// ChainApproxSimple compresses horizontal, vertical, and diagonal segments
-// 	// and leaves only their end points.
-// 	// For example, an up-right rectangular contour is encoded with 4 points.
-// 	ChainApproxSimple ContourApproximationMode = 2
-//
-// 	// ChainApproxTC89L1 applies one of the flavors of the Teh-Chin chain
-// 	// approximation algorithms.
-// 	ChainApproxTC89L1 ContourApproximationMode = 3
-//
-// 	// ChainApproxTC89KCOS applies one of the flavors of the Teh-Chin chain
-// 	// approximation algorithms.
-// 	ChainApproxTC89KCOS ContourApproximationMode = 4
-// )
-//
-// // BoundingRect calculates the up-right bounding rectangle of a point set.
-// //
-// // For further details, please see:
-// // https://docs.opencv.org/3.3.0/d3/dc0/group__imgproc__shape.html#gacb413ddce8e48ff3ca61ed7cf626a366
-// BoundingRect(contour PointVector) image.Rectangle {
-// 	r := C.BoundingRect(contour.p)
-// 	rect := image.Rect(int(r.x), int(r.y), int(r.x+r.width), int(r.y+r.height))
-// 	return rect
-// }
-//
-// // BoxPoints finds the four vertices of a rotated rect. Useful to draw the rotated rectangle.
-// //
-// // For further Details, please see:
-// // https://docs.opencv.org/3.3.0/d3/dc0/group__imgproc__shape.html#gaf78d467e024b4d7936cf9397185d2f5c
-// BoxPoints(rect RotatedRect, pts *Mat) {
-// 	rPoints := toCPoints(rect.Points)
-//
-// 	rRect := Rect{
-// 		x:      c.int(rect.BoundingRect.Min.X),
-// 		y:      c.int(rect.BoundingRect.Min.Y),
-// 		width:  c.int(rect.BoundingRect.Max.X - rect.BoundingRect.Min.X),
-// 		height: c.int(rect.BoundingRect.Max.Y - rect.BoundingRect.Min.Y),
-// 	}
-//
-// 	rCenter := Point{
-// 		x: c.int(rect.Center.X),
-// 		y: c.int(rect.Center.Y),
-// 	}
-//
-// 	rSize := Size{
-// 		width:  c.int(rect.Width),
-// 		height: c.int(rect.Height),
-// 	}
-//
-// 	r := RotatedRect{
-// 		pts:          rPoints,
-// 		boundingRect: rRect,
-// 		center:       rCenter,
-// 		size:         rSize,
-// 		angle:        c.double(rect.Angle),
-// 	}
-//
-// 	C.BoxPoints(r, pts.p)
-// }
-//
-// // BoxPoints finds the four vertices of a rotated rect. Useful to draw the rotated rectangle.
-// //
-// // For further Details, please see:
-// // https://docs.opencv.org/3.3.0/d3/dc0/group__imgproc__shape.html#gaf78d467e024b4d7936cf9397185d2f5c
-// BoxPoints2f(rect RotatedRect2f, pts *Mat) {
-// 	rPoints := toCPoints2f(rect.Points)
-//
-// 	rRect := Rect{
-// 		x:      c.int(rect.BoundingRect.Min.X),
-// 		y:      c.int(rect.BoundingRect.Min.Y),
-// 		width:  c.int(rect.BoundingRect.Max.X - rect.BoundingRect.Min.X),
-// 		height: c.int(rect.BoundingRect.Max.Y - rect.BoundingRect.Min.Y),
-// 	}
-//
-// 	rCenter := Point2f{
-// 		x: C.float(rect.Center.X),
-// 		y: C.float(rect.Center.Y),
-// 	}
-//
-// 	rSize := Size2f{
-// 		width:  C.float(rect.Width),
-// 		height: C.float(rect.Height),
-// 	}
-//
-// 	r := RotatedRect2f{
-// 		pts:          rPoints,
-// 		boundingRect: rRect,
-// 		center:       rCenter,
-// 		size:         rSize,
-// 		angle:        c.double(rect.Angle),
-// 	}
-//
-// 	C.BoxPoints2f(r, pts.p)
-// }
-//
-// // ContourArea calculates a contour area.
-// //
-// // For further details, please see:
-// // https://docs.opencv.org/3.3.0/d3/dc0/group__imgproc__shape.html#ga2c759ed9f497d4a618048a2f56dc97f1
-// ContourArea(contour PointVector) f64 {
-// 	result := C.ContourArea(contour.p)
-// 	return f64(result)
-// }
-//
-// type RotatedRect struct {
-// 	Points       []image.Point
-// 	BoundingRect image.Rectangle
-// 	Center       image.Point
-// 	Width        int
-// 	Height       int
-// 	Angle        f64
-// }
-//
-// type RotatedRect2f struct {
-// 	Points       []Point2f
-// 	BoundingRect image.Rectangle
-// 	Center       Point2f
-// 	Width        f32
-// 	Height       f32
-// 	Angle        f64
-// }
-//
-// // toPoints converts C.Contour to []image.Points
-// toPoints(points C.Contour) []image.Point {
-// 	pArray := points.points
-// 	pLength := int(points.length)
-//
-// 	pHdr := reflect.SliceHeader{
-// 		Data: uintptr(unsafe.Pointer(pArray)),
-// 		Len:  pLength,
-// 		Cap:  pLength,
-// 	}
-// 	sPoints := *(*[]C.Point)(unsafe.Pointer(&pHdr))
-//
-// 	points4 := make([]image.Point, pLength)
-// 	for j, pt := range sPoints {
-// 		points4[j] = image.Pt(int(pt.x), int(pt.y))
-// 	}
-// 	return points4
-// }
-//
-// // toPoints2f converts C.Contour2f to []Point2f
-// toPoints2f(points C.Contour2f) []Point2f {
-// 	pArray := points.points
-// 	pLength := int(points.length)
-//
-// 	pHdr := reflect.SliceHeader{
-// 		Data: uintptr(unsafe.Pointer(pArray)),
-// 		Len:  pLength,
-// 		Cap:  pLength,
-// 	}
-// 	sPoints := *(*[]C.Point)(unsafe.Pointer(&pHdr))
-//
-// 	points4 := make([]Point2f, pLength)
-// 	for j, pt := range sPoints {
-// 		points4[j] = NewPoint2f(f32(pt.x), float32(pt.y))
-// 	}
-// 	return points4
-// }
-//
-// // MinAreaRect finds a rotated rectangle of the minimum area enclosing the input 2D point set.
-// //
-// // For further details, please see:
-// // https://docs.opencv.org/master/d3/dc0/group__imgproc__shape.html#ga3d476a3417130ae5154aea421ca7ead9
-// MinAreaRect(points PointVector) RotatedRect {
-// 	result := C.MinAreaRect(points.p)
-// 	defer C.Points_Close(result.pts)
-//
-// 	return RotatedRect{
-// 		Points:       toPoints(result.pts),
-// 		BoundingRect: image.Rect(int(result.boundingRect.x), int(result.boundingRect.y), int(result.boundingRect.x)+int(result.boundingRect.width), int(result.boundingRect.y)+int(result.boundingRect.height)),
-// 		Center:       image.Pt(int(result.center.x), int(result.center.y)),
-// 		Width:        int(result.size.width),
-// 		Height:       int(result.size.height),
-// 		Angle:        f64(result.angle),
-// 	}
-// }
-//
-// // MinAreaRect finds a rotated rectangle of the minimum area enclosing the input 2D point set.
-// //
-// // For further details, please see:
-// // https://docs.opencv.org/master/d3/dc0/group__imgproc__shape.html#ga3d476a3417130ae5154aea421ca7ead9
-// MinAreaRect2f(points PointVector) RotatedRect2f {
-// 	result := C.MinAreaRect2f(points.p)
-// 	defer C.Points2f_Close(result.pts)
-//
-// 	return RotatedRect2f{
-// 		Points:       toPoints2f(result.pts),
-// 		BoundingRect: image.Rect(int(result.boundingRect.x), int(result.boundingRect.y), int(result.boundingRect.x)+int(result.boundingRect.width), int(result.boundingRect.y)+int(result.boundingRect.height)),
-// 		Center:       NewPoint2f(f32(result.center.x), float32(result.center.y)),
-// 		Width:        f32(result.size.width),
-// 		Height:       f32(result.size.height),
-// 		Angle:        f64(result.angle),
-// 	}
-// }
-//
-// // FitEllipse Fits an ellipse around a set of 2D points.
-// //
-// // For further details, please see:
-// // https://docs.opencv.org/master/d3/dc0/group__imgproc__shape.html#gaf259efaad93098103d6c27b9e4900ffa
-// FitEllipse(pts PointVector) RotatedRect {
-// 	cRect := C.FitEllipse(pts.p)
-// 	defer C.Points_Close(cRect.pts)
-//
-// 	return RotatedRect{
-// 		Points:       toPoints(cRect.pts),
-// 		BoundingRect: image.Rect(int(cRect.boundingRect.x), int(cRect.boundingRect.y), int(cRect.boundingRect.x)+int(cRect.boundingRect.width), int(cRect.boundingRect.y)+int(cRect.boundingRect.height)),
-// 		Center:       image.Pt(int(cRect.center.x), int(cRect.center.y)),
-// 		Width:        int(cRect.size.width),
-// 		Height:       int(cRect.size.height),
-// 		Angle:        f64(cRect.angle),
-// 	}
-//
-// }
-//
-// // MinEnclosingCircle finds a circle of the minimum area enclosing the input 2D point set.
-// //
-// // For further details, please see:
-// // https://docs.opencv.org/3.4/d3/dc0/group__imgproc__shape.html#ga8ce13c24081bbc7151e9326f412190f1
-// MinEnclosingCircle(pts PointVector) (x, y, radius f32) {
-// 	cCenterPoint := Point2f{}
-// 	var cRadius C.float
-// 	C.MinEnclosingCircle(pts, &cCenterPoint, &cRadius)
-// 	x, y = f32(cCenterPoint.x), float32(cCenterPoint.y)
-// 	radius = f32(cRadius)
-// 	return x, y, radius
-// }
-//
-// // FindContours finds contours in a binary image.
-// //
-// // For further details, please see:
-// // https://docs.opencv.org/master/d3/dc0/group__imgproc__shape.html#ga95f5b48d01abc7c2e0732db24689837b
-// FindContours(src Mat, mode RetrievalMode, method ContourApproximationMode) PointsVector {
-// 	hierarchy := NewMat()
-// 	defer hierarchy.Close()
-// 	return FindContoursWithParams(src, &hierarchy, mode, method)
-// }
-//
-// // FindContoursWithParams finds contours in a binary image.
-// //
-// // For further details, please see:
-// // https://docs.opencv.org/master/d3/dc0/group__imgproc__shape.html#ga17ed9f5d79ae97bd4c7cf18403e1689a
-// FindContoursWithParams(src Mat, hierarchy *Mat, mode RetrievalMode, method ContourApproximationMode) PointsVector {
-// 	return PointsVector{p: C.FindContours(src, hierarchy, c.int(mode), C.int(method))}
-// }
-//
-// // PointPolygonTest performs a point-in-contour test.
-// //
-// // For further details, please see:
-// // https://docs.opencv.org/master/d3/dc0/group__imgproc__shape.html#ga1a539e8db2135af2566103705d7a5722
-// PointPolygonTest(pts PointVector, pt image.Point, measureDist bool) f64 {
-// 	cp := Point{
-// 		x: c.int(pt.X),
-// 		y: c.int(pt.Y),
-// 	}
-// 	return f64(C.PointPolygonTest(pts, cp, C.bool(measureDist)))
-// }
-//
-// // ConnectedComponentsAlgorithmType specifies the type for ConnectedComponents
-// type ConnectedComponentsAlgorithmType int
-//
-// const (
-// 	// SAUF algorithm for 8-way connectivity, SAUF algorithm for 4-way connectivity.
-// 	CCL_WU ConnectedComponentsAlgorithmType = 0
-//
-// 	// BBDT algorithm for 8-way connectivity, SAUF algorithm for 4-way connectivity.
-// 	CCL_DEFAULT ConnectedComponentsAlgorithmType = 1
-//
-// 	// BBDT algorithm for 8-way connectivity, SAUF algorithm for 4-way connectivity
-// 	CCL_GRANA ConnectedComponentsAlgorithmType = 2
-// )
-//
-// // ConnectedComponents computes the connected components labeled image of boolean image.
-// //
-// // For further details, please see:
-// // https://docs.opencv.org/master/d3/dc0/group__imgproc__shape.html#gaedef8c7340499ca391d459122e51bef5
-// ConnectedComponents(src Mat, labels *Mat) int {
-// 	return int(C.ConnectedComponents(src, labels, c.int(8), C.int(MatTypeCV32S), C.int(CCL_DEFAULT)))
-// }
-//
-// // ConnectedComponents computes the connected components labeled image of boolean image.
-// //
-// // For further details, please see:
-// // https://docs.opencv.org/master/d3/dc0/group__imgproc__shape.html#gaedef8c7340499ca391d459122e51bef5
-// ConnectedComponentsWithParams(src Mat, labels *Mat, conn int, ltype MatType,
-// 	ccltype ConnectedComponentsAlgorithmType) int {
-// 	return int(C.ConnectedComponents(src, labels, c.int(conn), C.int(ltype), C.int(ccltype)))
-// }
-//
-// // ConnectedComponentsTypes are the connected components algorithm output formats
-// type ConnectedComponentsTypes int
-//
-// const (
-// 	//The leftmost (x) coordinate which is the inclusive start of the bounding box in the horizontal direction.
-// 	CC_STAT_LEFT ConnectedComponentsTypes = 0
-//
-// 	//The topmost (y) coordinate which is the inclusive start of the bounding box in the vertical direction.
-// 	CC_STAT_TOP ConnectedComponentsTypes = 1
-//
-// 	// The horizontal size of the bounding box.
-// 	CC_STAT_WIDTH ConnectedComponentsTypes = 2
-//
-// 	// The vertical size of the bounding box.
-// 	CC_STAT_HEIGHT ConnectedComponentsTypes = 3
-//
-// 	// The total area (in pixels) of the connected component.
-// 	CC_STAT_AREA ConnectedComponentsTypes = 4
-//
-// 	CC_STAT_MAX ConnectedComponentsTypes = 5
-// )
-//
-// // ConnectedComponentsWithStats computes the connected components labeled image of boolean
-// // image and also produces a statistics output for each label.
-// //
-// // For further details, please see:
-// // https://docs.opencv.org/master/d3/dc0/group__imgproc__shape.html#ga107a78bf7cd25dec05fb4dfc5c9e765f
-// ConnectedComponentsWithStats(src Mat, labels *Mat, stats *Mat, centroids *Mat) int {
-// 	return int(C.ConnectedComponentsWithStats(src, labels, stats, centroids,
-// 		c.int(8), C.int(MatTypeCV32S), C.int(CCL_DEFAULT)))
-// }
-//
-// // ConnectedComponentsWithStats computes the connected components labeled image of boolean
-// // image and also produces a statistics output for each label.
-// //
-// // For further details, please see:
-// // https://docs.opencv.org/master/d3/dc0/group__imgproc__shape.html#ga107a78bf7cd25dec05fb4dfc5c9e765f
-// ConnectedComponentsWithStatsWithParams(src Mat, labels *Mat, stats *Mat, centroids *Mat,
-// 	conn int, ltype MatType, ccltype ConnectedComponentsAlgorithmType) int {
-// 	return int(C.ConnectedComponentsWithStats(src, labels, stats, centroids, c.int(conn),
-// 		c.int(ltype), C.int(ccltype)))
-// }
-//
-// // TemplateMatchMode is the type of the template matching operation.
-// type TemplateMatchMode int
-//
-// const (
-// 	// TmSqdiff maps to TM_SQDIFF
-// 	TmSqdiff TemplateMatchMode = 0
-// 	// TmSqdiffNormed maps to TM_SQDIFF_NORMED
-// 	TmSqdiffNormed TemplateMatchMode = 1
-// 	// TmCcorr maps to TM_CCORR
-// 	TmCcorr TemplateMatchMode = 2
-// 	// TmCcorrNormed maps to TM_CCORR_NORMED
-// 	TmCcorrNormed TemplateMatchMode = 3
-// 	// TmCcoeff maps to TM_CCOEFF
-// 	TmCcoeff TemplateMatchMode = 4
-// 	// TmCcoeffNormed maps to TM_CCOEFF_NORMED
-// 	TmCcoeffNormed TemplateMatchMode = 5
-// )
-//
-// // MatchTemplate compares a template against overlapped image regions.
-// //
-// // For further details, please see:
-// // https://docs.opencv.org/master/df/dfb/group__imgproc__object.html#ga586ebfb0a7fb604b35a23d85391329be
-// MatchTemplate(image Mat, templ Mat, result *Mat, method TemplateMatchMode, mask Mat) {
-// 	C.MatchTemplate(image, templ, result, c.int(method), mask.p)
-// }
-//
-// // Moments calculates all of the moments up to the third order of a polygon
-// // or rasterized shape.
-// //
-// // For further details, please see:
-// // https://docs.opencv.org/master/d3/dc0/group__imgproc__shape.html#ga556a180f43cab22649c23ada36a8a139
-// Moments(src Mat, binaryImage bool) map[string]f64 {
-// 	r := C.Moments(src, C.bool(binaryImage))
-//
-// 	result := make(map[string]f64)
-// 	result["m00"] = f64(r.m00)
-// 	result["m10"] = f64(r.m10)
-// 	result["m01"] = f64(r.m01)
-// 	result["m20"] = f64(r.m20)
-// 	result["m11"] = f64(r.m11)
-// 	result["m02"] = f64(r.m02)
-// 	result["m30"] = f64(r.m30)
-// 	result["m21"] = f64(r.m21)
-// 	result["m12"] = f64(r.m12)
-// 	result["m03"] = f64(r.m03)
-// 	result["mu20"] = f64(r.mu20)
-// 	result["mu11"] = f64(r.mu11)
-// 	result["mu02"] = f64(r.mu02)
-// 	result["mu30"] = f64(r.mu30)
-// 	result["mu21"] = f64(r.mu21)
-// 	result["mu12"] = f64(r.mu12)
-// 	result["mu03"] = f64(r.mu03)
-// 	result["nu20"] = f64(r.nu20)
-// 	result["nu11"] = f64(r.nu11)
-// 	result["nu02"] = f64(r.nu02)
-// 	result["nu30"] = f64(r.nu30)
-// 	result["nu21"] = f64(r.nu21)
-// 	result["nu12"] = f64(r.nu12)
-// 	result["nu03"] = f64(r.nu03)
-//
-// 	return result
-// }
-//
-// // PyrDown blurs an image and downsamples it.
-// //
-// // For further details, please see:
-// // https://docs.opencv.org/master/d4/d86/group__imgproc__filter.html#gaf9bba239dfca11654cb7f50f889fc2ff
-// PyrDown(src Mat, dst *Mat, ksize image.Point, borderType BorderType) {
-// 	pSize := Size{
-// 		height: c.int(ksize.X),
-// 		width:  c.int(ksize.Y),
-// 	}
-// 	C.PyrDown(src, dst, pSize, c.int(borderType))
-// }
-//
-// // PyrUp upsamples an image and then blurs it.
-// //
-// // For further details, please see:
-// // https://docs.opencv.org/master/d4/d86/group__imgproc__filter.html#gada75b59bdaaca411ed6fee10085eb784
-// PyrUp(src Mat, dst *Mat, ksize image.Point, borderType BorderType) {
-// 	pSize := Size{
-// 		height: c.int(ksize.X),
-// 		width:  c.int(ksize.Y),
-// 	}
-// 	C.PyrUp(src, dst, pSize, c.int(borderType))
-// }
-//
-// // MorphologyDefaultBorder returns "magic" border value for erosion and dilation.
-// // It is automatically transformed to Scalar::all(-DBL_MAX) for dilation.
-// //
-// // For further details, please see:
-// // https://docs.opencv.org/master/d4/d86/group__imgproc__filter.html#ga94756fad83d9d24d29c9bf478558c40a
-// MorphologyDefaultBorderValue() Scalar {
-// 	var scalar C.Scalar = C.MorphologyDefaultBorderValue()
-// 	return NewScalar(f64(scalar.val1), float64(scalar.val2), float64(scalar.val3), float64(scalar.val4))
-// }
-//
-// // MorphologyEx performs advanced morphological transformations.
-// //
-// // For further details, please see:
-// // https://docs.opencv.org/master/d4/d86/group__imgproc__filter.html#ga67493776e3ad1a3df63883829375201f
-// MorphologyEx(src Mat, dst *Mat, op MorphType, kernel Mat) {
-// 	C.MorphologyEx(src, dst, c.int(op), kernel.p)
-// }
-//
-// // MorphologyExWithParams performs advanced morphological transformations.
-// //
-// // For further details, please see:
-// // https://docs.opencv.org/master/d4/d86/group__imgproc__filter.html#ga67493776e3ad1a3df63883829375201f
-// MorphologyExWithParams(src Mat, dst *Mat, op MorphType, kernel Mat, iterations int, borderType BorderType) {
-// 	pt := Point{
-// 		x: c.int(-1),
-// 		y: c.int(-1),
-// 	}
-// 	C.MorphologyExWithParams(src, dst, c.int(op), kernel, pt, C.int(iterations), C.int(borderType))
-// }
-//
-// // MorphShape is the shape of the structuring element used for Morphing operations.
-// type MorphShape int
-//
-// const (
-// 	// MorphRect is the rectangular morph shape.
-// 	MorphRect MorphShape = 0
-//
-// 	// MorphCross is the cross morph shape.
-// 	MorphCross MorphShape = 1
-//
-// 	// MorphEllipse is the ellipse morph shape.
-// 	MorphEllipse MorphShape = 2
-// )
-//
-// // GetStructuringElement returns a structuring element of the specified size
-// // and shape for morphological operations.
-// //
-// // For further details, please see:
-// // https://docs.opencv.org/master/d4/d86/group__imgproc__filter.html#gac342a1bb6eabf6f55c803b09268e36dc
-// GetStructuringElement(shape MorphShape, ksize image.Point) Mat {
-// 	sz := Size{
-// 		width:  c.int(ksize.X),
-// 		height: c.int(ksize.Y),
-// 	}
-//
-// 	return newMat(C.GetStructuringElement(c.int(shape), sz))
-// }
-//
-// // MorphType type of morphological operation.
-// type MorphType int
-//
-// const (
-// 	// MorphErode operation
-// 	MorphErode MorphType = 0
-//
-// 	// MorphDilate operation
-// 	MorphDilate MorphType = 1
-//
-// 	// MorphOpen operation
-// 	MorphOpen MorphType = 2
-//
-// 	// MorphClose operation
-// 	MorphClose MorphType = 3
-//
-// 	// MorphGradient operation
-// 	MorphGradient MorphType = 4
-//
-// 	// MorphTophat operation
-// 	MorphTophat MorphType = 5
-//
-// 	// MorphBlackhat operation
-// 	MorphBlackhat MorphType = 6
-//
-// 	// MorphHitmiss operation
-// 	MorphHitmiss MorphType = 7
-// )
-//
-// // GaussianBlur blurs an image Mat using a Gaussian filter.
-// // The function convolves the src Mat image into the dst Mat using
-// // the specified Gaussian kernel params.
-// //
-// // For further details, please see:
-// // http://docs.opencv.org/master/d4/d86/group__imgproc__filter.html#gaabe8c836e97159a9193fb0b11ac52cf1
-// GaussianBlur(src Mat, dst *Mat, ksize image.Point, sigmaX f64,
-// 	sigmaY f64, borderType BorderType) {
-// 	pSize := Size{
-// 		width:  c.int(ksize.X),
-// 		height: c.int(ksize.Y),
-// 	}
-//
-// 	C.GaussianBlur(src, dst, pSize, c.double(sigmaX), c.double(sigmaY), c.int(borderType))
-// }
-//
-// // GetGaussianKernel returns Gaussian filter coefficients.
-// //
-// // For further details, please see:
-// // https://docs.opencv.org/master/d4/d86/group__imgproc__filter.html#gac05a120c1ae92a6060dd0db190a61afa
-// GetGaussianKernel(ksize int, sigma f64) Mat {
-// 	return newMat(C.GetGaussianKernel(c.int(ksize), c.double(sigma), C.int(MatTypeCV64F)))
-// }
-//
-// // GetGaussianKernelWithParams returns Gaussian filter coefficients.
-// //
-// // For further details, please see:
-// // https://docs.opencv.org/master/d4/d86/group__imgproc__filter.html#gac05a120c1ae92a6060dd0db190a61afa
-// GetGaussianKernelWithParams(ksize int, sigma f64, ktype MatType) Mat {
-// 	return newMat(C.GetGaussianKernel(c.int(ksize), c.double(sigma), C.int(ktype)))
-// }
-//
+// erode_with_params_and_border_value erodes an image by using a specific structuring
+// element. Same as ErodeWithParams but requires an additional borderValue
+// parameter.
+//
+// For further details, please see:
+// https://docs.opencv.org/master/d4/d86/group__imgproc__filter.html#gaeb1e0c1033e3f6b891a25d0511362aeb
+erode_with_params_and_border_value :: proc(
+	src, kernel: Mat,
+	anchor: [2]int,
+	iterations, borderType: BorderType,
+	borderValue: [4]f64,
+) -> (
+	dst: Mat,
+) {
+	dst = new_mat()
+
+	cAnchor := CPoint{c.int(anchor.x), c.int(anchor.y)}
+
+	bv := Scalar {
+		c.double(borderValue[0]),
+		c.double(borderValue[1]),
+		c.double(borderValue[2]),
+		c.double(borderValue[3]),
+	}
+
+	ErodeWithParamsAndBorderValue(src, dst, kernel, cAnchor, iterations, borderType, bv)
+	return
+}
+
+// RetrievalMode is the mode of the contour retrieval algorithm.
+RetrievalMode :: enum {
+	// External retrieves only the extreme outer contours.
+	// It sets `hierarchy[i][2]=hierarchy[i][3]=-1` for all the contours.
+	External,
+	// List retrieves all of the contours without establishing
+	// any hierarchical relationships.
+	List,
+	// CComp retrieves all of the contours and organizes them into
+	// a two-level hierarchy. At the top level, there are external boundaries
+	// of the components. At the second level, there are boundaries of the holes.
+	// If there is another contour inside a hole of a connected component, it
+	// is still put at the top level.
+	CComp,
+	// Tree retrieves all of the contours and reconstructs a full
+	// hierarchy of nested contours.
+	Tree,
+	// Floodfill lacks a description in the original header.
+	Floodfill,
+}
+
+// ContourApproximationMode is the mode of the contour approximation algorithm.
+ContourApproximationMode :: enum {
+	// None stores absolutely all the contour points. That is,
+	// any 2 subsequent points (x1,y1) and (x2,y2) of the contour will be
+	// either horizontal, vertical or diagonal neighbors, that is,
+	// max(abs(x1-x2),abs(y2-y1))==1.
+	None     = 1,
+	// Simple compresses horizontal, vertical, and diagonal segments
+	// and leaves only their end points.
+	// For example, an up-right rectangular contour is encoded with 4 points.
+	Simple   = 2,
+	// TC89L1 applies one of the flavors of the Teh-Chin chain
+	// approximation algorithms.
+	TC89L1   = 3,
+	// TC89KCOS applies one of the flavors of the Teh-Chin chain
+	// approximation algorithms.
+	TC89KCOS = 4,
+}
+
+Point :: distinct [2]int
+
+to_cpoints :: proc(pts: []Point) -> CPoints {
+	return {cast([^]CPoint)&pts[0], cast(c.int)len(pts)}
+}
+
+Size :: struct {
+	height, width: int,
+}
+Rect :: struct {
+	min, max: Point,
+}
+
+// Rect is shorthand for [Rectangle]{Pt(x0, y0), [Pt](x1, y1)}. The returned
+// rectangle has minimum and maximum coordinates swapped if necessary so that
+// it is well-formed.
+rect :: proc(x0, y0, x1, y1: int) -> Rect {
+	x0 := x0;y0 := y0;x1 := x1;y1 := y1
+
+	if x0 > x1 {
+		x0, x1 = x1, x0
+	}
+	if y0 > y1 {
+		y0, y1 = y1, y0
+	}
+	return Rect{Point{x0, y0}, Point{x1, y1}}
+}
+
+// bounding_rect calculates the up-right bounding rectangle of a point set.
+//
+// For further details, please see:
+// https://docs.opencv.org/3.3.0/d3/dc0/group__imgproc__shape.html#gacb413ddce8e48ff3ca61ed7cf626a366
+bounding_rect :: proc(contour: PointVector) -> Rect {
+	r := BoundingRect(contour)
+	return rect(cast(int)r.x, cast(int)r.y, cast(int)r.width, cast(int)r.height)
+}
+
+RotatedRect :: struct {
+	pts:           []Point,
+	bounding_rect: Rect,
+	center:        Point,
+	size:          Size,
+	angle:         f64,
+}
+
+// box_points finds the four vertices of a rotated rect. Useful to draw the rotated rectangle.
+//
+// For further Details, please see:
+// https://docs.opencv.org/3.3.0/d3/dc0/group__imgproc__shape.html#gaf78d467e024b4d7936cf9397185d2f5c
+box_points :: proc(rect: RotatedRect, pts: Mat) {
+	rRect := CRect {
+		cast(c.int)rect.bounding_rect.min.x,
+		cast(c.int)rect.bounding_rect.min.y,
+		cast(c.int)(rect.bounding_rect.max.x - rect.bounding_rect.min.x),
+		cast(c.int)(rect.bounding_rect.max.y - rect.bounding_rect.min.y),
+	}
+
+	rCenter := CPoint{cast(c.int)rect.center.x, cast(c.int)rect.center.y}
+
+	rSize := CSize{cast(c.int)rect.size.width, cast(c.int)rect.size.height}
+
+	r := CRotatedRect {
+		pts          = {cast([^]CPoint)&rect.pts[0], cast(c.int)len(rect.pts)},
+		boundingRect = rRect,
+		center       = rCenter,
+		size         = rSize,
+		angle        = rect.angle,
+	}
+
+	BoxPoints(r, pts)
+}
+
+Point2f :: distinct [2]f32
+
+to_cpoints_2f :: proc(pts: []Point2f) -> CPoints2f {
+	return {cast([^]CPoint2f)&pts[0], cast(c.int)len(pts)}
+}
+
+Size2f :: struct {
+	width, height: f32,
+}
+
+RotatedRect2f :: struct {
+	pts:           []Point2f,
+	bounding_rect: Rect,
+	center:        Point2f,
+	size:          Size2f,
+	angle:         f64,
+}
+
+// box_points_2f finds the four vertices of a rotated rect. Useful to draw the rotated rectangle.
+//
+// For further Details, please see:
+// https://docs.opencv.org/3.3.0/d3/dc0/group__imgproc__shape.html#gaf78d467e024b4d7936cf9397185d2f5c
+box_points_2f :: proc(rect: RotatedRect2f, pts: Mat) {
+	rRect := CRect {
+		c.int(rect.bounding_rect.min.x),
+		c.int(rect.bounding_rect.min.y),
+		c.int(rect.bounding_rect.max.x - rect.bounding_rect.min.x),
+		c.int(rect.bounding_rect.max.y - rect.bounding_rect.min.y),
+	}
+
+	r := CRotatedRect2f {
+		pts          = to_cpoints_2f(rect.pts),
+		boundingRect = rRect,
+		center       = cast(CPoint2f)rect.center,
+		size         = cast(CSize2f)rect.size,
+		angle        = rect.angle,
+	}
+
+	BoxPoints2f(r, pts)
+}
+
+// contour_area calculates a contour area.
+//
+// For further details, please see:
+// https://docs.opencv.org/3.3.0/d3/dc0/group__imgproc__shape.html#ga2c759ed9f497d4a618048a2f56dc97f1
+contour_area :: proc(contour: PointVector) -> f64 {
+	result := ContourArea(contour)
+	return f64(result)
+}
+
+// to_points converts CPoints to []Point
+to_points :: proc(cpoints: CPoints) -> (pts: []Point) {
+	p_array := cpoints.points
+	p_length := int(cpoints.length)
+
+	pts = make([]Point, p_length)
+	for pt, idx in p_array[:p_length] {
+		pts[idx] = {int(pt.x), int(pt.y)}
+	}
+
+	return
+}
+
+// to_points_2f converts CPoints2f to []Point2f
+to_points_2f :: proc(cpoints: CPoints2f) -> (pts: []Point2f) {
+	p_array := cpoints.points
+	p_length := int(cpoints.length)
+
+	pts = make([]Point2f, p_length)
+	for pt, idx in p_array[:p_length] {
+		pts[idx] = cast(Point2f)pt
+	}
+	return
+}
+
+// min_area_rect finds a rotated rectangle of the minimum area enclosing the input 2D point set.
+//
+// For further details, please see:
+// https://docs.opencv.org/master/d3/dc0/group__imgproc__shape.html#ga3d476a3417130ae5154aea421ca7ead9
+min_area_rect :: proc(points: PointVector) -> RotatedRect {
+	result := MinAreaRect(points)
+	defer points_close(result.pts)
+
+	return RotatedRect {
+		pts = to_points(result.pts),
+		bounding_rect = rect(
+			int(result.boundingRect.x),
+			int(result.boundingRect.y),
+			int(result.boundingRect.x + result.boundingRect.width),
+			int(result.boundingRect.y + result.boundingRect.height),
+		),
+		center = {int(result.center.x), int(result.center.y)},
+		size = {int(result.size.width), int(result.size.height)},
+		angle = f64(result.angle),
+	}
+}
+
+// min_area_rect_2f finds a rotated rectangle of the minimum area enclosing the input 2D point set.
+//
+// For further details, please see:
+// https://docs.opencv.org/master/d3/dc0/group__imgproc__shape.html#ga3d476a3417130ae5154aea421ca7ead9
+min_area_rect_2f :: proc(points: PointVector) -> RotatedRect2f {
+	result := MinAreaRect2f(points)
+	defer points2f_close(result.pts)
+
+	return RotatedRect2f {
+		pts = to_points_2f(result.pts),
+		bounding_rect = rect(
+			int(result.boundingRect.x),
+			int(result.boundingRect.y),
+			int(result.boundingRect.x + result.boundingRect.width),
+			int(result.boundingRect.y + result.boundingRect.height),
+		),
+		center = cast(Point2f)result.center,
+		size = cast(Size2f)result.size,
+		angle = result.angle,
+	}
+}
+
+// fit_ellipse Fits an ellipse around a set of 2D points.
+//
+// For further details, please see:
+// https://docs.opencv.org/master/d3/dc0/group__imgproc__shape.html#gaf259efaad93098103d6c27b9e4900ffa
+fit_ellipse :: proc(pts: PointVector) -> RotatedRect {
+	result := FitEllipse(pts)
+	defer points_close(result.pts)
+
+	return RotatedRect {
+		pts = to_points(result.pts),
+		bounding_rect = rect(
+			int(result.boundingRect.x),
+			int(result.boundingRect.y),
+			int(result.boundingRect.x) + int(result.boundingRect.width),
+			int(result.boundingRect.y) + int(result.boundingRect.height),
+		),
+		center = {int(result.center.x), int(result.center.y)},
+		size = {int(result.size.width), int(result.size.height)},
+		angle = f64(result.angle),
+	}
+}
+
+// min_enclosing_circle finds a circle of the minimum area enclosing the input 2D point set.
+//
+// For further details, please see:
+// https://docs.opencv.org/3.4/d3/dc0/group__imgproc__shape.html#ga8ce13c24081bbc7151e9326f412190f1
+min_enclosing_circle :: proc(pts: PointVector) -> (x, y, radius: f32) {
+	cCenterPoint: Point2f
+	cRadius: c.float
+	MinEnclosingCircle(pts, &cCenterPoint, &cRadius)
+	x, y = cCenterPoint.x, cCenterPoint.y
+	radius = cRadius
+	return x, y, radius
+}
+
+// find_contours finds contours in a binary image.
+//
+// For further details, please see:
+// https://docs.opencv.org/master/d3/dc0/group__imgproc__shape.html#ga95f5b48d01abc7c2e0732db24689837b
+find_contours :: proc(
+	src: Mat,
+	mode: RetrievalMode,
+	method: ContourApproximationMode,
+) -> PointsVector {
+	hierarchy := new_mat()
+	defer delete_mat(hierarchy)
+	return find_contours_with_params(src, hierarchy, mode, method)
+}
+
+// find_contours_with_params finds contours in a binary image.
+//
+// For further details, please see:
+// https://docs.opencv.org/master/d3/dc0/group__imgproc__shape.html#ga17ed9f5d79ae97bd4c7cf18403e1689a
+find_contours_with_params :: proc(
+	src: Mat,
+	hierarchy: Mat,
+	mode: RetrievalMode,
+	method: ContourApproximationMode,
+) -> PointsVector {
+	return FindContours(src, hierarchy, cast(c.int)mode, cast(c.int)method)
+}
+
+// point_polygon_test performs a point-in-contour test.
+//
+// For further details, please see:
+// https://docs.opencv.org/master/d3/dc0/group__imgproc__shape.html#ga1a539e8db2135af2566103705d7a5722
+point_polygon_test :: proc(pts: PointVector, pt: Point, measureDist: bool) -> f64 {
+	cp := CPoint{c.int(pt.x), c.int(pt.y)}
+	return f64(PointPolygonTest(pts, cp, c.bool(measureDist)))
+}
+
+// CCL_AlgorithmType specifies the type for ConnectedComponents
+CCL_AlgorithmType :: enum c.int {
+	WU, // SAUF algorithm for 8-way connectivity, SAUF algorithm for 4-way connectivity.
+	DEFAULT, // BBDT algorithm for 8-way connectivity, SAUF algorithm for 4-way connectivity.
+	GRANA, // BBDT algorithm for 8-way connectivity, SAUF algorithm for 4-way connectivity
+}
+
+// connected_components computes the connected components labeled image of boolean image.
+//
+// For further details, please see:
+// https://docs.opencv.org/master/d3/dc0/group__imgproc__shape.html#gaedef8c7340499ca391d459122e51bef5
+connected_components :: proc(src, labels: Mat) -> int {
+	return int(ConnectedComponents(src, labels, 8, .CV_32S, .DEFAULT))
+}
+
+// connected_components_with_params computes the connected components labeled image of boolean image.
+//
+// For further details, please see:
+// https://docs.opencv.org/master/d3/dc0/group__imgproc__shape.html#gaedef8c7340499ca391d459122e51bef5
+connected_components_with_params :: proc(
+	src, labels: Mat,
+	conn: int,
+	ltype: Mat_Type,
+	ccltype: CCL_AlgorithmType,
+) -> int {
+	return int(ConnectedComponents(src, labels, c.int(conn), ltype, ccltype))
+}
+
+// Connected Components StatTypes are the connected components algorithm output formats
+CCL_StatTypes :: enum {
+	LEFT, //The leftmost (x) coordinate which is the inclusive start of the bounding box in the horizontal direction.
+	TOP, //The topmost (y) coordinate which is the inclusive start of the bounding box in the vertical direction.
+	WIDTH, // The horizontal size of the bounding box.
+	HEIGHT, // The vertical size of the bounding box.
+	AREA, // The total area (in pixels) of the connected component.
+	MAX,
+}
+
+// connected_components_with_stats computes the connected components labeled image of boolean
+// image and also produces a statistics output for each label.
+//
+// For further details, please see:
+// https://docs.opencv.org/master/d3/dc0/group__imgproc__shape.html#ga107a78bf7cd25dec05fb4dfc5c9e765f
+connected_components_with_stats :: proc(src, labels, stats, centroids: Mat) -> int {
+	return int(ConnectedComponentsWithStats(src, labels, stats, centroids, 8, .CV_32S, .DEFAULT))
+}
+
+// connected_components_with_stats_with_params computes the connected components labeled image of boolean
+// image and also produces a statistics output for each label.
+//
+// For further details, please see:
+// https://docs.opencv.org/master/d3/dc0/group__imgproc__shape.html#ga107a78bf7cd25dec05fb4dfc5c9e765f
+connected_components_with_stats_with_params :: proc(
+	src, labels, stats, centroids: Mat,
+	conn: int,
+	ltype: Mat_Type,
+	ccltype: CCL_AlgorithmType,
+) -> int {
+	return int(
+		ConnectedComponentsWithStats(src, labels, stats, centroids, c.int(conn), ltype, ccltype),
+	)
+}
+
+// TemplateMatchMode is the type of the template matching operation.
+TemplateMatchMode :: enum {
+	TmSqdiff, // TmSqdiff maps to TM_SQDIFF
+	TmSqdiffNormed, // TmSqdiffNormed maps to TM_SQDIFF_NORMED
+	TmCcorr, // TmCcorr maps to TM_CCORR
+	TmCcorrNormed, // TmCcorrNormed maps to TM_CCORR_NORMED
+	TmCcoeff, // TmCcoeff maps to TM_CCOEFF
+	TmCcoeffNormed, // TmCcoeffNormed maps to TM_CCOEFF_NORMED
+}
+
+// match_template compares a template against overlapped image regions.
+//
+// For further details, please see:
+// https://docs.opencv.org/master/df/dfb/group__imgproc__object.html#ga586ebfb0a7fb604b35a23d85391329be
+match_template :: proc(image, templ, result: Mat, method: TemplateMatchMode, mask: Mat) {
+	MatchTemplate(image, templ, result, method, mask)
+}
+
+// moments calculates all of the moments up to the third order of a polygon
+// or rasterized shape.
+//
+// For further details, please see:
+// https://docs.opencv.org/master/d3/dc0/group__imgproc__shape.html#ga556a180f43cab22649c23ada36a8a139
+moments :: proc(src: Mat, binaryImage: bool) -> map[string]f64 {
+	r := Moments(src, c.bool(binaryImage))
+
+	result := make(map[string]f64)
+	result["m00"] = f64(r.m00)
+	result["m10"] = f64(r.m10)
+	result["m01"] = f64(r.m01)
+	result["m20"] = f64(r.m20)
+	result["m11"] = f64(r.m11)
+	result["m02"] = f64(r.m02)
+	result["m30"] = f64(r.m30)
+	result["m21"] = f64(r.m21)
+	result["m12"] = f64(r.m12)
+	result["m03"] = f64(r.m03)
+	result["mu20"] = f64(r.mu20)
+	result["mu11"] = f64(r.mu11)
+	result["mu02"] = f64(r.mu02)
+	result["mu30"] = f64(r.mu30)
+	result["mu21"] = f64(r.mu21)
+	result["mu12"] = f64(r.mu12)
+	result["mu03"] = f64(r.mu03)
+	result["nu20"] = f64(r.nu20)
+	result["nu11"] = f64(r.nu11)
+	result["nu02"] = f64(r.nu02)
+	result["nu30"] = f64(r.nu30)
+	result["nu21"] = f64(r.nu21)
+	result["nu12"] = f64(r.nu12)
+	result["nu03"] = f64(r.nu03)
+
+	return result
+}
+
+// pyr_down blurs an image and downsamples it.
+//
+// For further details, please see:
+// https://docs.opencv.org/master/d4/d86/group__imgproc__filter.html#gaf9bba239dfca11654cb7f50f889fc2ff
+pyr_down :: proc(src: Mat, ksize: Point, borderType: BorderType) -> (dst: Mat) {
+	dst = new_mat()
+	pSize := CSize{c.int(ksize.x), c.int(ksize.y)}
+	PyrDown(src, dst, pSize, borderType)
+	return
+}
+
+// pyr_up upsamples an image and then blurs it.
+//
+// For further details, please see:
+// https://docs.opencv.org/master/d4/d86/group__imgproc__filter.html#gada75b59bdaaca411ed6fee10085eb784
+pyr_up :: proc(src: Mat, ksize: Point, borderType: BorderType) -> (dst: Mat) {
+	dst = new_mat()
+	pSize := CSize{c.int(ksize.x), c.int(ksize.y)}
+	PyrUp(src, dst, pSize, borderType)
+	return
+}
+
+// morphology_default_border_value returns "magic" border value for erosion and dilation.
+// It is automatically transformed to Scalar::all(-DBL_MAX) for dilation.
+//
+// For further details, please see:
+// https://docs.opencv.org/master/d4/d86/group__imgproc__filter.html#ga94756fad83d9d24d29c9bf478558c40a
+morphology_default_border_value :: proc() -> Scalar {
+	return MorphologyDefaultBorderValue()
+}
+
+// morphology_ex performs advanced morphological transformations.
+//
+// For further details, please see:
+// https://docs.opencv.org/master/d4/d86/group__imgproc__filter.html#ga67493776e3ad1a3df63883829375201f
+morphology_ex :: proc(src: Mat, op: MorphType, kernel: Mat) -> (dst: Mat) {
+	dst = new_mat()
+	MorphologyEx(src, dst, op, kernel)
+	return
+}
+
+// morphology_ex_with_params performs advanced morphological transformations.
+//
+// For further details, please see:
+// https://docs.opencv.org/master/d4/d86/group__imgproc__filter.html#ga67493776e3ad1a3df63883829375201f
+morphology_ex_with_params :: proc(
+	src: Mat,
+	op: MorphType,
+	kernel: Mat,
+	iterations, borderType: BorderType,
+) -> (
+	dst: Mat,
+) {
+	dst = new_mat()
+	pt := CPoint{-1, -1}
+	MorphologyExWithParams(src, dst, op, kernel, pt, iterations, borderType)
+	return
+}
+
+// MorphShape is the shape of the structuring element used for Morphing operations.
+MorphShape :: enum {
+	Rect, // MorphRect is the rectangular morph shape.
+	Cross, // MorphCross is the cross morph shape.
+	Ellipse, // MorphEllipse is the ellipse morph shape.
+}
+
+// GetStructuringElement returns a structuring element of the specified size
+// and shape for morphological operations.
+//
+// For further details, please see:
+// https://docs.opencv.org/master/d4/d86/group__imgproc__filter.html#gac342a1bb6eabf6f55c803b09268e36dc
+get_structuring_element :: proc(shape: MorphShape, ksize: Point) -> Mat {
+	sz := CSize{c.int(ksize.x), c.int(ksize.y)}
+	return newMat(GetStructuringElement(c.int(shape), sz))
+}
+
+// MorphType type of morphological operation.
+MorphType :: enum {
+	Erode, // MorphErode operation
+	Dilate, // MorphDilate operation
+	Open, // MorphOpen operation
+	Close, // MorphClose operation
+	Gradient, // MorphGradient operation
+	Tophat, // MorphTophat operation
+	Blackhat, // MorphBlackhat operation
+	Hitmiss, // MorphHitmiss operation
+}
+
+// gaussian_blur blurs an image Mat using a Gaussian filter.
+// The function convolves the src Mat image into the dst Mat using
+// the specified Gaussian kernel params.
+//
+// For further details, please see:
+// http://docs.opencv.org/master/d4/d86/group__imgproc__filter.html#gaabe8c836e97159a9193fb0b11ac52cf1
+gaussian_blur :: proc(
+	src: Mat,
+	ksize: Point,
+	sigmaX, sigmaY: f64,
+	borderType: BorderType,
+) -> (
+	dst: Mat,
+) {
+	dst = new_mat()
+	pSize := CSize{c.int(ksize.x), c.int(ksize.y)}
+
+	GaussianBlur(src, dst, pSize, sigmaX, sigmaY, borderType)
+	return
+}
+
+// get_gaussian_kernel returns Gaussian filter coefficients.
+//
+// For further details, please see:
+// https://docs.opencv.org/master/d4/d86/group__imgproc__filter.html#gac05a120c1ae92a6060dd0db190a61afa
+get_gaussian_kernel :: proc(ksize: int, sigma: f64) -> (m: Mat) {
+	return GetGaussianKernel(c.int(ksize), sigma, .CV_64F)
+}
+
+// get_gaussian_kernel_with_params returns Gaussian filter coefficients.
+//
+// For further details, please see:
+// https://docs.opencv.org/master/d4/d86/group__imgproc__filter.html#gac05a120c1ae92a6060dd0db190a61afa
+get_gaussian_kernel_with_params :: proc(ksize: int, sigma: f64, ktype: Mat_Type) -> Mat {
+	return GetGaussianKernel(c.int(ksize), sigma, ktype)
+}
+
 // // Sobel calculates the first, second, third, or mixed image derivatives using an extended Sobel operator
 // //
 // // For further details, please see:

@@ -42,70 +42,61 @@ RawData :: struct {
 }
 
 // Wrapper for an individual cv::Point2f
-Point2f :: struct {
-	x: c.float,
-	y: c.float,
-}
+CPoint2f :: distinct [2]c.float
 
-Point3f :: struct {
-	x: c.float,
-	y: c.float,
-	z: c.float,
-}
+// Wrapper for an individual cv::Point3f
+CPoint3f :: distinct [3]c.float
 
 // Wrapper for an individual cv::cvPoint
-Point :: struct {
-	x: c.int,
-	y: c.int,
-}
+CPoint :: distinct [2]c.int
 
 // Wrapper for the vector of Point structs aka std::vector<Point>
-Points :: struct {
-	points: [^]Point,
+CPoints :: struct {
+	points: [^]CPoint,
 	length: c.int,
 }
 
 // Wrapper for the vector of Point2f structs aka std::vector<Point2f>
-Points2f :: struct {
-	points: [^]Point2f,
+CPoints2f :: struct {
+	points: [^]CPoint2f,
 	length: c.int,
 }
 
-Points3f :: struct {
-	points: [^]Point3f,
+// Wrapper for the vector of Point3f structs aka std::vector<Point3f>
+CPoints3f :: struct {
+	points: [^]CPoint3f,
 	length: c.int,
 }
 
 // Contour is alias for Points
-Contour :: Points
+CContour :: CPoints
 
 // Contour2f is alias for Points2f
-Contour2f :: Points2f
+CContour2f :: CPoints2f
 
-Contours2f :: struct {
-	points: [^]Contour2f,
+CContours2f :: struct {
+	points: [^]CContour2f,
 	length: c.int,
 }
 
 // Contour3f is alias for Points3f
-Contour3f :: Points3f
+CContour3f :: CPoints3f
 
 // Wrapper for the vector of Points3f vectors aka std::vector<
 // std::vector<Point3f> >
-Contours3f :: struct {
-	points: [^]Contours3f,
+CContours3f :: struct {
+	points: [^]CContours3f,
 	length: c.int,
 }
 
 // Wrapper for the vector of Points vectors aka std::vector< std::vector<Point>
-// >
-Contours :: struct {
-	points: [^]Contours,
+CContours :: struct {
+	points: [^]CContours,
 	length: c.int,
 }
 
 // Wrapper for an individual cv::cvRect
-Rect :: struct {
+CRect :: struct {
 	x:      c.int,
 	y:      c.int,
 	width:  c.int,
@@ -113,38 +104,36 @@ Rect :: struct {
 }
 
 // Wrapper for the vector of Rect struct aka std::vector<Rect>
-Rects :: struct {
-	points: [^]Rect,
+CRects :: struct {
+	points: [^]CRect,
 	length: c.int,
 }
 
 // Wrapper for an individual cv::cvSize
-Size :: struct {
-	width:  c.int,
-	height: c.int,
+CSize :: struct {
+	width, height: c.int,
 }
 
 // Wrapper for an individual cv::cvSize
-Size2f :: struct {
-	width:  c.float,
-	height: c.float,
+CSize2f :: struct {
+	width, height: c.float,
 }
 
 // Wrapper for an individual cv::RotatedRect
-RotatedRect :: struct {
-	pts:          Points,
-	boundingRect: Rect,
-	center:       Point,
-	size:         Size,
+CRotatedRect :: struct {
+	pts:          CPoints,
+	boundingRect: CRect,
+	center:       CPoint,
+	size:         CSize,
 	angle:        c.double,
 }
 
 // Wrapper for an individual cv::RotatedRect
-RotatedRect2f :: struct {
-	pts:          Points2f,
-	boundingRect: Rect,
-	center:       Point2f,
-	size:         Size2f,
+CRotatedRect2f :: struct {
+	pts:          CPoints2f,
+	boundingRect: CRect,
+	center:       CPoint2f,
+	size:         CSize2f,
 	angle:        c.double,
 }
 
@@ -255,14 +244,6 @@ Points2fVector :: distinct rawptr
 Point3fVector :: distinct rawptr
 Points3fVector :: distinct rawptr
 
-Matrix :: struct {
-	p:    Mat,
-	rows: int,
-	cols: int,
-	type: Mat_Type,
-	data: []byte,
-}
-
 FlipCode :: enum c.int {
 	Horizontal = 1,
 	Vertical   = 0,
@@ -274,7 +255,7 @@ Mats :: struct {
 	length: c.int,
 }
 
-Mat_Type :: enum {
+Mat_Type :: enum c.int {
 	CV_8U    = 0, // MatTypeCV8U is a Mat of 8-bit unsigned in
 	CV_8S    = 1, // CV8S is a Mat of 8-bit signed in
 	CV_16U   = 2, // CV16U is a Mat of 16-bit unsigned in
@@ -397,7 +378,7 @@ foreign cv {
 
 	// Mat_Region returns a Mat of a region of another Mat
 	@(link_name = "Mat_Region")
-	mat_region :: proc(m: Mat, r: Rect) -> Mat ---
+	mat_region :: proc(m: Mat, r: CRect) -> Mat ---
 
 	@(link_name = "Mat_Reshape")
 	mat_reshape :: proc(m: Mat, cn, rows: c.int) -> Mat ---
@@ -753,7 +734,7 @@ foreign cv {
 	min_max_loc :: proc(m: Mat, minVal: ^c.double, maxVal: ^c.double, minLoc, maxLoc: ^Point) ---
 
 	@(link_name = "Mat_MinMaxLocWithMask")
-	min_max_loc_with_mask :: proc(m: Mat, minVal: ^c.double, maxVal: ^c.double, minLoc, maxLoc: ^Point, mask: Mat) ---
+	min_max_loc_with_mask :: proc(m: Mat, minVal: ^c.double, maxVal: ^c.double, minLoc, maxLoc: ^CPoint, mask: Mat) ---
 
 	@(link_name = "Mat_MixChannels")
 	mix_channels :: proc(src, dst: Mats, fromTo: IntVector) ---
@@ -842,7 +823,7 @@ foreign cv {
 	termcriteria_new :: proc(typ, maxCount: c.int, epsilon: c.double) -> TermCriteria ---
 
 	@(link_name = "Contours_Close")
-	contours_close :: proc(cs: Contours) ---
+	contours_close :: proc(cs: CContours) ---
 
 	@(link_name = "CStrings_Close")
 	cstrings_close :: proc(cstrs: CStrings) ---
@@ -851,19 +832,19 @@ foreign cv {
 	keypoints_close :: proc(ks: KeyPoints) ---
 
 	@(link_name = "Points_Close")
-	points_close :: proc(ps: Points) ---
+	points_close :: proc(ps: CPoints) ---
 
 	@(link_name = "Point_Close")
-	point_close :: proc(p: Point) ---
+	point_close :: proc(p: CPoint) ---
 
 	@(link_name = "Points2f_Close")
-	points2f_close :: proc(ps: Points2f) ---
+	points2f_close :: proc(ps: CPoints2f) ---
 
 	@(link_name = "Point2f_Close")
-	point2f_close :: proc(p: Point2f) ---
+	point2f_close :: proc(p: CPoint2f) ---
 
 	@(link_name = "Rects_Close")
-	delete_rects :: proc(rs: Rects) ---
+	delete_rects :: proc(rs: CRects) ---
 
 	@(link_name = "DMatches_Close")
 	dmatches_close :: proc(ds: DMatches) ---
@@ -902,7 +883,7 @@ foreign cv {
 	point_vector_new :: proc() -> PointVector ---
 
 	@(link_name = "PointVector_NewFromPoints")
-	point_vector_new_from_points :: proc(points: Contour) -> PointVector ---
+	point_vector_new_from_points :: proc(points: CContour) -> PointVector ---
 
 	@(link_name = "PointVector_NewFromMat")
 	point_vector_new_from_mat :: proc(mat: Mat) -> PointVector ---
@@ -911,7 +892,7 @@ foreign cv {
 	point_vector_at :: proc(pv: PointVector, idx: c.int) -> Point ---
 
 	@(link_name = "PointVector_Append")
-	point_vector_append :: proc(pv: PointVector, p: Point) ---
+	point_vector_append :: proc(pv: PointVector, p: CPoint) ---
 
 	@(link_name = "PointVector_Size")
 	point_vector_size :: proc(p: PointVector) -> c.int ---
@@ -923,7 +904,7 @@ foreign cv {
 	points_vector_new :: proc() -> PointsVector ---
 
 	@(link_name = "PointsVector_NewFromPoints")
-	points_vector_newfrompoints :: proc(points: Contours) -> PointsVector ---
+	points_vector_newfrompoints :: proc(points: CContours) -> PointsVector ---
 
 	@(link_name = "PointsVector_Size")
 	points_vector_size :: proc(ps: PointsVector) -> int ---
@@ -941,13 +922,13 @@ foreign cv {
 	point2f_vector_new :: proc() -> Point2fVector ---
 
 	@(link_name = "Point2fVector_NewFromPoints")
-	point2f_vector_newfrompoints :: proc(points: Contour2f) -> Point2fVector ---
+	point2f_vector_newfrompoints :: proc(points: CContour2f) -> Point2fVector ---
 
 	@(link_name = "Point2fVector_NewFromMat")
 	point2f_vector_newfrommat :: proc(mat: Mat) -> Point2fVector ---
 
 	@(link_name = "Point2fVector_At")
-	point2f_vector_at :: proc(pfv: Point2fVector, idx: c.int) -> Point2f ---
+	point2f_vector_at :: proc(pfv: Point2fVector, idx: c.int) -> CPoint2f ---
 
 	@(link_name = "Point2fVector_Size")
 	point2f_vector_size :: proc(pfv: Point2fVector) -> c.int ---
@@ -1004,7 +985,7 @@ foreign cv {
 	points2f_vector_new :: proc() -> Points2fVector ---
 
 	@(link_name = "Points2fVector_NewFromPoints")
-	points2f_vector_new_from_points :: proc(points: Contours2f) -> Points2fVector ---
+	points2f_vector_new_from_points :: proc(points: CContours2f) -> Points2fVector ---
 
 	@(link_name = "Points2fVector_Size")
 	points2f_vector_size :: proc(ps: Points2fVector) -> c.int ---
@@ -1022,16 +1003,16 @@ foreign cv {
 	point3f_vector_new :: proc() -> Point3fVector ---
 
 	@(link_name = "Point3fVector_NewFromPoints")
-	point3f_vector_newfrompoints :: proc(points: Contour3f) -> Point3fVector ---
+	point3f_vector_newfrompoints :: proc(points: CContour3f) -> Point3fVector ---
 
 	@(link_name = "Point3fVector_NewFromMat")
 	point3f_vector_newfrommat :: proc(mat: Mat) -> Point3fVector ---
 
 	@(link_name = "Point3fVector_At")
-	point3f_vector_at :: proc(pfv: Point3fVector, idx: c.int) -> Point3f ---
+	point3f_vector_at :: proc(pfv: Point3fVector, idx: c.int) -> CPoint3f ---
 
 	@(link_name = "Point3fVector_Append")
-	point3f_vector_append :: proc(pfv: Point3fVector, point: Point3f) ---
+	point3f_vector_append :: proc(pfv: Point3fVector, point: CPoint3f) ---
 
 	@(link_name = "Point3fVector_Size")
 	point3f_vector_size :: proc(pfv: Point3fVector) -> c.int ---
@@ -1043,7 +1024,7 @@ foreign cv {
 	points3f_vector_new :: proc() -> Points3fVector ---
 
 	@(link_name = "Points3fVector_NewFromPoints")
-	points3f_vector_newfrompoints :: proc(points: Contours3f) -> Points3fVector ---
+	points3f_vector_newfrompoints :: proc(points: CContours3f) -> Points3fVector ---
 
 	@(link_name = "Points3fVector_Size")
 	points3f_vector_size :: proc(ps: Points3fVector) -> c.int ---
