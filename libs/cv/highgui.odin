@@ -70,8 +70,8 @@ foreign cv {
 	Window_WaitKey :: proc(delay: c.int = 0) -> c.int ---
 	Window_Move :: proc(winname: cstring, x, y: c.int) ---
 	Window_Resize :: proc(winname: cstring, width, height: c.int) ---
-	Window_SelectROI :: proc(winname: cstring, img: Mat) -> Rect ---
-	Window_SelectROIs :: proc(winname: cstring, img: Mat) -> Rects ---
+	Window_SelectROI :: proc(winname: cstring, img: Mat) -> CRect ---
+	Window_SelectROIs :: proc(winname: cstring, img: Mat) -> CRects ---
 }
 
 // named_window creates a new named OpenCV window
@@ -196,11 +196,13 @@ resize_window :: proc(w: ^Window, width, height: int) {
 //
 // For further details, please see:
 // https://docs.opencv.org/master/d7/dfc/group__highgui.html#ga8daf4730d3adf7035b6de9be4c469af5
-select_ROI :: proc(w: ^Window, img: Mat) -> Rect {
+select_ROI :: proc(w: ^Window, img: Mat) -> (r: Rect) {
 	c_name := strings.clone_to_cstring(w.name)
 	defer delete(c_name)
 
-	return Window_SelectROI(c_name, img)
+	roi := Window_SelectROI(c_name, img)
+	r = new_rect(cast(int)roi.x, cast(int)roi.y, cast(int)roi.width, cast(int)roi.height)
+	return
 }
 
 // select_ROIs selects multiple Regions Of Interest (ROI) on the given image.
@@ -212,11 +214,17 @@ select_ROI :: proc(w: ^Window, img: Mat) -> Rect {
 //
 // For further details, please see:
 // https://docs.opencv.org/master/d7/dfc/group__highgui.html#ga0f11fad74a6432b8055fb21621a0f893
-select_ROIs :: proc(w: ^Window, img: Mat) -> Rects {
+select_ROIs :: proc(w: ^Window, img: Mat) -> (rs: []Rect) {
 	c_name := strings.clone_to_cstring(w.name)
 	defer delete(c_name)
 
-	return Window_SelectROIs(c_name, img)
+	rois := Window_SelectROIs(c_name, img)
+	rs = make([]Rect, rois.length)
+	for r, i in rois.points[:rois.length] {
+		rs[i] = new_rect(cast(int)r.x, cast(int)r.y, cast(int)r.width, cast(int)r.height)
+	}
+
+	return
 }
 
 @(default_calling_convention = "c")

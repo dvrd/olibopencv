@@ -1,6 +1,7 @@
 package cv
 
 import "core:c"
+import "core:strings"
 
 when ODIN_OS == .Darwin {
 	foreign import cv "libcv.dylib"
@@ -224,26 +225,26 @@ foreign cv {
 	ConnectedComponentsWithStats :: proc(src: Mat, labels: Mat, stats: Mat, centroids: Mat, connectivity: c.int, ltype: Mat_Type, ccltype: CCL_AlgorithmType) -> c.int ---
 	GaussianBlur :: proc(src: Mat, dst: Mat, ps: CSize, sX, sY: c.double, bt: BorderType) ---
 	GetGaussianKernel :: proc(ksize: c.int, sigma: c.double, ktype: Mat_Type) -> Mat ---
-	Laplacian :: proc(src: Mat, dst: Mat, dDepth, kSize: c.int, scale, delta: c.double, borderType: BorderType) ---
-	Scharr :: proc(src: Mat, dst: Mat, dDepth: c.int, dx, dy: c.int, scale, delta: c.double, borderType: BorderType) ---
+	Laplacian :: proc(src, dst: Mat, dDepth: Mat_Type, kSize: c.int, scale, delta: c.double, borderType: BorderType) ---
+	Scharr :: proc(src, dst: Mat, dDepth: Mat_Type, dx, dy: c.int, scale, delta: c.double, borderType: BorderType) ---
 	GetStructuringElement :: proc(shape: c.int, ksize: CSize) -> Mat ---
 	MorphologyDefaultBorderValue :: proc() -> Scalar ---
 	MorphologyEx :: proc(src: Mat, dst: Mat, op: MorphType, kernel: Mat) ---
 	MorphologyExWithParams :: proc(src: Mat, dst: Mat, op: MorphType, kernel: Mat, pt: CPoint, iterations, borderType: BorderType) ---
 	MedianBlur :: proc(src: Mat, dst: Mat, ksize: c.int) ---
 	Canny :: proc(src: Mat, edges: Mat, t1: c.double, t2: c.double) ---
-	CornerSubPix :: proc(img: Mat, corners: Mat, winSize: CSize, zeroZone: Size, criteria: TermCriteria) ---
+	CornerSubPix :: proc(img: Mat, corners: Mat, winSize: CSize, zeroZone: CSize, criteria: TermCriteria) ---
 	GoodFeaturesToTrack :: proc(img: Mat, corners: Mat, maxCorners: c.int, quality: c.double, minDist: c.double) ---
-	GrabCut :: proc(img: Mat, mask: Mat, rect: CRect, bgdModel: Mat, fgdModel: Mat, iterCount: c.int, mode: c.int) ---
-	HoughCircles :: proc(src: Mat, circles: Mat, method: c.int, dp: c.double, minDist: c.double) ---
-	HoughCirclesWithParams :: proc(src: Mat, circles: Mat, method: c.int, dp: c.double, minDist: c.double, param1: c.double, param2: c.double, minRadius: c.int, maxRadius: c.int) ---
+	GrabCut :: proc(img: Mat, mask: Mat, rect: CRect, bgdModel: Mat, fgdModel: Mat, iterCount: c.int, mode: GrabCutMode) ---
+	HoughCircles :: proc(src, circles: Mat, method: HoughMode, dp, minDist: c.double) ---
+	HoughCirclesWithParams :: proc(src, circles: Mat, method: HoughMode, dp, minDist, param1, param2: c.double, minRadius, maxRadius: c.int) ---
 	HoughLines :: proc(src: Mat, lines: Mat, rho: c.double, theta: c.double, threshold: c.int) ---
 	HoughLinesP :: proc(src: Mat, lines: Mat, rho: c.double, theta: c.double, threshold: c.int) ---
 	HoughLinesPWithParams :: proc(src: Mat, lines: Mat, rho: c.double, theta: c.double, threshold: c.int, minLineLength: c.double, maxLineGap: c.double) ---
 	HoughLinesPointSet :: proc(points: Mat, lines: Mat, lines_max: c.int, threshold: c.int, min_rho: c.double, max_rho: c.double, rho_step: c.double, min_theta: c.double, max_theta: c.double, theta_step: c.double) ---
 	Integral :: proc(src: Mat, sum: Mat, sqsum: Mat, tilted: Mat) ---
-	Threshold :: proc(src: Mat, dst: Mat, thresh: c.double, maxvalue: c.double, typ: c.int) -> c.double ---
-	AdaptiveThreshold :: proc(src: Mat, dst: Mat, maxValue: c.double, adaptiveTyp: c.int, typ: c.int, blockSize: c.int, c: c.double) ---
+	Threshold :: proc(src: Mat, dst: Mat, thresh, maxvalue: c.double, typ: ThresholdType) -> c.double ---
+	AdaptiveThreshold :: proc(src: Mat, dst: Mat, maxValue: c.double, adaptiveTyp: c.int, typ: c.int, blockSize: c.int, const: c.double) ---
 	ArrowedLine :: proc(img: Mat, pt1: CPoint, pt2: CPoint, color: Scalar, thickness: c.int) ---
 	Circle :: proc(img: Mat, center: CPoint, radius: c.int, color: Scalar, thickness: c.int) ---
 	CircleWithParams :: proc(img: Mat, center: CPoint, radius: c.int, color: Scalar, thickness: c.int, lineType: c.int, shift: c.int) ---
@@ -255,7 +256,7 @@ foreign cv {
 	FillPoly :: proc(img: Mat, points: PointsVector, color: Scalar) ---
 	FillPolyWithParams :: proc(img: Mat, points: PointsVector, color: Scalar, lineType: c.int, shift: c.int, offset: CPoint) ---
 	Polylines :: proc(img: Mat, points: PointsVector, isClosed: c.bool, color: Scalar, thickness: c.int) ---
-	GetTextSize :: proc(text: cstring, fontFace: c.int, fontScale: c.double, thickness: c.int) -> Size ---
+	GetTextSize :: proc(text: cstring, fontFace: HersheyFont, fontScale: c.double, thickness: c.int) -> Size ---
 	GetTextSizeWithBaseline :: proc(text: cstring, fontFace: c.int, fontScale: c.double, thickness: c.int, baseline: ^c.int) -> Size ---
 	PutText :: proc(img: Mat, text: cstring, org: CPoint, fontFace: c.int, fontScale: c.double, color: Scalar, thickness: c.int) ---
 	PutTextWithParams :: proc(img: Mat, text: cstring, org: CPoint, fontFace: c.int, fontScale: c.double, color: Scalar, thickness: c.int, lineType: c.int, bottomLeftOrigin: c.bool) ---
@@ -276,8 +277,8 @@ foreign cv {
 	FindHomography :: proc(src: Mat, dst: Mat, method: c.int, ransacReprojThreshold: c.double, mask: Mat, maxIters: c.int, confidence: c.double) -> Mat ---
 	DrawContours :: proc(src: Mat, contours: PointsVector, contourIdx: c.int, color: Scalar, thickness: c.int) ---
 	DrawContoursWithParams :: proc(src: Mat, contours: PointsVector, contourIdx: c.int, color: Scalar, thickness: c.int, lineType: c.int, hierarchy: Mat, maxLevel: c.int, offset: CPoint) ---
-	Sobel :: proc(src: Mat, dst: Mat, ddepth: c.int, dx: c.int, dy: c.int, ksize: c.int, scale: c.double, delta: c.double, borderType: BorderType) ---
-	SpatialGradient :: proc(src: Mat, dx: Mat, dy: Mat, ksize: c.int, borderType: BorderType) ---
+	Sobel :: proc(src: Mat, dst: Mat, ddepth: Mat_Type, dx, dy, ksize: c.int, scale, delta: c.double, borderType: BorderType) ---
+	SpatialGradient :: proc(src, dx, dy: Mat, ksize: Mat_Type, borderType: BorderType) ---
 	Remap :: proc(src: Mat, dst: Mat, map1: Mat, map2: Mat, interpolation: c.int, borderMode: c.int, borderValue: Scalar) ---
 	Filter2D :: proc(src: Mat, dst: Mat, ddepth: c.int, kernel: Mat, anchor: CPoint, delta: c.double, borderType: BorderType) ---
 	SepFilter2D :: proc(src: Mat, dst: Mat, ddepth: c.int, kernelX: Mat, kernelY: Mat, anchor: CPoint, delta: c.double, borderType: BorderType) ---
@@ -361,7 +362,7 @@ equalize_hist :: proc(src: Mat) -> (dst: Mat) {
 
 // calc_hist Calculates a histogram of a set of images
 //
-// For futher details, please see:
+// For further details, please see:
 // https://docs.opencv.org/master/d6/dc7/group__imgproc__hist.html#ga6ca1876785483836f72a77ced8ea759a
 calc_hist :: proc(mats: Mats, chans: []int, mask, hist: Mat, sz: []int, rng: []f32, acc: bool) {
 	c_chans := IntVector{cast([^]c.int)&chans[0], cast(c.int)len(chans)}
@@ -372,7 +373,7 @@ calc_hist :: proc(mats: Mats, chans: []int, mask, hist: Mat, sz: []int, rng: []f
 
 // calc_back_project calculates the back projection of a histogram.
 //
-// For futher details, please see:
+// For further details, please see:
 // https://docs.opencv.org/3.4/d6/dc7/group__imgproc__hist.html#ga3a0af640716b456c3d14af8aee12e3ca
 calc_back_project :: proc(
 	mats: Mats,
@@ -395,7 +396,7 @@ HistCmpMethod :: enum int {
 	Intersect    = 2, // HistCmpIntersect calculates the Intersection
 	Bhattacharya = 3, // HistCmpBhattacharya applies the HistCmpBhattacharya by calculating the Bhattacharya distance.
 	Hellinger    = Bhattacharya, // HistCmpHellinger applies the HistCmpBhattacharya comparison. It is a synonym to HistCmpBhattacharya.
-	ChiSqrAlt    = 4, // HistCmpChiSqrAlt applies the Alternative Chi-Square (regularly used for texture comparsion).
+	ChiSqrAlt    = 4, // HistCmpChiSqrAlt applies the Alternative Chi-Square (regularly used for texture comparison).
 	KlDiv        = 5, // HistCmpKlDiv applies the Kullback-Liebler divergence comparison.
 }
 
@@ -680,7 +681,7 @@ Rect :: struct {
 // Rect is shorthand for [Rectangle]{Pt(x0, y0), [Pt](x1, y1)}. The returned
 // rectangle has minimum and maximum coordinates swapped if necessary so that
 // it is well-formed.
-rect :: proc(x0, y0, x1, y1: int) -> Rect {
+new_rect :: proc(x0, y0, x1, y1: int) -> Rect {
 	x0 := x0;y0 := y0;x1 := x1;y1 := y1
 
 	if x0 > x1 {
@@ -692,13 +693,17 @@ rect :: proc(x0, y0, x1, y1: int) -> Rect {
 	return Rect{Point{x0, y0}, Point{x1, y1}}
 }
 
+rect_size :: proc(r: Rect) -> Size {
+	return {r.max.x - r.min.x, r.max.y - r.min.y}
+}
+
 // bounding_rect calculates the up-right bounding rectangle of a point set.
 //
 // For further details, please see:
 // https://docs.opencv.org/3.3.0/d3/dc0/group__imgproc__shape.html#gacb413ddce8e48ff3ca61ed7cf626a366
 bounding_rect :: proc(contour: PointVector) -> Rect {
 	r := BoundingRect(contour)
-	return rect(cast(int)r.x, cast(int)r.y, cast(int)r.width, cast(int)r.height)
+	return new_rect(cast(int)r.x, cast(int)r.y, cast(int)r.width, cast(int)r.height)
 }
 
 RotatedRect :: struct {
@@ -717,8 +722,8 @@ box_points :: proc(rect: RotatedRect, pts: Mat) {
 	rRect := CRect {
 		cast(c.int)rect.bounding_rect.min.x,
 		cast(c.int)rect.bounding_rect.min.y,
-		cast(c.int)(rect.bounding_rect.max.x - rect.bounding_rect.min.x),
-		cast(c.int)(rect.bounding_rect.max.y - rect.bounding_rect.min.y),
+		cast(c.int)(rect_size(rect.bounding_rect).width),
+		cast(c.int)(rect_size(rect.bounding_rect).height),
 	}
 
 	rCenter := CPoint{cast(c.int)rect.center.x, cast(c.int)rect.center.y}
@@ -821,7 +826,7 @@ min_area_rect :: proc(points: PointVector) -> RotatedRect {
 
 	return RotatedRect {
 		pts = to_points(result.pts),
-		bounding_rect = rect(
+		bounding_rect = new_rect(
 			int(result.boundingRect.x),
 			int(result.boundingRect.y),
 			int(result.boundingRect.x + result.boundingRect.width),
@@ -843,7 +848,7 @@ min_area_rect_2f :: proc(points: PointVector) -> RotatedRect2f {
 
 	return RotatedRect2f {
 		pts = to_points_2f(result.pts),
-		bounding_rect = rect(
+		bounding_rect = new_rect(
 			int(result.boundingRect.x),
 			int(result.boundingRect.y),
 			int(result.boundingRect.x + result.boundingRect.width),
@@ -865,7 +870,7 @@ fit_ellipse :: proc(pts: PointVector) -> RotatedRect {
 
 	return RotatedRect {
 		pts = to_points(result.pts),
-		bounding_rect = rect(
+		bounding_rect = new_rect(
 			int(result.boundingRect.x),
 			int(result.boundingRect.y),
 			int(result.boundingRect.x) + int(result.boundingRect.width),
@@ -1110,14 +1115,14 @@ MorphShape :: enum {
 	Ellipse, // MorphEllipse is the ellipse morph shape.
 }
 
-// GetStructuringElement returns a structuring element of the specified size
+// get_structuring_element returns a structuring element of the specified size
 // and shape for morphological operations.
 //
 // For further details, please see:
 // https://docs.opencv.org/master/d4/d86/group__imgproc__filter.html#gac342a1bb6eabf6f55c803b09268e36dc
 get_structuring_element :: proc(shape: MorphShape, ksize: Point) -> Mat {
 	sz := CSize{c.int(ksize.x), c.int(ksize.y)}
-	return newMat(GetStructuringElement(c.int(shape), sz))
+	return GetStructuringElement(c.int(shape), sz)
 }
 
 // MorphType type of morphological operation.
@@ -1169,424 +1174,440 @@ get_gaussian_kernel_with_params :: proc(ksize: int, sigma: f64, ktype: Mat_Type)
 	return GetGaussianKernel(c.int(ksize), sigma, ktype)
 }
 
-// // Sobel calculates the first, second, third, or mixed image derivatives using an extended Sobel operator
-// //
-// // For further details, please see:
-// // https://docs.opencv.org/master/d4/d86/group__imgproc__filter.html#gacea54f142e81b6758cb6f375ce782c8d
-// Sobel(src Mat, dst *Mat, ddepth MatType, dx, dy, ksize int, scale, delta f64, borderType BorderType) {
-// 	C.Sobel(src, dst, c.int(ddepth), C.int(dx), C.int(dy), C.int(ksize), c.double(scale), c.double(delta), C.int(borderType))
-// }
+// sobel calculates the first, second, third, or mixed image derivatives using an extended Sobel operator
 //
-// // SpatialGradient calculates the first order image derivative in both x and y using a Sobel operator.
-// //
-// // For further details, please see:
-// // https://docs.opencv.org/master/d4/d86/group__imgproc__filter.html#ga405d03b20c782b65a4daf54d233239a2
-// SpatialGradient(src Mat, dx, dy *Mat, ksize MatType, borderType BorderType) {
-// 	C.SpatialGradient(src, dx, dy, c.int(ksize), C.int(borderType))
-// }
+// For further details, please see:
+// https://docs.opencv.org/master/d4/d86/group__imgproc__filter.html#gacea54f142e81b6758cb6f375ce782c8d
+sobel :: proc(
+	src: Mat,
+	ddepth: Mat_Type,
+	dx, dy, ksize: int,
+	scale, delta: f64,
+	borderType: BorderType,
+) -> (
+	dst: Mat,
+) {
+	dst = new_mat()
+	Sobel(src, dst, ddepth, c.int(dx), c.int(dy), c.int(ksize), scale, delta, borderType)
+	return
+}
+
+// spatial_gradient calculates the first order image derivative in both x and y using a Sobel operator.
 //
-// // Laplacian calculates the Laplacian of an image.
-// //
-// // For further details, please see:
-// // https://docs.opencv.org/master/d4/d86/group__imgproc__filter.html#gad78703e4c8fe703d479c1860d76429e6
-// Laplacian(src Mat, dst *Mat, dDepth MatType, size int, scale f64,
-// 	delta f64, borderType BorderType) {
-// 	C.Laplacian(src, dst, c.int(dDepth), C.int(size), c.double(scale), c.double(delta), C.int(borderType))
-// }
+// For further details, please see:
+// https://docs.opencv.org/master/d4/d86/group__imgproc__filter.html#ga405d03b20c782b65a4daf54d233239a2
+spatial_gradient :: proc(src, dx, dy: Mat, ksize: Mat_Type, borderType: BorderType) {
+	SpatialGradient(src, dx, dy, ksize, borderType)
+}
+
+// laplacian calculates the Laplacian of an image.
 //
-// // Scharr calculates the first x- or y- image derivative using Scharr operator.
-// //
-// // For further details, please see:
-// // https://docs.opencv.org/master/d4/d86/group__imgproc__filter.html#gaa13106761eedf14798f37aa2d60404c9
-// Scharr(src Mat, dst *Mat, dDepth MatType, dx int, dy int, scale f64,
-// 	delta f64, borderType BorderType) {
-// 	C.Scharr(src, dst, c.int(dDepth), C.int(dx), C.int(dy), c.double(scale), c.double(delta), C.int(borderType))
-// }
+// For further details, please see:
+// https://docs.opencv.org/master/d4/d86/group__imgproc__filter.html#gad78703e4c8fe703d479c1860d76429e6
+laplacian :: proc(
+	src: Mat,
+	dDepth: Mat_Type,
+	size: int,
+	scale, delta: f64,
+	borderType: BorderType,
+) -> (
+	dst: Mat,
+) {
+	dst = new_mat()
+	Laplacian(src, dst, dDepth, c.int(size), scale, delta, borderType)
+	return
+}
+
+// scharr calculates the first x- or y- image derivative using Scharr operator.
 //
-// // MedianBlur blurs an image using the median filter.
-// //
-// // For further details, please see:
-// // https://docs.opencv.org/master/d4/d86/group__imgproc__filter.html#ga564869aa33e58769b4469101aac458f9
-// MedianBlur(src Mat, dst *Mat, ksize int) {
-// 	C.MedianBlur(src, dst, c.int(ksize))
-// }
+// For further details, please see:
+// https://docs.opencv.org/master/d4/d86/group__imgproc__filter.html#gaa13106761eedf14798f37aa2d60404c9
+scharr :: proc(
+	src: Mat,
+	dDepth: Mat_Type,
+	dx, dy: int,
+	scale, delta: f64,
+	borderType: BorderType,
+) -> (
+	dst: Mat,
+) {
+	dst = new_mat()
+	Scharr(src, dst, dDepth, c.int(dx), c.int(dy), scale, delta, borderType)
+	return
+}
+
+// median_blur blurs an image using the median filter.
 //
-// // Canny finds edges in an image using the Canny algorithm.
-// // The function finds edges in the input image image and marks
-// // them in the output map edges using the Canny algorithm.
-// // The smallest value between threshold1 and threshold2 is used
-// // for edge linking. The largest value is used to
-// // find initial segments of strong edges.
-// // See http://en.wikipedia.org/wiki/Canny_edge_detector
-// //
-// // For further details, please see:
-// // http://docs.opencv.org/master/dd/d1a/group__imgproc__feature.html#ga04723e007ed888ddf11d9ba04e2232de
-// Canny(src Mat, edges *Mat, t1 f32, t2 float32) {
-// 	C.Canny(src, edges, c.double(t1), c.double(t2))
-// }
+// For further details, please see:
+// https://docs.opencv.org/master/d4/d86/group__imgproc__filter.html#ga564869aa33e58769b4469101aac458f9
+median_blur :: proc(src: Mat, ksize: int) -> (dst: Mat) {
+	dst = new_mat()
+	MedianBlur(src, dst, c.int(ksize))
+	return
+}
+
+// canny finds edges in an image using the Canny algorithm.
+// The function finds edges in the input image image and marks
+// them in the output map edges using the Canny algorithm.
+// The smallest value between threshold1 and threshold2 is used
+// for edge linking. The largest value is used to
+// find initial segments of strong edges.
+// See http://en.wikipedia.org/wiki/Canny_edge_detector
 //
-// // CornerSubPix Refines the corner locations. The function iterates to find
-// // the sub-pixel accurate location of corners or radial saddle points.
-// //
-// // For further details, please see:
-// // https://docs.opencv.org/master/dd/d1a/group__imgproc__feature.html#ga354e0d7c86d0d9da75de9b9701a9a87e
-// CornerSubPix(img Mat, corners *Mat, winSize image.Point, zeroZone image.Point, criteria TermCriteria) {
-// 	winSz := Size{
-// 		width:  c.int(winSize.X),
-// 		height: c.int(winSize.Y),
-// 	}
+// For further details, please see:
+// http://docs.opencv.org/master/dd/d1a/group__imgproc__feature.html#ga04723e007ed888ddf11d9ba04e2232de
+canny :: proc(src, edges: Mat, t1, t2: f64) {
+	Canny(src, edges, t1, t2)
+}
+
+// corner_sub_pix Refines the corner locations. The function iterates to find
+// the sub-pixel accurate location of corners or radial saddle points.
 //
-// 	zeroSz := Size{
-// 		width:  c.int(zeroZone.X),
-// 		height: c.int(zeroZone.Y),
-// 	}
+// For further details, please see:
+// https://docs.opencv.org/master/dd/d1a/group__imgproc__feature.html#ga354e0d7c86d0d9da75de9b9701a9a87e
+corner_sub_pix :: proc(img, corners: Mat, winSize, zeroZone: Point, criteria: TermCriteria) {
+	winSz := CSize{c.int(winSize.x), c.int(winSize.y)}
+	zeroSz := CSize{c.int(zeroZone.x), c.int(zeroZone.y)}
+
+	CornerSubPix(img, corners, winSz, zeroSz, criteria)
+}
+
+// good_features_to_track determines strong corners on an image. The function
+// finds the most prominent corners in the image or in the specified image region.
 //
-// 	C.CornerSubPix(img, corners, winSz, zeroSz, criteria.p)
-// 	return
-// }
+// For further details, please see:
+// https://docs.opencv.org/master/dd/d1a/group__imgproc__feature.html#ga1d6bb77486c8f92d79c8793ad995d541
+good_features_to_track :: proc(img, corners: Mat, maxCorners: int, quality, minDist: f64) {
+	GoodFeaturesToTrack(img, corners, c.int(maxCorners), quality, minDist)
+}
+
+// GrabCutMode is the flag for GrabCut algorithm.
+GrabCutMode :: enum {
+	// GCInitWithRect makes the function initialize the state and the mask using the provided rectangle.
+	// After that it runs the itercount iterations of the algorithm.
+	InitWithRect,
+	// GCInitWithMask makes the function initialize the state using the provided mask.
+	// GCInitWithMask and GCInitWithRect can be combined.
+	// Then all the pixels outside of the ROI are automatically initialized with GC_BGD.
+	InitWithMask,
+	// GCEval means that the algorithm should just resume.
+	Eval,
+	// GCEvalFreezeModel means that the algorithm should just run a single iteration of the GrabCut algorithm
+	// with the fixed model
+	EvalFreezeModel,
+}
+
+// grab_cut runs the GrabCut algorithm.
+// The function implements the GrabCut image segmentation algorithm.
+// For further details, please see:
+// https://docs.opencv.org/master/d7/d1b/group__imgproc__misc.html#ga909c1dda50efcbeaa3ce126be862b37f
+grab_cut :: proc(
+	img, mask: Mat,
+	r: Rect,
+	bgdModel, fgdModel: Mat,
+	iterCount: int,
+	mode: GrabCutMode,
+) {
+	cRect := CRect {
+		x      = c.int(r.min.x),
+		y      = c.int(r.min.y),
+		width  = c.int(r.max.x - r.min.x),
+		height = c.int(r.max.y - r.min.y),
+	}
+
+	GrabCut(img, mask, cRect, bgdModel, fgdModel, c.int(iterCount), mode)
+}
+
+// HoughMode is the type for Hough transform variants.
+HoughMode :: enum {
+	// HoughStandard is the classical or standard Hough transform.
+	Standard,
+	// HoughProbabilistic is the probabilistic Hough transform (more efficient
+	// in case if the picture contains a few long linear segments).
+	Probabilistic,
+	// HoughMultiScale is the multi-scale variant of the classical Hough
+	// transform.
+	MultiScale,
+	// HoughGradient is basically 21HT, described in: HK Yuen, John Princen,
+	// John Illingworth, and Josef Kittler. Comparative study of hough
+	// transform methods for circle finding. Image and Vision Computing,
+	// 8(1):71–77, 1990.
+	Gradient,
+}
+
+// hough_circles finds circles in a grayscale image using the Hough transform.
+// The only "method" currently supported is HoughGradient. If you want to pass
+// more parameters, please see `HoughCirclesWithParams`.
 //
-// // GoodFeaturesToTrack determines strong corners on an image. The function
-// // finds the most prominent corners in the image or in the specified image region.
-// //
-// // For further details, please see:
-// // https://docs.opencv.org/master/dd/d1a/group__imgproc__feature.html#ga1d6bb77486c8f92d79c8793ad995d541
-// GoodFeaturesToTrack(img Mat, corners *Mat, maxCorners int, quality f64, minDist float64) {
-// 	C.GoodFeaturesToTrack(img, corners, c.int(maxCorners), c.double(quality), c.double(minDist))
-// }
+// For further details, please see:
+// https://docs.opencv.org/master/dd/d1a/group__imgproc__feature.html#ga47849c3be0d0406ad3ca45db65a25d2d
+hough_circles :: proc(src, circles: Mat, method: HoughMode, dp, minDist: f64) {
+	HoughCircles(src, circles, method, dp, minDist)
+}
+
+// hough_circles_with_params finds circles in a grayscale image using the Hough
+// transform. The only "method" currently supported is HoughGradient.
 //
-// // GrabCutMode is the flag for GrabCut algorithm.
-// type GrabCutMode int
+// For further details, please see:
+// https://docs.opencv.org/master/dd/d1a/group__imgproc__feature.html#ga47849c3be0d0406ad3ca45db65a25d2d
+hough_circles_with_params :: proc(
+	src, circles: Mat,
+	method: HoughMode,
+	dp, minDist, param1, param2: f64,
+	minRadius, maxRadius: int,
+) {
+	HoughCirclesWithParams(
+		src,
+		circles,
+		method,
+		dp,
+		minDist,
+		param1,
+		param2,
+		c.int(minRadius),
+		c.int(maxRadius),
+	)
+}
+
+// hough_lines implements the standard or standard multi-scale Hough transform
+// algorithm for line detection. For a good explanation of Hough transform, see:
+// http://homepages.inf.ed.ac.uk/rbf/HIPR2/hough.htm
 //
-// const (
-// 	// GCInitWithRect makes the function initialize the state and the mask using the provided rectangle.
-// 	// After that it runs the itercount iterations of the algorithm.
-// 	GCInitWithRect GrabCutMode = 0
-// 	// GCInitWithMask makes the function initialize the state using the provided mask.
-// 	// GCInitWithMask and GCInitWithRect can be combined.
-// 	// Then all the pixels outside of the ROI are automatically initialized with GC_BGD.
-// 	GCInitWithMask GrabCutMode = 1
-// 	// GCEval means that the algorithm should just resume.
-// 	GCEval GrabCutMode = 2
-// 	// GCEvalFreezeModel means that the algorithm should just run a single iteration of the GrabCut algorithm
-// 	// with the fixed model
-// 	GCEvalFreezeModel GrabCutMode = 3
-// )
+// For further details, please see:
+// http://docs.opencv.org/master/dd/d1a/group__imgproc__feature.html#ga46b4e588934f6c8dfd509cc6e0e4545a
+hough_lines :: proc(src, lines: Mat, rho, theta: f64, threshold: int) {
+	HoughLines(src, lines, rho, theta, c.int(threshold))
+}
+
+// hough_lines_p implements the probabilistic Hough transform
+// algorithm for line detection. For a good explanation of Hough transform, see:
+// http://homepages.inf.ed.ac.uk/rbf/HIPR2/hough.htm
 //
-// // Grabcut runs the GrabCut algorithm.
-// // The function implements the GrabCut image segmentation algorithm.
-// // For further details, please see:
-// // https://docs.opencv.org/master/d7/d1b/group__imgproc__misc.html#ga909c1dda50efcbeaa3ce126be862b37f
-// GrabCut(img Mat, mask *Mat, r image.Rectangle, bgdModel *Mat, fgdModel *Mat, iterCount int, mode GrabCutMode) {
-// 	cRect := Rect{
-// 		x:      c.int(r.Min.X),
-// 		y:      c.int(r.Min.Y),
-// 		width:  c.int(r.Size().X),
-// 		height: c.int(r.Size().Y),
-// 	}
+// For further details, please see:
+// http://docs.opencv.org/master/dd/d1a/group__imgproc__feature.html#ga8618180a5948286384e3b7ca02f6feeb
+hough_lines_p :: proc(src, lines: Mat, rho, theta: f64, threshold: int) {
+	HoughLinesP(src, lines, rho, theta, c.int(threshold))
+}
+
+hough_lines_p_with_params :: proc(
+	src, lines: Mat,
+	rho, theta: f64,
+	threshold: int,
+	minLineLength, maxLineGap: f64,
+) {
+	HoughLinesPWithParams(src, lines, rho, theta, c.int(threshold), minLineLength, maxLineGap)
+}
+
+// hough_lines_point_set implements the Hough transform algorithm for line
+// detection on a set of points. For a good explanation of Hough transform, see:
+// http://homepages.inf.ed.ac.uk/rbf/HIPR2/hough.htm
 //
-// 	C.GrabCut(img, mask, cRect, bgdModel, fgdModel, c.int(iterCount), C.int(mode))
-// }
+// For further details, please see:
+// https://docs.opencv.org/master/dd/d1a/group__imgproc__feature.html#ga2858ef61b4e47d1919facac2152a160e
+hough_lines_point_set :: proc(
+	pts, lines: Mat,
+	linesMax, threshold: int,
+	minRho, maxRho, rhoStep, minTheta, maxTheta, thetaStep: f64,
+) {
+	HoughLinesPointSet(
+		pts,
+		lines,
+		c.int(linesMax),
+		c.int(threshold),
+		minRho,
+		maxRho,
+		rhoStep,
+		minTheta,
+		maxTheta,
+		thetaStep,
+	)
+}
+
+// integral calculates one or more integral images for the source image.
+// For further details, please see:
+// https://docs.opencv.org/master/d7/d1b/group__imgproc__misc.html#ga97b87bec26908237e8ba0f6e96d23e28
+integral :: proc(src, sum, sqsum, tilted: Mat) {
+	integral(src, sum, sqsum, tilted)
+}
+
+// ThresholdType type of threshold operation.
+ThresholdType :: enum {
+	Binary, // ThresholdBinary threshold type
+	BinaryInv, // ThresholdBinaryInv threshold type
+	Trunc, // ThresholdTrunc threshold type
+	ToZero, // ThresholdToZero threshold type
+	ToZeroInv, // ThresholdToZeroInv threshold type
+	Mask, // ThresholdMask threshold type
+	Otsu, // ThresholdOtsu threshold type
+	Triangle, // ThresholdTriangle threshold type
+}
+
+// threshold applies a fixed-level threshold to each array element.
 //
-// // HoughMode is the type for Hough transform variants.
-// type HoughMode int
+// For further details, please see:
+// https://docs.opencv.org/3.3.0/d7/d1b/group__imgproc__misc.html#gae8a4a146d1ca78c626a53577199e9c57
+threshold :: proc(
+	src: Mat,
+	thresh, maxvalue: f64,
+	typ: ThresholdType,
+) -> (
+	dst: Mat,
+	threshold: f64,
+) {
+	dst = new_mat()
+	threshold = Threshold(src, dst, thresh, maxvalue, typ)
+	return
+}
+
+// AdaptiveThresholdType type of adaptive threshold operation.
+AdaptiveThresholdType :: enum {
+	Mean,
+	Gaussian,
+}
+
+// adaptive_threshold applies a fixed-level threshold to each array element.
 //
-// const (
-// 	// HoughStandard is the classical or standard Hough transform.
-// 	HoughStandard HoughMode = 0
-// 	// HoughProbabilistic is the probabilistic Hough transform (more efficient
-// 	// in case if the picture contains a few long linear segments).
-// 	HoughProbabilistic HoughMode = 1
-// 	// HoughMultiScale is the multi-scale variant of the classical Hough
-// 	// transform.
-// 	HoughMultiScale HoughMode = 2
-// 	// HoughGradient is basically 21HT, described in: HK Yuen, John Princen,
-// 	// John Illingworth, and Josef Kittler. Comparative study of hough
-// 	// transform methods for circle finding. Image and Vision Computing,
-// 	// 8(1):71–77, 1990.
-// 	HoughGradient HoughMode = 3
-// )
+// For further details, please see:
+// https://docs.opencv.org/master/d7/d1b/group__imgproc__misc.html#ga72b913f352e4a1b1b397736707afcde3
+adaptive_threshold :: proc(
+	src: Mat,
+	maxValue: f64,
+	adaptiveTyp: AdaptiveThresholdType,
+	typ: ThresholdType,
+	blockSize: int,
+	const: f64,
+) -> (
+	dst: Mat,
+) {
+	dst = new_mat()
+	AdaptiveThreshold(src, dst, maxValue, c.int(adaptiveTyp), c.int(typ), c.int(blockSize), const)
+	return
+}
+
+// arrowed_line draws a arrow segment pointing from the first point
+// to the second one.
 //
-// // HoughCircles finds circles in a grayscale image using the Hough transform.
-// // The only "method" currently supported is HoughGradient. If you want to pass
-// // more parameters, please see `HoughCirclesWithParams`.
-// //
-// // For further details, please see:
-// // https://docs.opencv.org/master/dd/d1a/group__imgproc__feature.html#ga47849c3be0d0406ad3ca45db65a25d2d
-// HoughCircles(src Mat, circles *Mat, method HoughMode, dp, minDist f64) {
-// 	C.HoughCircles(src, circles, c.int(method), c.double(dp), c.double(minDist))
-// }
+// For further details, please see:
+// https://docs.opencv.org/master/d6/d6e/group__imgproc__draw.html#ga0a165a3ca093fd488ac709fdf10c05b2
+arrowed_line :: proc(img: Mat, pt1, pt2: Point, const: RGBA, thickness: int) {
+	sp1 := CPoint{c.int(pt1.x), c.int(pt1.y)}
+	sp2 := CPoint{c.int(pt2.x), c.int(pt2.y)}
+	sColor := Scalar{c.double(const.b), c.double(const.g), c.double(const.r), c.double(const.a)}
+	ArrowedLine(img, sp1, sp2, sColor, c.int(thickness))
+}
+
+// circle draws a circle.
 //
-// // HoughCirclesWithParams finds circles in a grayscale image using the Hough
-// // transform. The only "method" currently supported is HoughGradient.
-// //
-// // For further details, please see:
-// // https://docs.opencv.org/master/dd/d1a/group__imgproc__feature.html#ga47849c3be0d0406ad3ca45db65a25d2d
-// HoughCirclesWithParams(src Mat, circles *Mat, method HoughMode, dp, minDist, param1, param2 f64, minRadius, maxRadius int) {
-// 	C.HoughCirclesWithParams(src, circles, c.int(method), c.double(dp), c.double(minDist), c.double(param1), c.double(param2), C.int(minRadius), C.int(maxRadius))
-// }
+// For further details, please see:
+// https://docs.opencv.org/master/d6/d6e/group__imgproc__draw.html#gaf10604b069374903dbd0f0488cb43670
+circle :: proc(img: Mat, center: Point, radius: int, const: RGBA, thickness: int) {
+	pc := CPoint{c.int(center.x), c.int(center.y)}
+	sColor := Scalar{c.double(const.b), c.double(const.g), c.double(const.r), c.double(const.a)}
+	Circle(img, pc, c.int(radius), sColor, c.int(thickness))
+}
+
+// circle_with_params draws a circle.
 //
-// // HoughLines implements the standard or standard multi-scale Hough transform
-// // algorithm for line detection. For a good explanation of Hough transform, see:
-// // http://homepages.inf.ed.ac.uk/rbf/HIPR2/hough.htm
-// //
-// // For further details, please see:
-// // http://docs.opencv.org/master/dd/d1a/group__imgproc__feature.html#ga46b4e588934f6c8dfd509cc6e0e4545a
-// HoughLines(src Mat, lines *Mat, rho f32, theta float32, threshold int) {
-// 	C.HoughLines(src, lines, c.double(rho), c.double(theta), c.int(threshold))
-// }
+// For further details, please see:
+// https://docs.opencv.org/master/d6/d6e/group__imgproc__draw.html#gaf10604b069374903dbd0f0488cb43670
+circle_with_params :: proc(
+	img: Mat,
+	center: Point,
+	radius: int,
+	const: RGBA,
+	thickness: int,
+	lineType: LineType,
+	shift: int,
+) {
+	pc := CPoint{c.int(center.x), c.int(center.y)}
+	sColor := Scalar{c.double(const.b), c.double(const.g), c.double(const.r), c.double(const.a)}
+
+	CircleWithParams(
+		img,
+		pc,
+		c.int(radius),
+		sColor,
+		c.int(thickness),
+		c.int(lineType),
+		c.int(shift),
+	)
+}
+
+// ellipse draws a simple or thick elliptic arc or fills an ellipse sector.
 //
-// // HoughLinesP implements the probabilistic Hough transform
-// // algorithm for line detection. For a good explanation of Hough transform, see:
-// // http://homepages.inf.ed.ac.uk/rbf/HIPR2/hough.htm
-// //
-// // For further details, please see:
-// // http://docs.opencv.org/master/dd/d1a/group__imgproc__feature.html#ga8618180a5948286384e3b7ca02f6feeb
-// HoughLinesP(src Mat, lines *Mat, rho f32, theta float32, threshold int) {
-// 	C.HoughLinesP(src, lines, c.double(rho), c.double(theta), c.int(threshold))
-// }
-// HoughLinesPWithParams(src Mat, lines *Mat, rho f32, theta float32, threshold int, minLineLength float32, maxLineGap float32) {
-// 	C.HoughLinesPWithParams(src, lines, c.double(rho), c.double(theta), c.int(threshold), c.double(minLineLength), c.double(maxLineGap))
-// }
+// For further details, please see:
+// https://docs.opencv.org/master/d6/d6e/group__imgproc__draw.html#ga28b2267d35786f5f890ca167236cbc69
+ellipse :: proc(
+	img: Mat,
+	center, axes: Point,
+	angle, startAngle, endAngle: f64,
+	const: RGBA,
+	thickness: int,
+) {
+	pc := CPoint{c.int(center.x), c.int(center.y)}
+	pa := CPoint{c.int(axes.x), c.int(axes.y)}
+	sColor := Scalar{c.double(const.b), c.double(const.g), c.double(const.r), c.double(const.a)}
+	Ellipse(img, pc, pa, angle, startAngle, endAngle, sColor, c.int(thickness))
+}
+
+// ellipse_with_params draws a simple or thick elliptic arc or fills an ellipse sector.
 //
-// // HoughLinesPointSet implements the Hough transform algorithm for line
-// // detection on a set of points. For a good explanation of Hough transform, see:
-// // http://homepages.inf.ed.ac.uk/rbf/HIPR2/hough.htm
-// //
-// // For further details, please see:
-// // https://docs.opencv.org/master/dd/d1a/group__imgproc__feature.html#ga2858ef61b4e47d1919facac2152a160e
-// HoughLinesPointSet(points Mat, lines *Mat, linesMax int, threshold int,
-// 	minRho f32, maxRho float32, rhoStep float32,
-// 	minTheta f32, maxTheta float32, thetaStep float32) {
-// 	C.HoughLinesPointSet(points, lines, c.int(linesMax), C.int(threshold),
-// 		c.double(minRho), c.double(maxRho), c.double(rhoStep),
-// 		c.double(minTheta), c.double(maxTheta), c.double(thetaStep))
-// }
+// For further details, please see:
+// https://docs.opencv.org/master/d6/d6e/group__imgproc__draw.html#ga28b2267d35786f5f890ca167236cbc69
+ellipse_with_params :: proc(
+	img: Mat,
+	center, axes: Point,
+	angle, startAngle, endAngle: f64,
+	const: RGBA,
+	thickness: int,
+	lineType: LineType,
+	shift: int,
+) {
+	pc := CPoint{c.int(center.x), c.int(center.y)}
+	pa := CPoint{c.int(axes.x), c.int(axes.y)}
+	sColor := Scalar{c.double(const.b), c.double(const.g), c.double(const.r), c.double(const.a)}
+
+	EllipseWithParams(
+		img,
+		pc,
+		pa,
+		angle,
+		startAngle,
+		endAngle,
+		sColor,
+		c.int(thickness),
+		c.int(lineType),
+		c.int(shift),
+	)
+}
+
+// line draws a line segment connecting two points.
 //
-// // Integral calculates one or more integral images for the source image.
-// // For further details, please see:
-// // https://docs.opencv.org/master/d7/d1b/group__imgproc__misc.html#ga97b87bec26908237e8ba0f6e96d23e28
-// Integral(src Mat, sum *Mat, sqsum *Mat, tilted *Mat) {
-// 	c.integral(src, sum, sqsum, tilted.p)
-// }
+// For further details, please see:
+// https://docs.opencv.org/master/d6/d6e/group__imgproc__draw.html#ga7078a9fae8c7e7d13d24dac2520ae4a2
+line :: proc(img: Mat, pt1, pt2: Point, const: RGBA, thickness: int) {
+	sp1 := CPoint{c.int(pt1.x), c.int(pt1.y)}
+	sp2 := CPoint{c.int(pt2.x), c.int(pt2.y)}
+	sColor := Scalar{c.double(const.b), c.double(const.g), c.double(const.r), c.double(const.a)}
+	Line(img, sp1, sp2, sColor, c.int(thickness))
+}
+
+// Rectangle draws a simple, thick, or filled up-right rectangle.
+// It renders a rectangle with the desired characteristics to the target Mat image.
 //
-// // ThresholdType type of threshold operation.
-// type ThresholdType int
-//
-// const (
-// 	// ThresholdBinary threshold type
-// 	ThresholdBinary ThresholdType = 0
-//
-// 	// ThresholdBinaryInv threshold type
-// 	ThresholdBinaryInv ThresholdType = 1
-//
-// 	// ThresholdTrunc threshold type
-// 	ThresholdTrunc ThresholdType = 2
-//
-// 	// ThresholdToZero threshold type
-// 	ThresholdToZero ThresholdType = 3
-//
-// 	// ThresholdToZeroInv threshold type
-// 	ThresholdToZeroInv ThresholdType = 4
-//
-// 	// ThresholdMask threshold type
-// 	ThresholdMask ThresholdType = 7
-//
-// 	// ThresholdOtsu threshold type
-// 	ThresholdOtsu ThresholdType = 8
-//
-// 	// ThresholdTriangle threshold type
-// 	ThresholdTriangle ThresholdType = 16
-// )
-//
-// // Threshold applies a fixed-level threshold to each array element.
-// //
-// // For further details, please see:
-// // https://docs.opencv.org/3.3.0/d7/d1b/group__imgproc__misc.html#gae8a4a146d1ca78c626a53577199e9c57
-// Threshold(src Mat, dst *Mat, thresh f32, maxvalue float32, typ ThresholdType) (threshold float32) {
-// 	return f32(C.Threshold(src, dst, c.double(thresh), c.double(maxvalue), c.int(typ)))
-// }
-//
-// // AdaptiveThresholdType type of adaptive threshold operation.
-// type AdaptiveThresholdType int
-//
-// const (
-// 	// AdaptiveThresholdMean threshold type
-// 	AdaptiveThresholdMean AdaptiveThresholdType = 0
-//
-// 	// AdaptiveThresholdGaussian threshold type
-// 	AdaptiveThresholdGaussian AdaptiveThresholdType = 1
-// )
-//
-// // AdaptiveThreshold applies a fixed-level threshold to each array element.
-// //
-// // For further details, please see:
-// // https://docs.opencv.org/master/d7/d1b/group__imgproc__misc.html#ga72b913f352e4a1b1b397736707afcde3
-// AdaptiveThreshold(src Mat, dst *Mat, maxValue f32, adaptiveTyp AdaptiveThresholdType, typ ThresholdType, blockSize int, c float32) {
-// 	C.AdaptiveThreshold(src, dst, c.double(maxValue), c.int(adaptiveTyp), C.int(typ), C.int(blockSize), c.double(c))
-// }
-//
-// // ArrowedLine draws a arrow segment pointing from the first point
-// // to the second one.
-// //
-// // For further details, please see:
-// // https://docs.opencv.org/master/d6/d6e/group__imgproc__draw.html#ga0a165a3ca093fd488ac709fdf10c05b2
-// ArrowedLine(img *Mat, pt1 image.Point, pt2 image.Point, c color.RGBA, thickness int) {
-// 	sp1 := Point{
-// 		x: c.int(pt1.X),
-// 		y: c.int(pt1.Y),
-// 	}
-//
-// 	sp2 := Point{
-// 		x: c.int(pt2.X),
-// 		y: c.int(pt2.Y),
-// 	}
-//
-// 	sColor := Scalar{
-// 		val1: c.double(c.B),
-// 		val2: c.double(c.G),
-// 		val3: c.double(c.R),
-// 		val4: c.double(c.A),
-// 	}
-//
-// 	C.ArrowedLine(img, sp1, sp2, sColor, c.int(thickness))
-// }
-//
-// // Circle draws a circle.
-// //
-// // For further details, please see:
-// // https://docs.opencv.org/master/d6/d6e/group__imgproc__draw.html#gaf10604b069374903dbd0f0488cb43670
-// Circle(img *Mat, center image.Point, radius int, c color.RGBA, thickness int) {
-// 	pc := Point{
-// 		x: c.int(center.X),
-// 		y: c.int(center.Y),
-// 	}
-//
-// 	sColor := Scalar{
-// 		val1: c.double(c.B),
-// 		val2: c.double(c.G),
-// 		val3: c.double(c.R),
-// 		val4: c.double(c.A),
-// 	}
-//
-// 	C.Circle(img, pc, c.int(radius), sColor, C.int(thickness))
-// }
-//
-// // CircleWithParams draws a circle.
-// //
-// // For further details, please see:
-// // https://docs.opencv.org/master/d6/d6e/group__imgproc__draw.html#gaf10604b069374903dbd0f0488cb43670
-// CircleWithParams(img *Mat, center image.Point, radius int, c color.RGBA, thickness int, lineType LineType, shift int) {
-// 	pc := Point{
-// 		x: c.int(center.X),
-// 		y: c.int(center.Y),
-// 	}
-//
-// 	sColor := Scalar{
-// 		val1: c.double(c.B),
-// 		val2: c.double(c.G),
-// 		val3: c.double(c.R),
-// 		val4: c.double(c.A),
-// 	}
-//
-// 	C.CircleWithParams(img, pc, c.int(radius), sColor, C.int(thickness), C.int(lineType), C.int(shift))
-// }
-//
-// // Ellipse draws a simple or thick elliptic arc or fills an ellipse sector.
-// //
-// // For further details, please see:
-// // https://docs.opencv.org/master/d6/d6e/group__imgproc__draw.html#ga28b2267d35786f5f890ca167236cbc69
-// Ellipse(img *Mat, center, axes image.Point, angle, startAngle, endAngle f64, c color.RGBA, thickness int) {
-// 	pc := Point{
-// 		x: c.int(center.X),
-// 		y: c.int(center.Y),
-// 	}
-// 	pa := Point{
-// 		x: c.int(axes.X),
-// 		y: c.int(axes.Y),
-// 	}
-//
-// 	sColor := Scalar{
-// 		val1: c.double(c.B),
-// 		val2: c.double(c.G),
-// 		val3: c.double(c.R),
-// 		val4: c.double(c.A),
-// 	}
-//
-// 	C.Ellipse(img, pc, pa, c.double(angle), c.double(startAngle), c.double(endAngle), sColor, c.int(thickness))
-// }
-//
-// // Ellipse draws a simple or thick elliptic arc or fills an ellipse sector.
-// //
-// // For further details, please see:
-// // https://docs.opencv.org/master/d6/d6e/group__imgproc__draw.html#ga28b2267d35786f5f890ca167236cbc69
-// EllipseWithParams(img *Mat, center, axes image.Point, angle, startAngle, endAngle f64, c color.RGBA, thickness int, lineType LineType, shift int) {
-// 	pc := Point{
-// 		x: c.int(center.X),
-// 		y: c.int(center.Y),
-// 	}
-// 	pa := Point{
-// 		x: c.int(axes.X),
-// 		y: c.int(axes.Y),
-// 	}
-//
-// 	sColor := Scalar{
-// 		val1: c.double(c.B),
-// 		val2: c.double(c.G),
-// 		val3: c.double(c.R),
-// 		val4: c.double(c.A),
-// 	}
-//
-// 	C.EllipseWithParams(img, pc, pa, c.double(angle), c.double(startAngle), c.double(endAngle), sColor, c.int(thickness), C.int(lineType), C.int(shift))
-// }
-//
-// // Line draws a line segment connecting two points.
-// //
-// // For further details, please see:
-// // https://docs.opencv.org/master/d6/d6e/group__imgproc__draw.html#ga7078a9fae8c7e7d13d24dac2520ae4a2
-// Line(img *Mat, pt1 image.Point, pt2 image.Point, c color.RGBA, thickness int) {
-// 	sp1 := Point{
-// 		x: c.int(pt1.X),
-// 		y: c.int(pt1.Y),
-// 	}
-//
-// 	sp2 := Point{
-// 		x: c.int(pt2.X),
-// 		y: c.int(pt2.Y),
-// 	}
-//
-// 	sColor := Scalar{
-// 		val1: c.double(c.B),
-// 		val2: c.double(c.G),
-// 		val3: c.double(c.R),
-// 		val4: c.double(c.A),
-// 	}
-//
-// 	C.Line(img, sp1, sp2, sColor, c.int(thickness))
-// }
-//
-// // Rectangle draws a simple, thick, or filled up-right rectangle.
-// // It renders a rectangle with the desired characteristics to the target Mat image.
-// //
-// // For further details, please see:
-// // http://docs.opencv.org/master/d6/d6e/group__imgproc__draw.html#ga346ac30b5c74e9b5137576c9ee9e0e8c
-// Rectangle(img *Mat, r image.Rectangle, c color.RGBA, thickness int) {
-// 	cRect := Rect{
-// 		x:      c.int(r.Min.X),
-// 		y:      c.int(r.Min.Y),
-// 		width:  c.int(r.Size().X),
-// 		height: c.int(r.Size().Y),
-// 	}
-//
-// 	sColor := Scalar{
-// 		val1: c.double(c.B),
-// 		val2: c.double(c.G),
-// 		val3: c.double(c.R),
-// 		val4: c.double(c.A),
-// 	}
-//
-// 	C.Rectangle(img, cRect, sColor, c.int(thickness))
-// }
-//
+// For further details, please see:
+// http://docs.opencv.org/master/d6/d6e/group__imgproc__draw.html#ga346ac30b5c74e9b5137576c9ee9e0e8c
+rectangle :: proc(img: Mat, r: Rect, const: RGBA, thickness: int) {
+	cRect := CRect {
+		c.int(r.min.x),
+		c.int(r.min.y),
+		c.int(rect_size(r).width),
+		c.int(rect_size(r).height),
+	}
+	sColor := Scalar{c.double(const.b), c.double(const.g), c.double(const.r), c.double(const.a)}
+	Rectangle(img, cRect, sColor, c.int(thickness))
+}
+
 // // RectangleWithParams draws a simple, thick, or filled up-right rectangle.
 // // It renders a rectangle with the desired characteristics to the target Mat image.
 // //
@@ -1630,7 +1651,7 @@ get_gaussian_kernel_with_params :: proc(ksize: int, sigma: f64, ktype: Mat_Type)
 // // For more information, see:
 // // https://docs.opencv.org/master/d6/d6e/group__imgproc__draw.html#gaf30888828337aa4c6b56782b5dfbd4b7
 // FillPolyWithParams(img *Mat, pts PointsVector, c color.RGBA, lineType LineType, shift int, offset image.Point) {
-// 	offsetP := Point{
+// 	offset := Point{
 // 		x: c.int(offset.X),
 // 		y: c.int(offset.Y),
 // 	}
@@ -1642,7 +1663,7 @@ get_gaussian_kernel_with_params :: proc(ksize: int, sigma: f64, ktype: Mat_Type)
 // 		val4: c.double(c.A),
 // 	}
 //
-// 	C.FillPolyWithParams(img, pts, sColor, c.int(lineType), C.int(shift), offsetP)
+// 	C.FillPolyWithParams(img, pts, sColor, c.int(lineType), C.int(shift), offset)
 // }
 //
 // // Polylines draws several polygonal curves.
@@ -1659,69 +1680,56 @@ get_gaussian_kernel_with_params :: proc(ksize: int, sigma: f64, ktype: Mat_Type)
 //
 // 	C.Polylines(img, pts, C.bool(isClosed), sColor, c.int(thickness))
 // }
+
+// HersheyFont are the font libraries included in OpenCV.
+// Only a subset of the available Hershey fonts are supported by OpenCV.
 //
-// // HersheyFont are the font libraries included in OpenCV.
-// // Only a subset of the available Hershey fonts are supported by OpenCV.
-// //
-// // For more information, see:
-// // http://sources.isc.org/utils/misc/hershey-font.txt
-// type HersheyFont int
+// For more information, see:
+// http://sources.isc.org/utils/misc/hershey-font.txt
+HersheyFont :: enum {
+	Simplex, // FontHersheySimplex is normal size sans-serif font.
+	Plain, // FontHersheyPlain issmall size sans-serif font.
+	Duplex, // FontHersheyDuplex normal size sans-serif font (more complex than FontHersheySIMPLEX).
+	Complex, // FontHersheyComplex i a normal size serif font.
+	Triplex, // FontHersheyTriplex is a normal size serif font (more complex than FontHersheyCOMPLEX).
+	ComplexSmall, // FontHersheyComplexSmall is a smaller version of FontHersheyCOMPLEX.
+	ScriptSimplex, // FontHersheyScriptSimplex is a hand-writing style font.
+	ScriptComplex, // FontHersheyScriptComplex is a more complex variant of FontHersheyScriptSimplex.
+	Italic = 16, // FontItalic is the flag for italic font.
+}
+
+// LineType are the line libraries included in OpenCV.
 //
-// const (
-// 	// FontHersheySimplex is normal size sans-serif font.
-// 	FontHersheySimplex HersheyFont = 0
-// 	// FontHersheyPlain issmall size sans-serif font.
-// 	FontHersheyPlain HersheyFont = 1
-// 	// FontHersheyDuplex normal size sans-serif font
-// 	// (more complex than FontHersheySIMPLEX).
-// 	FontHersheyDuplex HersheyFont = 2
-// 	// FontHersheyComplex i a normal size serif font.
-// 	FontHersheyComplex HersheyFont = 3
-// 	// FontHersheyTriplex is a normal size serif font
-// 	// (more complex than FontHersheyCOMPLEX).
-// 	FontHersheyTriplex HersheyFont = 4
-// 	// FontHersheyComplexSmall is a smaller version of FontHersheyCOMPLEX.
-// 	FontHersheyComplexSmall HersheyFont = 5
-// 	// FontHersheyScriptSimplex is a hand-writing style font.
-// 	FontHersheyScriptSimplex HersheyFont = 6
-// 	// FontHersheyScriptComplex is a more complex variant of FontHersheyScriptSimplex.
-// 	FontHersheyScriptComplex HersheyFont = 7
-// 	// FontItalic is the flag for italic font.
-// 	FontItalic HersheyFont = 16
-// )
+// For more information, see:
+// https://vovkos.github.io/doxyrest-showcase/opencv/sphinx_rtd_theme/enum_cv_LineTypes.html
+LineType :: enum {
+	Filled      = -1, // Filled line
+	Four        = 4, // 4-connected line
+	Eigth       = 8, // 8-connected line
+	Antialiased = 16, // kntialiased line
+}
+
+// get_text_size calculates the width and height of a text string.
+// It returns an image.Point with the size required to draw text using
+// a specific font face, scale, and thickness.
 //
-// // LineType are the line libraries included in OpenCV.
-// //
-// // For more information, see:
-// // https://vovkos.github.io/doxyrest-showcase/opencv/sphinx_rtd_theme/enum_cv_LineTypes.html
-// type LineType int
-//
-// const (
-// 	// Filled line
-// 	Filled LineType = -1
-// 	// Line4 4-connected line
-// 	Line4 LineType = 4
-// 	// Line8 8-connected line
-// 	Line8 LineType = 8
-// 	// LineAA antialiased line
-// 	LineAA LineType = 16
-// )
-//
-// // GetTextSize calculates the width and height of a text string.
-// // It returns an image.Point with the size required to draw text using
-// // a specific font face, scale, and thickness.
-// //
-// // For further details, please see:
-// // http://docs.opencv.org/master/d6/d6e/group__imgproc__draw.html#ga3d2abfcb995fd2db908c8288199dba82
-// GetTextSize(text string, fontFace HersheyFont, fontScale f64, thickness int) image.Point {
-// 	cText := C.CString(text)
-// 	defer C.free(unsafe.Pointer(cText))
-//
-// 	sz := C.GetTextSize(cText, c.int(fontFace), c.double(fontScale), C.int(thickness))
-// 	return image.Pt(int(sz.width), int(sz.height))
-// }
-//
-// // GetTextSizeWithBaseline calculates the width and height of a text string including the basline of the text.
+// For further details, please see:
+// http://docs.opencv.org/master/d6/d6e/group__imgproc__draw.html#ga3d2abfcb995fd2db908c8288199dba82
+get_text_size :: proc(
+	text: string,
+	fontFace: HersheyFont,
+	fontScale: f64,
+	thickness: int,
+) -> Point {
+	c_text := strings.clone_to_cstring(text)
+	defer delete(c_text)
+
+
+	sz := GetTextSize(c_text, fontFace, fontScale, c.int(thickness))
+	return {int(sz.width), int(sz.height)}
+}
+
+// // GetTextSizeWithBaseline calculates the width and height of a text string including the baseline of the text.
 // // It returns an image.Point with the size required to draw text using
 // // a specific font face, scale, and thickness as well as its baseline.
 // //
@@ -2062,12 +2070,12 @@ get_gaussian_kernel_with_params :: proc(ksize: int, sigma: f64, ktype: Mat_Type)
 // 		val3: c.double(c.R),
 // 		val4: c.double(c.A),
 // 	}
-// 	offsetP := Point{
+// 	offset := Point{
 // 		x: c.int(offset.X),
 // 		y: c.int(offset.Y),
 // 	}
 //
-// 	C.DrawContoursWithParams(img, contours, c.int(contourIdx), sColor, C.int(thickness), C.int(lineType), hierarchy, C.int(maxLevel), offsetP)
+// 	C.DrawContoursWithParams(img, contours, c.int(contourIdx), sColor, C.int(thickness), C.int(lineType), hierarchy, C.int(maxLevel), offset)
 // }
 //
 // // Remap applies a generic geometrical transformation to an image.
