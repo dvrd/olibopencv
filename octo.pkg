@@ -10,8 +10,20 @@
         libs: "libs"
       },
       optim: "speed",
-      separate_modules: true,
-      linker_flags: "\"`pkg-config --cflags --libs opencv4` -lstdc++\"",
     },
+    playground: {
+      src: "libs/playground",
+      collections: {
+        libs: "libs"
+      },
+      debug: true,
+      mode: "DLL",
+      seperate_modules: true,
+      linker_flags: [
+        "`pkg-config --cflags --libs opencv4`",
+        "-lstdc++",
+        "-Wl,-rpath [raylib]/macos-arm64"
+      ],
+    }
   },
 }

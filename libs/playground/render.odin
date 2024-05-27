@@ -11,8 +11,7 @@ render :: proc(app: ^State) {
 	defer rl.EndDrawing()
 
 	rl.ClearBackground(rl.RAYWHITE)
-	fmt.println(app.image)
-	rl.DrawTexture(app.image, 0, 0, rl.WHITE)
+	rl.DrawTexture(app.image.texture, 0, 0, rl.WHITE)
 
 	draw_page(app)
 }
@@ -24,7 +23,7 @@ draw_page :: proc(app: ^State) {
 }
 
 draw_line_number :: proc(app: ^State) {
-	rl.DrawRectangle(0, app.image.height, 20, app.editor.height, rl.GRAY) // line number area
+	rl.DrawRectangle(0, app.image.texture.height, 20, app.editor.height, rl.GRAY) // line number area
 
 	buffer := [20]byte{}
 	line_number: string
@@ -37,7 +36,7 @@ draw_line_number :: proc(app: ^State) {
 		rl.DrawText(
 			c_line_number,
 			15 - width,
-			app.image.height + 10 + cast(c.int)i * 20,
+			app.image.texture.height + 10 + cast(c.int)i * 20,
 			20,
 			rl.DARKGRAY,
 		)
@@ -53,7 +52,7 @@ draw_text :: proc(app: ^State) {
 		rl.DrawText(
 			text = c_text,
 			posX = 25,
-			posY = app.image.height + 10 + cast(c.int)i * 20,
+			posY = app.image.texture.height + 10 + cast(c.int)i * 20,
 			fontSize = 20,
 			color = rl.BLACK,
 		)
@@ -66,7 +65,7 @@ draw_cursor :: proc(app: ^State) {
 		if app.editor.frame_count < app.editor.blink_time {
 			rl.DrawRectangle(
 				25 + cast(c.int)cursor_x,
-				app.image.height + 10 + cast(c.int)cursor_y,
+				app.image.texture.height + 10 + cast(c.int)cursor_y,
 				12,
 				20,
 				rl.BLACK,
@@ -75,7 +74,7 @@ draw_cursor :: proc(app: ^State) {
 	} else {
 		rl.DrawRectangle(
 			25 + cast(c.int)cursor_x,
-			app.image.height + 10 + cast(c.int)cursor_y,
+			app.image.texture.height + 10 + cast(c.int)cursor_y,
 			12,
 			20,
 			rl.BLACK,

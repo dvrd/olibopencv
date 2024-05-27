@@ -3,64 +3,62 @@ package imgproc
 import "core:fmt"
 import rl "vendor:raylib"
 
-update :: proc(app: ^State) {
-	key := rl.GetCharPressed()
-
-	for key > 0 {
-		if key >= 32 && key <= 125 {
-			add_char_to_current_line(app.editor.current_page, cast(byte)key)
-			app.editor.is_blinking = false
-			app.editor.frame_count = 0
-		}
-
-		key = rl.GetCharPressed() // Check next character in the queue
+handle_navigation :: proc(app: ^State) {
+	key := rl.GetKeyPressed()
+	#partial switch key {
+	case .I:
+		app.editor.mode = .Insert
+	case .ESCAPE:
+		app.editor.mode = .Normal
 	}
 
-	if rl.IsKeyPressed(.RIGHT) {
+	if app.editor.mode != .Normal do return
+
+	#partial switch key {
+	case .L, .RIGHT:
 		move_cursor_right(app.editor.current_page)
 		app.editor.is_blinking = false
 		app.editor.frame_count = 0
-	}
-
-	if rl.IsKeyPressed(.LEFT) {
+	case .H, .LEFT:
 		move_cursor_left(app.editor.current_page)
 		app.editor.is_blinking = false
 		app.editor.frame_count = 0
-	}
-
-	if rl.IsKeyPressed(.UP) {
+	case .K, .UP:
 		move_up_line(app.editor.current_page)
 		app.editor.is_blinking = false
 		app.editor.frame_count = 0
-	}
-
-	if rl.IsKeyPressed(.DOWN) {
+	case .J, .DOWN:
 		move_down_line(app.editor.current_page)
 		app.editor.is_blinking = false
 		app.editor.frame_count = 0
 	}
+}
 
-	if rl.IsKeyPressed(.DELETE) {
-		delete_char_after_cursor(app.editor.current_page)
-		app.editor.is_blinking = false
-		app.editor.frame_count = 0
+handle_insert :: proc(app: ^State) {
+	if app.editor.mode != .Insert do return
+
+	for unicode := rl.GetCharPressed(); unicode > 0; unicode = rl.GetCharPressed() {
+		if unicode >= 32 && unicode <= 125 {
+			add_char_to_current_line(app.editor.current_page, cast(byte)unicode)
+			app.editor.is_blinking = false
+			app.editor.frame_count = 0
+		}
 	}
 
-	if rl.IsKeyPressed(.BACKSPACE) {
+	if rl.IsKeyPressed(.BACKSPACE) || rl.IsKeyDown(.BACKSPACE) {
 		delete_char_at_cursor(app.editor.current_page)
 		app.editor.is_blinking = false
 		app.editor.frame_count = 0
 	}
+}
+
+update :: proc(app: ^State) {
+	handle_insert(app)
+	handle_navigation(app)
 
 	if rl.IsKeyPressed(.ENTER) {
-		lines := app.editor.current_page.lines
-		last_line := lines[len(app.editor.current_page.lines) - 1]
-		if last_line.tail.prev.char == ';' {
-			process_command(app)
-			delete_all_lines(app.editor.current_page)
-		} else {
-			handle_new_line(app.editor.current_page)
-		}
+		process_command(app)
+		delete_all_lines(app.editor.current_page)
 		app.editor.is_blinking = false
 		app.editor.frame_count = 0
 	}
@@ -74,7 +72,4 @@ update :: proc(app: ^State) {
 	if app.editor.is_blinking {
 		app.editor.frame_count = app.editor.frame_count % (2 * app.editor.blink_time)
 	}
-
-	app.image_area.height = rl.GetScreenHeight() * 3 / 4
-	app.editor.height = rl.GetScreenHeight() * 1 / 4
 }

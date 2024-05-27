@@ -3,7 +3,7 @@ alias b := build
 
 cv_lib_src := "libs/cv"
 cv_lib_bindings := "libs/cv/bindings"
-linker_flags := "\"`pkg-config --cflags --libs opencv4` -lstdc++\""
+linker_flags := "\"`pkg-config --cflags --libs opencv4` -lstdc++ -Wl,-rpath {{root}}\""
 
 default:
   @just --list

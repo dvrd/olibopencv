@@ -1,5 +1,6 @@
 package cv
 
+import "base:intrinsics"
 import "core:c"
 
 when ODIN_OS == .Darwin {
@@ -256,19 +257,18 @@ Mats :: struct {
 }
 
 Mat_Type :: enum c.int {
-	CV_8U    = 0, // MatTypeCV8U is a Mat of 8-bit unsigned in
-	CV_8S    = 1, // CV8S is a Mat of 8-bit signed in
-	CV_16U   = 2, // CV16U is a Mat of 16-bit unsigned in
-	CV_16S   = 3, // CV16S is a Mat of 16-bit signed in
-	CV_16SC2 = CV_16S + Mat_Channel2, // CV16SC2 is a Mat of 16-bit signed int with 2 channel
-	CV_32S   = 4, // CV32S is a Mat of 32-bit signed in
-	CV_32F   = 5, // CV32F is a Mat of 32-bit floa
-	CV_64F   = 6, // CV64F is a Mat of 64-bit floa
+	CV_8U    = 0, // CV8U is a Mat of 8-bit unsigned int
+	CV_8S    = 1, // CV8S is a Mat of 8-bit signed int
+	CV_16U   = 2, // CV16U is a Mat of 16-bit unsigned int
+	CV_16S   = 3, // CV16S is a Mat of 16-bit signed int
+	CV_32S   = 4, // CV32S is a Mat of 32-bit signed int
+	CV_32F   = 5, // CV32F is a Mat of 32-bit float
+	CV_64F   = 6, // CV64F is a Mat of 64-bit float
 	CV_8UC1  = CV_8U + Mat_Channel1, // CV8UC1 is a Mat of 8-bit unsigned int with a single channel
 	CV_8UC2  = CV_8U + Mat_Channel2, // CV8UC2 is a Mat of 8-bit unsigned int with 2 channel
 	CV_8UC3  = CV_8U + Mat_Channel3, // CV8UC3 is a Mat of 8-bit unsigned int with 3 channel
 	CV_8UC4  = CV_8U + Mat_Channel4, // CV8UC4 is a Mat of 8-bit unsigned int with 4 channel
-	CV_8SC1  = CV_8S + Mat_Channel1, // CV8SC1 is a Mat of 8-bit signed int with a single channe
+	CV_8SC1  = CV_8S + Mat_Channel1, // CV8SC1 is a Mat of 8-bit signed int with a single channel
 	CV_8SC2  = CV_8S + Mat_Channel2, // CV8SC2 is a Mat of 8-bit signed int with 2 channel
 	CV_8SC3  = CV_8S + Mat_Channel3, // CV8SC3 is a Mat of 8-bit signed int with 3 channel
 	CV_8SC4  = CV_8S + Mat_Channel4, // CV8SC4 is a Mat of 8-bit signed int with 4 channel
@@ -277,6 +277,7 @@ Mat_Type :: enum c.int {
 	CV_16UC3 = CV_16U + Mat_Channel3, // CV16UC3 is a Mat of 16-bit unsigned int with 3 channel
 	CV_16UC4 = CV_16U + Mat_Channel4, // CV16UC4 is a Mat of 16-bit unsigned int with 4 channel
 	CV_16SC1 = CV_16S + Mat_Channel1, // CV16SC1 is a Mat of 16-bit signed int with a single channel
+	CV_16SC2 = CV_16S + Mat_Channel2, // CV16SC2 is a Mat of 16-bit signed int with 2 channel
 	CV_16SC3 = CV_16S + Mat_Channel3, // CV16SC3 is a Mat of 16-bit signed int with 3 channel
 	CV_16SC4 = CV_16S + Mat_Channel4, // CV16SC4 is a Mat of 16-bit signed int with 4 channel
 	CV_32SC1 = CV_32S + Mat_Channel1, // CV32SC1 is a Mat of 32-bit signed int with a single channel
@@ -290,7 +291,7 @@ Mat_Type :: enum c.int {
 	CV_64FC1 = CV_64F + Mat_Channel1, // CV64FC1 is a Mat of 64-bit float int with a single channel
 	CV_64FC2 = CV_64F + Mat_Channel2, // CV64FC2 is a Mat of 64-bit float int with 2 channel
 	CV_64FC3 = CV_64F + Mat_Channel3, // CV64FC3 is a Mat of 64-bit float int with 3 channel
-	CV64FC4  = CV_64F + Mat_Channel4, // CV64FC4 is a Mat of 64-bit float int with 4 channel
+	CV_64FC4 = CV_64F + Mat_Channel4, // CV64FC4 is a Mat of 64-bit float int with 4 channel
 }
 
 @(default_calling_convention = "c")
@@ -440,6 +441,14 @@ foreign cv {
 
 	@(link_name = "Mat_GetSChar3")
 	mat_get_schar3 :: proc(m: Mat, x, y, z: c.int) -> c.int8_t ---
+
+	// Mat_GetUShort returns a specific row/col value from this Mat expecting
+	// each element to contain a short aka CV_16U.
+	@(link_name = "Mat_GetUShort")
+	mat_get_ushort :: proc(m: Mat, row, col: c.int) -> c.uint16_t ---
+
+	@(link_name = "Mat_GetUShort3")
+	mat_get_ushort3 :: proc(m: Mat, x, y, z: c.int) -> c.uint16_t ---
 
 	// Mat_GetShort returns a specific row/col value from this Mat expecting
 	// each element to contain a short aka CV_16S.
@@ -1147,11 +1156,11 @@ channels :: proc(m: Mat) -> int {
 	return cast(int)Mat_Channels(m)
 }
 
-get_float_at3 :: proc(m: Mat, x, y, z: int) -> f32 {
+mat_get_float3 :: proc(m: Mat, x, y, z: int) -> f32 {
 	return cast(f32)Mat_GetFloat3(m, c.int(x), c.int(y), c.int(z))
 }
 
-get_uchar :: proc(m: Mat, x, y: int) -> u8 {
+mat_get_uchar :: proc(m: Mat, x, y: int) -> u8 {
 	return cast(u8)Mat_GetUChar(m, c.int(x), c.int(y))
 }
 
@@ -1171,4 +1180,70 @@ split :: proc(src: Mat) -> []Mat {
 		mats[i] = mat
 	}
 	return mats
+}
+
+at_u8 :: proc {
+	mat_get_uchar,
+	mat_get_uchar3,
+}
+
+at_i8 :: proc {
+	mat_get_schar,
+	mat_get_schar3,
+}
+
+at_u16 :: proc {
+	mat_get_ushort,
+	mat_get_ushort3,
+}
+
+at_i16 :: proc {
+	mat_get_short,
+	mat_get_short3,
+}
+
+at_i32 :: proc {
+	mat_get_int,
+	mat_get_int3,
+}
+
+at_f32 :: proc {
+	mat_get_float,
+	mat_get_float3,
+}
+
+at_f64 :: proc {
+	mat_get_double,
+	mat_get_double3,
+}
+
+Number :: union {
+	c.uchar,
+	c.schar,
+	c.ushort,
+	c.short,
+	c.int,
+	c.float,
+	c.double,
+}
+
+at :: proc(m: Mat, x, y: int) -> Number {
+	switch mat_type(m) {
+	case .CV_8UC1, .CV_8UC2, .CV_8UC3, .CV_8UC4:
+		return at_u8(m, x, y)
+	case .CV_8SC1, .CV_8SC2, .CV_8SC3, .CV_8SC4:
+		return at_i8(m, cast(c.int)x, cast(c.int)y)
+	case .CV_16UC1, .CV_16UC2, .CV_16UC3, .CV_16UC4:
+		return at_u16(m, cast(c.int)x, cast(c.int)y)
+	case .CV_16SC1, .CV_16SC2, .CV_16SC3, .CV_16SC4:
+		return at_i16(m, cast(c.int)x, cast(c.int)y)
+	case .CV_32SC1, .CV_32SC2, .CV_32SC3, .CV_32SC4:
+		return at_i32(m, cast(c.int)x, cast(c.int)y)
+	case .CV_32FC1, .CV_32FC2, .CV_32FC3, .CV_32FC4:
+		return at_f32(m, cast(c.int)x, cast(c.int)y)
+	case .CV_64FC1, .CV_64FC2, .CV_64FC3, .CV_64FC4:
+		return at_f64(m, cast(c.int)x, cast(c.int)y)
+	case:
+		return nil
+	}
 }

@@ -431,7 +431,7 @@ emd :: proc(signature1, signature2: Mat, typ: DistanceTypes) -> f32 {
 // clip_line clips the line against the image rectangle.
 // For further details, please see:
 // https://docs.opencv.org/master/d6/d6e/group__imgproc__draw.html#gaf483cb46ad6b049bc35ec67052ef1c2c
-clip_line :: proc(imgSize, pt1, pt2: [2]int) -> bool {
+clip_line :: proc(imgSize, pt1, pt2: Point) -> bool {
 	pSize := CSize{c.int(imgSize.x), c.int(imgSize.y)}
 	rPt1 := CPoint{c.int(pt1.x), c.int(pt1.y)}
 	rPt2 := CPoint{c.int(pt2.x), c.int(pt2.y)}
@@ -458,7 +458,7 @@ bilateral_filter :: proc(src: Mat, diameter: int, sigmaColor: f64, sigmaSpace: f
 //
 // For further details, please see:
 // https://docs.opencv.org/master/d4/d86/group__imgproc__filter.html#ga8c45db9afe636703801b0b2e440fce37
-blur :: proc(src: Mat, ksize: [2]int) -> (dst: Mat) {
+blur :: proc(src: Mat, ksize: Point) -> (dst: Mat) {
 	dst = new_mat()
 	pSize := CSize{c.int(ksize.x), c.int(ksize.y)}
 	Blur(src, dst, pSize)
@@ -469,7 +469,7 @@ blur :: proc(src: Mat, ksize: [2]int) -> (dst: Mat) {
 //
 // For further details, please see:
 // https://docs.opencv.org/master/d4/d86/group__imgproc__filter.html#gad533230ebf2d42509547d514f7d3fbc3
-box_filter :: proc(src: Mat, depth: int, ksize: [2]int) -> (dst: Mat) {
+box_filter :: proc(src: Mat, depth: int, ksize: Point) -> (dst: Mat) {
 	dst = new_mat()
 	pSize := CSize{c.int(ksize.x), c.int(ksize.y)}
 	BoxFilter(src, dst, c.int(depth), pSize)
@@ -480,7 +480,7 @@ box_filter :: proc(src: Mat, depth: int, ksize: [2]int) -> (dst: Mat) {
 //
 // For further details, please see:
 // https://docs.opencv.org/master/d4/d86/group__imgproc__filter.html#ga045028184a9ef65d7d2579e5c4bff6c0
-sq_box_filter :: proc(src: Mat, depth: int, ksize: [2]int) -> (dst: Mat) {
+sq_box_filter :: proc(src: Mat, depth: int, ksize: Point) -> (dst: Mat) {
 	dst = new_mat()
 	pSize := CSize{c.int(ksize.x), c.int(ksize.y)}
 	SqBoxFilter(src, dst, c.int(depth), pSize)
@@ -518,7 +518,7 @@ BorderType :: enum {
 // https://docs.opencv.org/master/d4/d86/group__imgproc__filter.html#ga4ff0f3318642c4f469d0e11f242f3b6c
 dilate_with_params :: proc(
 	src, kernel: Mat,
-	anchor: [2]int,
+	anchor: Point,
 	iterations, borderType: BorderType,
 	borderValue: RGBA,
 ) -> (
@@ -585,7 +585,7 @@ erode :: proc(src, kernel: Mat) -> (dst: Mat) {
 // https://docs.opencv.org/master/d4/d86/group__imgproc__filter.html#gaeb1e0c1033e3f6b891a25d0511362aeb
 erode_with_params :: proc(
 	src, kernel: Mat,
-	anchor: [2]int,
+	anchor: Point,
 	iterations, borderType: BorderType,
 ) -> (
 	dst: Mat,
@@ -604,7 +604,7 @@ erode_with_params :: proc(
 // https://docs.opencv.org/master/d4/d86/group__imgproc__filter.html#gaeb1e0c1033e3f6b891a25d0511362aeb
 erode_with_params_and_border_value :: proc(
 	src, kernel: Mat,
-	anchor: [2]int,
+	anchor: Point,
 	iterations, borderType: BorderType,
 	borderValue: [4]f64,
 ) -> (
@@ -672,7 +672,7 @@ to_cpoints :: proc(pts: []Point) -> CPoints {
 }
 
 Size :: struct {
-	height, width: int,
+	width, height: int,
 }
 Rect :: struct {
 	min, max: Point,

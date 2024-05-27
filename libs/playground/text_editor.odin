@@ -13,119 +13,55 @@ ListNode :: struct {
 }
 
 TextLine :: struct {
-	head:   ^ListNode,
-	tail:   ^ListNode,
-	cursor: ^ListNode,
-	size:   int,
+	cursor: int,
+	data:   [32]byte,
 }
 
 new_text_line :: proc() -> (tl: ^TextLine) {
 	tl = new(TextLine)
-	tl.head = new(ListNode)
-	tl.tail = new(ListNode)
-	tl.head.next = tl.tail
-	tl.tail.prev = tl.head
-	tl.cursor = tl.tail
+	tl.cursor = 0
 	return
 }
 
 delete_text_line :: proc(using tl: ^TextLine) {
-	if (head.next != tail) {
-		node := head.next
-		to_remove: ^ListNode
-		for node != tail {
-			to_remove = node
-			node = node.next
-			free(to_remove)
-		}
-	}
-
-	free(head)
-	free(tail)
 	free(tl)
 }
 
 tl_insert_char_at_cursor :: proc(using tl: ^TextLine, char: byte) {
-	prev := cursor.prev
-	node := new(ListNode)
-	node.char = char
-	node.prev = prev
-	prev.next = node
-	node.next = cursor
-	cursor.prev = node
-	size += 1
+	data[cursor] = char
+	cursor += 1
 }
 
-tl_delete_char_after_cursor :: proc(using tl: ^TextLine) {
-	if cursor != tail && cursor.next != tail {
-		next_next := cursor.next.next
-		next := cursor.next
-		cursor.next = next_next
-		next_next.prev = cursor
-		free(next)
-		size -= 1
-	} else if size == 1 {
-		node := head.next
-		head.next = tail
-		tail.prev = head
-		cursor = tail
-		size = 0
-		free(node)
-	}
-}
-
-tl_delete_char_at_cursor :: proc(using tl: ^TextLine) {
-	if cursor.prev != head {
-		prev := cursor.prev
-		prev_prev := cursor.prev.prev
-		cursor.prev = prev_prev
-		prev_prev.next = cursor
-		free(prev)
-		size -= 1
-	} else if size == 1 {
-		node := head.next
-		head.next = tail
-		tail.prev = head
-		cursor = tail
-		size = 0
-		free(node)
+tl_delete_char_before_cursor :: proc(using tl: ^TextLine) {
+	prev := cursor - 1
+	if prev >= 0 {
+		data[prev] = 0
+		cursor -= 1
 	}
 }
 
 tl_move_cursor_left :: proc(using tl: ^TextLine) {
-	if cursor.prev != head {
-		cursor = cursor.prev
+	prev := cursor - 1
+	if prev >= 0 {
+		cursor = prev
 	}
 }
 
 tl_move_cursor_right :: proc(using tl: ^TextLine) {
-	if cursor != tail {
-		cursor = cursor.next
+	next := cursor - 1
+	if next <= len(tl.data) {
+		cursor = next
 	}
 }
 
 to_string :: proc(using tl: ^TextLine) -> string {
-	if head.next != tail {
-		sb := strings.builder_make()
-		node := head.next
-		for node != tail {
-			strings.write_byte(&sb, node.char)
-			node = node.next
-		}
-		return strings.to_string(sb)
-	}
+	if cursor == 0 do return ""
 
-	return ""
-}
-
-cursor_index :: proc(using tl: ^TextLine) -> int {
-	index := 0
-	node := head
-	for node.next != cursor {
-		node = node.next
-		index += 1
+	sb := strings.builder_make()
+	for char in tl.data {
+		strings.write_byte(&sb, char)
 	}
-	return index
+	return strings.to_string(sb)
 }
 
 Page :: struct {
@@ -143,7 +79,12 @@ new_page :: proc() -> (p: ^Page) {
 }
 
 add_char_to_current_line :: proc(using p: ^Page, char: byte) {
-	if ln_idx > -1 {
+	if ln_idx < 0 do return
+
+	if lines[ln_idx].cursor < 32 {
+		tl_insert_char_at_cursor(lines[ln_idx], char)
+	} else {
+		handle_new_line(p)
 		tl_insert_char_at_cursor(lines[ln_idx], char)
 	}
 }
@@ -167,8 +108,10 @@ delete_current_line :: proc(using p: ^Page) {
 }
 
 delete_all_lines :: proc(using p: ^Page) {
-	for len(lines) != 0 {
-		delete_text_line(pop(&lines))
+	line, ok := pop_safe(&lines)
+	for ok {
+		delete_text_line(line)
+		line, ok = pop_safe(&lines)
 	}
 	append(&lines, new_text_line())
 	ln_idx = 0
@@ -198,30 +141,20 @@ move_up_line :: proc(using p: ^Page) {
 	}
 }
 
-delete_char_after_cursor :: proc(using p: ^Page) {
-	if ln_idx > -1 {
-		if lines[ln_idx].size == 0 {
-			delete_current_line(p)
-			return
-		}
-		tl_delete_char_after_cursor(lines[ln_idx])
-	}
-}
-
 delete_char_at_cursor :: proc(using p: ^Page) {
 	if ln_idx > -1 {
-		if lines[ln_idx].size == 0 {
+		if lines[ln_idx].cursor == 0 {
 			delete_current_line(p)
 			return
 		}
-		tl_delete_char_at_cursor(lines[ln_idx])
+		tl_delete_char_before_cursor(lines[ln_idx])
 	}
 }
 
 get_cursor_xy :: proc(using p: ^Page) -> (x, y: int) {
 	if ln_idx > -1 {
 		text := to_string(lines[ln_idx])
-		c_text := strings.clone_to_cstring(text[:cursor_index(lines[ln_idx])])
+		c_text := strings.clone_to_cstring(text[:lines[ln_idx].cursor])
 		return cast(int)rl.MeasureText(c_text, 20), ln_idx * 20
 	}
 	return
