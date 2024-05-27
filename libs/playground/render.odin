@@ -32,6 +32,7 @@ draw_line_number :: proc(app: ^State) {
 	for i in 0 ..< len(app.editor.current_page.lines) {
 		line_number = strconv.itoa(buffer[:], i + 1)
 		c_line_number = strings.clone_to_cstring(line_number)
+		defer delete(c_line_number)
 		width = rl.MeasureText(c_line_number, 20)
 		rl.DrawText(
 			c_line_number,
@@ -48,7 +49,9 @@ draw_text :: proc(app: ^State) {
 	c_text: cstring
 	for line, i in app.editor.current_page.lines {
 		text = to_string(line)
+		defer delete(text)
 		c_text = strings.clone_to_cstring(text)
+		defer delete(c_text)
 		rl.DrawText(
 			text = c_text,
 			posX = 25,

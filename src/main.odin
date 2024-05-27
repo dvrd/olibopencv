@@ -36,7 +36,7 @@ main :: proc() {
 		force_reload := api.force_reload()
 		force_restart := api.force_restart()
 		reload := force_reload || force_restart
-		app_dll_mod, app_dll_mod_err := os.last_write_time_by_name("playground" + DLL_EXT)
+		app_dll_mod, app_dll_mod_err := os.last_write_time_by_name(BIN_PATH)
 
 		if app_dll_mod_err == os.ERROR_NONE && api.modification_time != app_dll_mod {
 			reload = true
@@ -77,11 +77,8 @@ main :: proc() {
 			libc.getchar()
 			panic("Bad free detected")
 		}
-
-		free_all(context.temp_allocator)
 	}
 
-	free_all(context.temp_allocator)
 	api.shutdown()
 	if reset_tracking_allocator(&tracking_allocator) {
 		libc.getchar()

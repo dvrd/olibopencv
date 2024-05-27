@@ -11,11 +11,16 @@ process_command :: proc(using app: ^State) {
 	using app.editor
 
 	tks := parse_list(editor.current_page)
+	defer delete(tks)
 	fmt.println(tks)
 	tk, ok := pop_front_safe(&tks)
-	fmt.println(tk)
+	defer delete(tk)
 	loop: for ok {
+		defer delete(tk)
 		switch tk {
+		case "exit":
+			rl.CloseWindow()
+			break
 		case "load":
 			file_name, ok := pop_front_safe(&tks)
 			if !ok do break loop
@@ -48,19 +53,22 @@ process_command :: proc(using app: ^State) {
 parse_list :: proc(using p: ^Page) -> [dynamic]string {
 	parts := make([dynamic]string)
 	sb := strings.builder_make()
+	defer strings.builder_destroy(&sb)
+
 	for line in lines {
 		if line.cursor == 0 do continue
 
 		for char in line.data {
 			if char == ' ' {
-				append(&parts, strings.clone(strings.to_string(sb)))
+				append(&parts, strings.to_string(sb))
 				strings.builder_reset(&sb)
 			} else {
 				strings.write_byte(&sb, char)
 			}
 		}
-		append(&parts, strings.clone(strings.to_string(sb)))
+		append(&parts, strings.to_string(sb))
 		strings.builder_reset(&sb)
 	}
+
 	return parts
 }

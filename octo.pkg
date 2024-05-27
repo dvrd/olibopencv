@@ -18,7 +18,9 @@
       },
       debug: true,
       mode: "DLL",
-      seperate_modules: true,
+      definitions: {
+        RAYLIB_SHARED: "true"
+      },
       linker_flags: [
         "`pkg-config --cflags --libs opencv4`",
         "-lstdc++",

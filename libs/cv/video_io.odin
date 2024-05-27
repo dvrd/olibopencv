@@ -236,8 +236,6 @@ videocapture_retrieve :: proc(v: VideoCapture, m: Mat) -> bool {
 // videocapture_codec_string returns a string representation of FourCC bytes, i.e. the name of a codec
 videocapture_codec_string :: proc(v: VideoCapture) -> string {
 	sb := strings.builder_make()
-	defer strings.builder_destroy(&sb)
-
 	hexes := []i64{0xff, 0xff00, 0xff0000, 0xff000000}
 	param: i64
 	for h, i in hexes {

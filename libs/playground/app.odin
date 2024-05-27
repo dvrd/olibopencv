@@ -41,11 +41,10 @@ app_update :: proc() -> bool {
 
 @(export)
 app_init_window :: proc() {
-	rl.SetConfigFlags({.WINDOW_RESIZABLE | .VSYNC_HINT})
 	rl.InitWindow(SCREEN.width, SCREEN.height, "Computer Vision")
 	rl.SetWindowPosition(200, 200)
-	rl.SetTargetFPS(10)
-	rl.SetExitKey(.Q)
+	rl.SetExitKey(.KEY_NULL)
+	rl.SetTargetFPS(60)
 }
 
 @(export)
@@ -70,6 +69,7 @@ app_init :: proc() {
 
 @(export)
 app_shutdown :: proc() {
+	delete_page(application_state.editor.current_page)
 	free(application_state)
 }
 

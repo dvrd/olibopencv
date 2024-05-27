@@ -82,7 +82,7 @@ unload_api :: proc(api: ^AppAPI) {
 		}
 	}
 
-	if os.remove(fmt.tprintf(PROJ_NAME + "_{0}" + DLL_EXT, api.api_version)) != 0 {
+	if os.remove(fmt.tprintf(LIB_PATH + PROJ_NAME + "_{0}" + DLL_EXT, api.api_version)) != 0 {
 		fmt.printfln("Failed to remove " + PROJ_NAME + "_{0}" + DLL_EXT + " copy", api.api_version)
 	}
 }

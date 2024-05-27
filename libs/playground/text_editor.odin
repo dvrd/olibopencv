@@ -6,12 +6,6 @@ import "core:strconv"
 import "core:strings"
 import rl "vendor:raylib"
 
-ListNode :: struct {
-	char: byte,
-	next: ^ListNode,
-	prev: ^ListNode,
-}
-
 TextLine :: struct {
 	cursor: int,
 	data:   [32]byte,
@@ -48,20 +42,22 @@ tl_move_cursor_left :: proc(using tl: ^TextLine) {
 }
 
 tl_move_cursor_right :: proc(using tl: ^TextLine) {
-	next := cursor - 1
-	if next <= len(tl.data) {
+	next := cursor + 1
+	if next <= len(tl.data) && data[next - 1] != 0 {
 		cursor = next
 	}
 }
 
 to_string :: proc(using tl: ^TextLine) -> string {
-	if cursor == 0 do return ""
+	if cursor == 0 && data[cursor] == 0 do return ""
 
 	sb := strings.builder_make()
+	defer strings.builder_destroy(&sb)
+
 	for char in tl.data {
 		strings.write_byte(&sb, char)
 	}
-	return strings.to_string(sb)
+	return strings.clone(strings.to_string(sb))
 }
 
 Page :: struct {
@@ -76,6 +72,14 @@ new_page :: proc() -> (p: ^Page) {
 	append(&p.lines, new_text_line())
 
 	return
+}
+
+delete_page :: proc(p: ^Page) {
+	for line in p.lines {
+		free(line)
+	}
+	delete(p.lines)
+	free(p)
 }
 
 add_char_to_current_line :: proc(using p: ^Page, char: byte) {
@@ -154,7 +158,9 @@ delete_char_at_cursor :: proc(using p: ^Page) {
 get_cursor_xy :: proc(using p: ^Page) -> (x, y: int) {
 	if ln_idx > -1 {
 		text := to_string(lines[ln_idx])
+		defer delete(text)
 		c_text := strings.clone_to_cstring(text[:lines[ln_idx].cursor])
+		defer delete(c_text)
 		return cast(int)rl.MeasureText(c_text, 20), ln_idx * 20
 	}
 	return
