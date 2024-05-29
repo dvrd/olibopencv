@@ -197,7 +197,7 @@ void Mat_Size(Mat m, IntVector *res) {
   cv::MatSize ms(m->size);
   int *ids = new int[ms.dims()];
 
-  for (size_t i = 0; i < ms.dims(); ++i) {
+  for (int i = 0; i < ms.dims(); ++i) {
     ids[i] = ms[i];
   }
 
@@ -774,31 +774,31 @@ void CStrings_Close(struct CStrings cstrs) {
 void KeyPoints_Close(struct KeyPoints ks) { delete[] ks.keypoints; }
 
 void Points_Close(Points ps) {
-  for (size_t i = 0; i < ps.length; i++) {
+  for (int i = 0; i < ps.length; i++) {
     Point_Close(ps.points[i]);
   }
 
   delete[] ps.points;
 }
 
-void Point_Close(Point p) {}
+void Point_Close(Point _) {}
 
 void Points2f_Close(Points2f ps) {
-  for (size_t i = 0; i < ps.length; i++) {
+  for (int i = 0; i < ps.length; i++) {
     Point2f_Close(ps.points[i]);
   }
 
   delete[] ps.points;
 }
 
-void Point2f_Close(Point2f p) {}
+void Point2f_Close(Point2f _) {}
 
 void Rects_Close(struct Rects rs) { delete[] rs.rects; }
 
 void DMatches_Close(struct DMatches ds) { delete[] ds.dmatches; }
 
 void MultiDMatches_Close(struct MultiDMatches mds) {
-  for (size_t i = 0; i < mds.length; i++) {
+  for (int i = 0; i < mds.length; i++) {
     DMatches_Close(mds.dmatches[i]);
   }
 
@@ -839,7 +839,7 @@ PointVector PointVector_New() { return new std::vector<cv::Point>; }
 PointVector PointVector_NewFromPoints(Contour points) {
   std::vector<cv::Point> *cntr = new std::vector<cv::Point>;
 
-  for (size_t i = 0; i < points.length; i++) {
+  for (int i = 0; i < points.length; i++) {
     cntr->push_back(cv::Point(points.points[i].x, points.points[i].y));
   }
 
@@ -876,12 +876,12 @@ PointsVector PointsVector_NewFromPoints(Contours points) {
   std::vector<std::vector<cv::Point>> *pv =
       new std::vector<std::vector<cv::Point>>;
 
-  for (size_t i = 0; i < points.length; i++) {
+  for (int i = 0; i < points.length; i++) {
     Contour contour = points.contours[i];
 
     std::vector<cv::Point> cntr;
 
-    for (size_t i = 0; i < contour.length; i++) {
+    for (int i = 0; i < contour.length; i++) {
       cntr.push_back(cv::Point(contour.points[i].x, contour.points[i].y));
     }
 
@@ -912,7 +912,7 @@ Point2fVector Point2fVector_New() { return new std::vector<cv::Point2f>; }
 Point2fVector Point2fVector_NewFromPoints(Contour2f points) {
   std::vector<cv::Point2f> *cntr = new std::vector<cv::Point2f>;
 
-  for (size_t i = 0; i < points.length; i++) {
+  for (int i = 0; i < points.length; i++) {
     cntr->push_back(cv::Point2f(points.points[i].x, points.points[i].y));
   }
 
@@ -996,7 +996,7 @@ Points2fVector Points2fVector_New() {
 
 Points2fVector Points2fVector_NewFromPoints(Contours2f points) {
   Points2fVector pv = Points2fVector_New();
-  for (size_t i = 0; i < points.length; i++) {
+  for (int i = 0; i < points.length; i++) {
     Contour2f contour2f = points.contours[i];
     Point2fVector cntr = Point2fVector_NewFromPoints(contour2f);
     Points2fVector_Append(pv, cntr);
@@ -1024,7 +1024,7 @@ Point3fVector Point3fVector_New() { return new std::vector<cv::Point3f>; }
 
 Point3fVector Point3fVector_NewFromPoints(Contour3f points) {
   std::vector<cv::Point3f> *cntr = new std::vector<cv::Point3f>;
-  for (size_t i = 0; i < points.length; i++) {
+  for (int i = 0; i < points.length; i++) {
     cntr->push_back(cv::Point3f(points.points[i].x, points.points[i].y,
                                 points.points[i].z));
   }
@@ -1060,7 +1060,7 @@ Points3fVector Points3fVector_New() {
 
 Points3fVector Points3fVector_NewFromPoints(Contours3f points) {
   Points3fVector pv = Points3fVector_New();
-  for (size_t i = 0; i < points.length; i++) {
+  for (int i = 0; i < points.length; i++) {
     Contour3f contour3f = points.contours[i];
     Point3fVector cntr = Point3fVector_NewFromPoints(contour3f);
     Points3fVector_Append(pv, cntr);

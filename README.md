@@ -3,6 +3,8 @@
 **olibopencv** is an implementation of OpenCV in Odin. It applies the same
 patterns as [gocv](https://github.com/hybridgroup/gocv)
 
+My project is having a playground for OpenCV along with the library but it's just a work in process
+
 Currently there are bindings to:
 - [x] core
 - [x] highgui
@@ -14,54 +16,23 @@ Currently there are bindings to:
 ### Dev
 Dependencies:
 * C++ standard library
-* OpenCV 4
-* `pkg-config`
+* OpenCV 4 (Already included in the project for macos-arm64)
 
 Copy the `cv` directory into your project
 ```bash
 mv libs/cv path/to/your/project
 ```
-and remember to pass opencv4 and stdc++ libraries when building your app.
-This is what works on MacOS with opencv4 installed by homebrew
-```bash
-  LINKER_FLAGS="\"`pkg-config --cflags --libs opencv4` -lstdc++\""
-  odin build src \
-      -collection:libs=libs \
-      -use-separate-modules \
-      -out:odin-vision \
-      -extra-linker-flags:${LINKER_FLAGS} \
-      -o:speed
-```
-
 ### Build library
 
 ```bash
-just static
-```
-or
-```bash
-just shared
-```
+# First compile the build tool
+odin build build -out:cv
 
-### Run app
-To run the app you depend of another personal project (`octo`) but you can
-just modify the Justfile with pure odin:
-```bash
-build:
-  @if [[ ! -f {{cv_lib_src}}/libcv.dylib ]]; then \
-    just shared; \
-  fi; \
-  odin build src \
-      -collection:libs=libs \
-      -use-separate-modules \
-      -out:odin-vision \
-      -extra-linker-flags:{{linker_flags}} \
-      -o:speed
-run:
-  ./odin-vision
-```
-and then:
-```bash
-just run
+# Then you can execute any of the options
+./cv objects
+./cv shared
+./cv playground
+./cv app
+./cv run
 ```
 

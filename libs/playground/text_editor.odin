@@ -7,13 +7,15 @@ import "core:strings"
 import rl "vendor:raylib"
 
 TextLine :: struct {
-	cursor: int,
-	data:   [32]byte,
+	cursor:        int,
+	data:          [32]byte,
+	last_char_idx: int,
 }
 
 new_text_line :: proc() -> (tl: ^TextLine) {
 	tl = new(TextLine)
 	tl.cursor = 0
+	tl.last_char_idx = 0
 	return
 }
 
@@ -22,8 +24,17 @@ delete_text_line :: proc(using tl: ^TextLine) {
 }
 
 tl_insert_char_at_cursor :: proc(using tl: ^TextLine, char: byte) {
-	data[cursor] = char
+	if last_char_idx == cursor {
+		data[cursor] = char
+	} else {
+		copy := data[cursor + 1:last_char_idx]
+		for idx in cursor ..= last_char_idx + 1 {
+			data[idx] = copy[idx - cursor]
+		}
+		data[cursor] = char
+	}
 	cursor += 1
+	last_char_idx += 1
 }
 
 tl_delete_char_before_cursor :: proc(using tl: ^TextLine) {
