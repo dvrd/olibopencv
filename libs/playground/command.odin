@@ -14,9 +14,7 @@ process_command :: proc(using app: ^State) {
 	defer delete(tks)
 	fmt.println(tks)
 	tk, ok := pop_front_safe(&tks)
-	defer delete(tk)
 	loop: for ok {
-		defer delete(tk)
 		switch tk {
 		case "exit":
 			rl.CloseWindow()

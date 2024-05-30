@@ -42,7 +42,6 @@ app_update :: proc() -> bool {
 @(export)
 app_init_window :: proc() {
 	rl.InitWindow(SCREEN.width, SCREEN.height, "Computer Vision")
-	rl.SetWindowPosition(200, 200)
 	rl.SetExitKey(.KEY_NULL)
 	rl.SetTargetFPS(60)
 }
