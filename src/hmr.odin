@@ -87,7 +87,6 @@ unload_api :: proc(api: ^AppAPI) {
 	}
 }
 
-// make app use good GPU on laptops etc
 @(export)
 NvOptimusEnablement: u32 = 1
 

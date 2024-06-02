@@ -4,6 +4,9 @@ BINDINGS_PATH :: "libs/cv/bindings"
 BINDINGS_TESTS_PATH :: "libs/cv/tests"
 DYLIB_PATH :: "libs/cv/libcv.dylib"
 
+PLAYGROUND_SRC :: "libs/playground"
+PLAYGROUND_TARGET :: "target/playground/olibopencv"
+
 APP_SRC :: "src"
 APP_TARGET_DEBUG :: "target/debug/olibopencv"
 APP_TARGET_RELEASE :: "target/release/olibopencv"

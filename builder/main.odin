@@ -50,6 +50,14 @@ extra_linker_flags :: proc(with_raylib_dll := true) -> string {
 	return fmt.tprintf("-extra-linker-flags:\"%s\"", strings.join(flags[:], " "))
 }
 
+clean_files :: proc() {
+	remove_dir("target")
+	for file in OBJECT_FILES {
+		os.remove(filepath.join({BINDINGS_PATH, file}))
+	}
+	os.remove(DYLIB_PATH)
+}
+
 main :: proc() {
 	context.logger = log.create_console_logger(opt = log.Options{.Level, .Terminal_Color})
 
@@ -68,5 +76,10 @@ main :: proc() {
 		test_bindings()
 	case "run":
 		run_app()
+	case "clean":
+		clean_files()
+	case:
+		log.error("Invalid command")
+		os.exit(1)
 	}
 }

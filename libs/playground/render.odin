@@ -11,7 +11,6 @@ render :: proc(app: ^State) {
 	defer rl.EndDrawing()
 
 	rl.ClearBackground(rl.RAYWHITE)
-	fmt.println(app.image.texture)
 	rl.DrawTexture(app.image.texture, 0, 0, rl.WHITE)
 
 	draw_page(app)

@@ -4,11 +4,10 @@ import "cmd"
 import "core:log"
 import "core:os"
 
-PLAYGROUND_SRC :: "libs/playground"
-PLAYGROUND_TARGET :: "target/playground/olibopencv"
-
 build_playground :: proc() {
 	if !os.exists(DYLIB_PATH) do build_dll()
+	if !os.exists("target") do os.make_directory("target")
+	if !os.exists("target/playground") do os.make_directory("target/playground")
 
 	args := make([dynamic]string)
 

@@ -7,6 +7,10 @@ import "core:path/filepath"
 
 build_app :: proc(is_debug := true) {
 	if !os.exists(PLAYGROUND_TARGET) do build_playground()
+	if !os.exists("target") do os.make_directory("target")
+	if is_debug && !os.exists("target/debug") do os.make_directory("target/debug")
+	if !is_debug && !os.exists("target/release") do os.make_directory("target/release")
+
 
 	args := make([dynamic]string)
 
@@ -19,15 +23,9 @@ build_app :: proc(is_debug := true) {
 	append(&args, "-collection:" + LIBS_PATH + "=" + LIBS_PATH)
 	if is_debug {
 		append(&args, "-debug")
-		if !os.exists(filepath.dir(APP_TARGET_DEBUG)) {
-			os.make_directory(filepath.dir(APP_TARGET_DEBUG))
-		}
 		append(&args, "-out:" + APP_TARGET_DEBUG)
 	} else {
 		append(&args, "-o:speed")
-		if !os.exists(filepath.dir(APP_TARGET_RELEASE)) {
-			os.make_directory(filepath.dir(APP_TARGET_RELEASE))
-		}
 		append(&args, "-out:" + APP_TARGET_RELEASE)
 	}
 	err := cmd.launch(args[:])
