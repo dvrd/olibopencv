@@ -14,10 +14,11 @@ process_command :: proc(using app: ^State) {
 	defer delete(tks)
 	fmt.println(tks)
 	tk, ok := pop_front_safe(&tks)
+	defer delete(tk)
 	loop: for ok {
 		switch tk {
 		case "exit":
-			rl.CloseWindow()
+			app.exit = true
 			break
 		case "load":
 			file_name, ok := pop_front_safe(&tks)
@@ -44,6 +45,7 @@ process_command :: proc(using app: ^State) {
 		case:
 			fmt.println("Unknown commands")
 		}
+		delete(tk)
 		tk, ok = pop_front_safe(&tks)
 	}
 }
@@ -56,15 +58,17 @@ parse_list :: proc(using p: ^Page) -> [dynamic]string {
 	for line in lines {
 		if line.cursor == 0 do continue
 
-		for char in line.data {
+		char: byte
+		for idx in 0 ..< line.cursor {
+			char = line.data[idx]
 			if char == ' ' {
-				append(&parts, strings.to_string(sb))
+				append(&parts, strings.clone(strings.to_string(sb)))
 				strings.builder_reset(&sb)
 			} else {
 				strings.write_byte(&sb, char)
 			}
 		}
-		append(&parts, strings.to_string(sb))
+		append(&parts, strings.clone(strings.to_string(sb)))
 		strings.builder_reset(&sb)
 	}
 

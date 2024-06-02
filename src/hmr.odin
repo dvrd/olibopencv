@@ -37,11 +37,36 @@ AppAPI :: struct {
 }
 
 copy_dll :: proc(to: string) -> bool {
-	exit: i32
-	exit = libc.system(fmt.ctprintf("cp " + BIN_PATH + " {0}", to))
+	fd: os.Handle
+	fi: os.File_Info
+	errno: os.Errno
 
-	if exit != 0 {
-		fmt.printfln("Failed to copy " + PROJ_NAME + DLL_EXT + " to {0}", to)
+	fi, errno = os.stat(BIN_PATH)
+	defer os.file_info_delete(fi)
+	if errno != os.ERROR_NONE {
+		return false
+	}
+
+	fd, errno = os.open(to, os.O_CREATE | os.O_RDWR, int(fi.mode))
+	if errno != os.ERROR_NONE {
+		log.errorf("Failed to copy " + PROJ_NAME + DLL_EXT + " to {0}", to)
+		log.error(os.get_last_error_string())
+		return false
+	}
+	defer os.close(fd)
+
+	file_contents, success := os.read_entire_file(fi.fullpath)
+	if !success {
+		log.errorf("Failed to copy " + PROJ_NAME + DLL_EXT + " to {0}", to)
+		log.error(os.get_last_error_string())
+		return false
+	}
+	defer delete(file_contents)
+
+	_, errno = os.write(fd, file_contents)
+	if errno != os.ERROR_NONE {
+		log.errorf("Failed to copy " + PROJ_NAME + DLL_EXT + " to {0}", to)
+		log.error(os.get_last_error_string())
 		return false
 	}
 
@@ -49,9 +74,10 @@ copy_dll :: proc(to: string) -> bool {
 }
 
 load_api :: proc(api_version: int) -> (api: AppAPI, ok: bool) {
+	log.debug("Loading API version", api_version)
 	mod_time, mod_time_error := os.last_write_time_by_name(BIN_PATH)
 	if mod_time_error != os.ERROR_NONE {
-		fmt.printfln(
+		log.errorf(
 			"Failed getting last write time of " + BIN_PATH + ", error code: %v",
 			os.get_last_error_string(),
 		)
@@ -60,12 +86,12 @@ load_api :: proc(api_version: int) -> (api: AppAPI, ok: bool) {
 
 	// NOTE: this needs to be a relative path for Linux to work.
 	app_dll_name := fmt.tprintf(LIB_PATH + PROJ_NAME + "_{0}" + DLL_EXT, api_version)
-	fmt.println("dll name:", app_dll_name)
+	log.debug("dll name:", app_dll_name)
 	copy_dll(app_dll_name) or_return
 
 	_, ok = dynlib.initialize_symbols(&api, app_dll_name, "app_", "lib")
 	if !ok {
-		fmt.printfln("Failed initializing symbols: {0}", dynlib.last_error())
+		log.errorf("Failed initializing symbols: {0}", dynlib.last_error())
 	}
 
 	api.api_version = api_version
@@ -78,12 +104,12 @@ load_api :: proc(api_version: int) -> (api: AppAPI, ok: bool) {
 unload_api :: proc(api: ^AppAPI) {
 	if api.lib != nil {
 		if !dynlib.unload_library(api.lib) {
-			fmt.printfln("Failed unloading lib: {0}", dynlib.last_error())
+			log.errorf("Failed unloading lib: {0}", dynlib.last_error())
 		}
 	}
 
 	if os.remove(fmt.tprintf(LIB_PATH + PROJ_NAME + "_{0}" + DLL_EXT, api.api_version)) != 0 {
-		fmt.printfln("Failed to remove " + PROJ_NAME + "_{0}" + DLL_EXT + " copy", api.api_version)
+		log.errorf("Failed to remove " + PROJ_NAME + "_{0}" + DLL_EXT + " copy", api.api_version)
 	}
 }
 

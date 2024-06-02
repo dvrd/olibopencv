@@ -2,6 +2,7 @@ package imgproc
 
 import "core:c"
 import "core:fmt"
+import "core:log"
 import "core:strconv"
 import "core:strings"
 import rl "vendor:raylib"

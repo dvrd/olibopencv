@@ -14,6 +14,7 @@ EditMode :: enum {
 }
 
 State :: struct {
+	exit:   bool,
 	image:  struct {
 		texture: rl.Texture2D,
 		data:    cv.Mat,
@@ -36,7 +37,7 @@ application_state: ^State
 app_update :: proc() -> bool {
 	update(application_state)
 	render(application_state)
-	return !rl.WindowShouldClose()
+	return rl.WindowShouldClose() || application_state.exit
 }
 
 @(export)

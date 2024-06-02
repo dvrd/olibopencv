@@ -30,35 +30,41 @@ main :: proc() {
 	old_apis := make([dynamic]AppAPI, default_allocator)
 
 	new_api: AppAPI
-	window_open := true
-	for window_open {
-		window_open = api.update()
+	should_close := false
+	for !should_close {
+		should_close = api.update()
 		force_reload := api.force_reload()
 		force_restart := api.force_restart()
 		reload := force_reload || force_restart
 		app_dll_mod, app_dll_mod_err := os.last_write_time_by_name(BIN_PATH)
 
 		if app_dll_mod_err == os.ERROR_NONE && api.modification_time != app_dll_mod {
+			log.debugf("API DLL modified {0}s ago", app_dll_mod - api.modification_time)
+			if app_dll_mod_err == os.ERROR_NONE do log.error(os.get_last_error_string())
 			reload = true
 		}
 
 		if reload {
 			new_api, ok = load_api(version)
-
+			log.debug("Reloading API:", ok)
 			if ok {
 				if api.state_size() != new_api.state_size() || force_restart {
+					log.debug("Force restarting")
 					api.shutdown()
 					reset_tracking_allocator(&tracking_allocator)
 
-					for &g in old_apis {
-						unload_api(&g)
+					for &old_api in old_apis {
+						log.debug("Unloading", old_api)
+						unload_api(&old_api)
 					}
 
 					clear(&old_apis)
+					log.debug("Unloading", api)
 					unload_api(&api)
 					api = new_api
 					api.init()
 				} else {
+					log.debug("Hot reloading")
 					append(&old_apis, api)
 					app_state := api.state()
 					api = new_api
@@ -95,14 +101,12 @@ main :: proc() {
 	mem.tracking_allocator_destroy(&tracking_allocator)
 }
 
-reset_tracking_allocator :: proc(a: ^mem.Tracking_Allocator) -> bool {
-	err := false
-
+reset_tracking_allocator :: proc(a: ^mem.Tracking_Allocator) -> (err: bool) {
 	for _, value in a.allocation_map {
-		fmt.printf("%v: Leaked %v bytes\n", value.location, value.size)
+		log.debugf("%v: Leaked %v bytes", value.location, value.size)
 		err = true
 	}
 
 	mem.tracking_allocator_clear(a)
-	return err
+	return
 }

@@ -4,6 +4,7 @@ import "cmd"
 import "core:log"
 import "core:os"
 import "core:path/filepath"
+import "core:strings"
 
 build_app :: proc(is_debug := true) {
 	if !os.exists(PLAYGROUND_TARGET) do build_playground()
@@ -28,11 +29,14 @@ build_app :: proc(is_debug := true) {
 		append(&args, "-o:speed")
 		append(&args, "-out:" + APP_TARGET_RELEASE)
 	}
+	log.debug("Building app")
+	log.debug(strings.join(args[:], " "))
 	err := cmd.launch(args[:])
 	if err != .ERROR_NONE {
 		log.error("Failed compilation of src due to:", os.get_last_error_string())
 		os.exit(1)
 	}
+	log.debug("Successfully compiled", APP_TARGET_RELEASE)
 }
 
 run_app :: proc() {
