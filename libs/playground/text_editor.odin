@@ -27,9 +27,10 @@ tl_insert_char_at_cursor :: proc(using tl: ^TextLine, char: byte) {
 	if last_char_idx == cursor {
 		data[cursor] = char
 	} else {
-		copy := data[cursor + 1:last_char_idx]
-		for idx in cursor ..= last_char_idx + 1 {
-			data[idx] = copy[idx - cursor]
+		copy: []byte
+		copy_slice(copy, data[cursor:last_char_idx])
+		for c, idx in copy {
+			data[cursor + idx + 1] = c
 		}
 		data[cursor] = char
 	}

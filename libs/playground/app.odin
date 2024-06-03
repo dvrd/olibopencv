@@ -16,8 +16,9 @@ EditMode :: enum {
 State :: struct {
 	exit:   bool,
 	image:  struct {
-		texture: rl.Texture2D,
-		data:    cv.Mat,
+		src_path: string,
+		texture:  rl.Texture2D,
+		data:     cv.Mat,
 	},
 	editor: struct {
 		current_page:       ^Page,
@@ -70,6 +71,7 @@ app_init :: proc() {
 @(export)
 app_shutdown :: proc() {
 	delete_page(application_state.editor.current_page)
+	delete(application_state.image.src_path)
 	free(application_state)
 }
 

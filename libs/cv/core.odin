@@ -431,8 +431,7 @@ foreign cv {
 	// each element to contain a schar aka CV_8U.
 	Mat_GetUChar :: proc(m: Mat, row, col: c.int) -> c.uint8_t ---
 
-	@(link_name = "Mat_GetUChar3")
-	mat_get_uchar3 :: proc(m: Mat, x, y, z: c.int) -> c.uint8_t ---
+	Mat_GetUChar3 :: proc(m: Mat, x, y, z: c.int) -> c.uint8_t ---
 
 	// Mat_GetSChar returns a specific row/col value from this Mat expecting
 	// each element to contain a schar aka CV_8S.
@@ -565,8 +564,7 @@ foreign cv {
 	@(link_name = "Mat_AbsDiff")
 	abs_diff :: proc(src1, src2, dst: Mat) ---
 
-	@(link_name = "Mat_Add")
-	add :: proc(src1, src2, dst: Mat) ---
+	Mat_Add :: proc(src1, src2, dst: Mat) ---
 
 	@(link_name = "Mat_AddWeighted")
 	add_weighted :: proc(src1, src2, dst: Mat) ---
@@ -751,8 +749,7 @@ foreign cv {
 	@(link_name = "Mat_MulSpectrums")
 	mul_spectrums :: proc(a, b, c: Mat, flags: i32) ---
 
-	@(link_name = "Mat_Multiply")
-	multiply :: proc(src1, src2, dst: Mat) ---
+	Mat_Multiply :: proc(src1, src2, dst: Mat) ---
 
 	@(link_name = "Mat_MultiplyWithParams")
 	multiply_with_params :: proc(src1, src2, dst: Mat, scale: c.double, dtype: Mat_Type) ---
@@ -804,8 +801,7 @@ foreign cv {
 
 	Mat_Split :: proc(src: Mat, mats: ^Mats) ---
 
-	@(link_name = "Mat_Subtract")
-	subtract :: proc(src1, src2, dst: Mat) ---
+	Mat_Subtract :: proc(src1, src2, dst: Mat) ---
 
 	@(link_name = "Mat_Trace")
 	trace :: proc(src: Mat) -> Scalar ---
@@ -1227,7 +1223,28 @@ Number :: union {
 	c.double,
 }
 
-at :: proc(m: Mat, x, y: int) -> Number {
+at3 :: proc(m: Mat, x, y, z: int) -> Number {
+	switch mat_type(m) {
+	case .CV_8UC1, .CV_8UC2, .CV_8UC3, .CV_8UC4:
+		return at_u8(m, x, y, z)
+	case .CV_8SC1, .CV_8SC2, .CV_8SC3, .CV_8SC4:
+		return at_i8(m, cast(c.int)x, cast(c.int)y, cast(c.int)z)
+	case .CV_16UC1, .CV_16UC2, .CV_16UC3, .CV_16UC4:
+		return at_u16(m, cast(c.int)x, cast(c.int)y, cast(c.int)z)
+	case .CV_16SC1, .CV_16SC2, .CV_16SC3, .CV_16SC4:
+		return at_i16(m, cast(c.int)x, cast(c.int)y, cast(c.int)z)
+	case .CV_32SC1, .CV_32SC2, .CV_32SC3, .CV_32SC4:
+		return at_i32(m, cast(c.int)x, cast(c.int)y, cast(c.int)z)
+	case .CV_32FC1, .CV_32FC2, .CV_32FC3, .CV_32FC4:
+		return at_f32(m, x, y, z)
+	case .CV_64FC1, .CV_64FC2, .CV_64FC3, .CV_64FC4:
+		return at_f64(m, cast(c.int)x, cast(c.int)y, cast(c.int)z)
+	case:
+		return nil
+	}
+}
+
+at :: proc(m: Mat, x, y: int) -> [3]Number {
 	switch mat_type(m) {
 	case .CV_8UC1, .CV_8UC2, .CV_8UC3, .CV_8UC4:
 		return at_u8(m, x, y)
@@ -1246,4 +1263,26 @@ at :: proc(m: Mat, x, y: int) -> Number {
 	case:
 		return nil
 	}
+}
+
+multiply :: proc(a, b: Mat) -> (dst: Mat) {
+	dst = new_mat()
+	Mat_Multiply(a, b, dst)
+	return
+}
+
+add :: proc(a, b: Mat) -> (dst: Mat) {
+	dst = new_mat()
+	Mat_Add(a, b, dst)
+	return
+}
+
+substract :: proc(a, b: Mat) -> (dst: Mat) {
+	dst = new_mat()
+	Mat_Subtract(a, b, dst)
+	return
+}
+
+mat_get_uchar3 :: proc(m: Mat, x, y, z: int) -> u8 {
+	return cast(u8)Mat_GetUChar3(m, c.int(x), c.int(y), c.int(z))
 }

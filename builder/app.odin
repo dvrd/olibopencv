@@ -21,6 +21,7 @@ build_app :: proc(is_debug := true) {
 
 	append(&args, "odin", "build")
 	append(&args, APP_SRC)
+	append(&args, "-sanitize:address")
 	append(&args, "-collection:" + LIBS_PATH + "=" + LIBS_PATH)
 	if is_debug {
 		append(&args, "-debug")

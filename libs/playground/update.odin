@@ -1,6 +1,6 @@
 package imgproc
 
-import "core:fmt"
+import "core:log"
 import rl "vendor:raylib"
 
 handle_navigation :: proc(app: ^State) {
@@ -39,13 +39,14 @@ handle_insert :: proc(app: ^State) {
 
 	for unicode := rl.GetCharPressed(); unicode > 0; unicode = rl.GetCharPressed() {
 		if unicode >= 32 && unicode <= 125 {
+			log.debugf("unicode: %c", cast(byte)unicode)
 			add_char_to_current_line(app.editor.current_page, cast(byte)unicode)
 			app.editor.is_blinking = false
 			app.editor.frame_count = 0
 		}
 	}
 
-	if rl.IsKeyPressed(.BACKSPACE) || rl.IsKeyDown(.BACKSPACE) {
+	if rl.IsKeyPressed(.BACKSPACE) {
 		delete_char_at_cursor(app.editor.current_page)
 		app.editor.is_blinking = false
 		app.editor.frame_count = 0
